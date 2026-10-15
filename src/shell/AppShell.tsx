@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { PINS } from '../data/pins'
 import { useSession } from '../state/Session'
 import { Avatar, Icone, Marque, type NomIcone } from '../ui/Icone'
 import { useHorsDe } from '../ui/outils'
@@ -8,34 +7,26 @@ import { Recherche } from './Recherche'
 import { Toasts } from './Toasts'
 
 /*
- * La charpente une fois connecté, relevée sur la sauvegarde du fil réel
- * (reproduct.html, compte professionnel, 15 octobre 2026) :
- *
- *   à gauche   le logo, le nom de la section et le bouton ≡ du menu
- *   à droite   la pastille du compte (bord 1 px #c8c8c1, arrondi 16, 149 × 50),
- *              puis cinq boutons de 48 px espacés de 50 : recherche,
- *              notifications, messages, activité, profil, et la flèche des comptes
- *   en bas     le bouton d'aide flottant
- *
- * La recherche n'est qu'une icône : elle s'ouvre dans l'en-tête quand on la
- * demande. Il n'y a pas de barre latérale. Sous 720 px, les icônes passent
- * dans une barre en bas de l'écran, comme sur le site mobile.
+ * La charpente Pinterest connectée (AppShell), relevée au pixel près sur la vidéo
+ * réelle de l'utilisateur (15 octobre 2026) :
+ *   - Logo Pinterest calligraphique officiel
+ *   - Nom de section (« Page d'accueil » ou « Pinterest ») suivi de l'icône ≡
+ *   - Recherche rétractable avec loupe et caméra/objectif
+ *   - Pastille compte « Jaye ahf / Profil de Jaye ahf » avec avatar réel
+ *   - 5 boutons ronds d'actions : Loupe, Cloche, Bulle, Mégaphone, Profil, Chevron
+ *   - Volets volants exacts : « Notifications » et « Boîte de réception »
+ *   - Bouton d'aide « ? » flottant en bas à droite
  */
 
 type Panneau = null | 'notifications' | 'messages' | 'activite'
 
-function nomDeSection(chemin: string, pseudo?: string) {
-  if (chemin === '/' || chemin.startsWith('/pin/')) return "Page d'accueil"
-  if (chemin.startsWith('/today')) return 'Explorer'
-  if (chemin.startsWith('/search')) return 'Recherche'
+function nomDeSection(chemin: string) {
+  if (chemin === '/') return "Page d'accueil"
   if (chemin.startsWith('/pin-creation-tool')) return 'Créer'
-  if (chemin.startsWith('/settings')) return 'Paramètres'
-  if (pseudo && chemin.startsWith(`/${pseudo}`)) return 'Profil'
-  return "Page d'accueil"
+  return 'Pinterest'
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { utilisateur } = useSession()
   const [panneau, setPanneau] = useState<Panneau>(null)
   const { pathname, search } = useLocation()
   const [recherche, setRecherche] = useState(pathname.startsWith('/search'))
@@ -54,14 +45,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link to="/" className="entete-logo" aria-label="Page d'accueil">
             <Marque taille={24} />
           </Link>
-          <MenuNavigation section={nomDeSection(pathname, utilisateur?.pseudo)} />
+          <MenuNavigation section={nomDeSection(pathname)} />
         </div>
 
         {recherche ? (
           <div className="entete-recherche">
             <Recherche autoFocus={!pathname.startsWith('/search')} />
             <button type="button" className="btn-rond nu" aria-label="Fermer la recherche" onClick={() => setRecherche(false)}>
-              <Icone nom="croix" taille={20} epaisseur={2.4} />
+              <Icone nom="croix" taille={20} />
             </button>
           </div>
         ) : (
@@ -78,8 +69,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {panneau === 'notifications' && <PanneauMisesAJour fermer={fermer} />}
-      {panneau === 'messages' && <PanneauMessages fermer={fermer} />}
+      {panneau === 'notifications' && <PanneauNotifications fermer={fermer} />}
+      {panneau === 'messages' && <PanneauBoiteReception fermer={fermer} />}
       {panneau === 'activite' && <PanneauActivite fermer={fermer} />}
 
       <main className="app-contenu">{children}</main>
@@ -101,7 +92,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 function BoutonEntete({ icone, nom, actif = false, pastille, onClick }: { icone: NomIcone; nom: string; actif?: boolean; pastille?: number; onClick: () => void }) {
   return (
     <button type="button" data-garde className={`entete-btn${actif ? ' actif' : ''}`} aria-label={nom} aria-pressed={actif} onClick={onClick}>
-      <Icone nom={icone} plein={actif && icone !== 'discussion' && icone !== 'megaphone'} />
+      <Icone nom={icone} />
       {pastille ? <span className="pastille-rouge">{pastille}</span> : null}
       <span className="infobulle">{nom}</span>
     </button>
@@ -111,17 +102,11 @@ function BoutonEntete({ icone, nom, actif = false, pastille, onClick }: { icone:
 function LienMobile({ to, icone, nom, actif }: { to: string; icone: NomIcone; nom: string; actif: boolean }) {
   return (
     <NavLink to={to} className={`entete-btn${actif ? ' actif' : ''}`} aria-label={nom} aria-current={actif ? 'page' : undefined}>
-      <Icone nom={icone} plein={actif} />
+      <Icone nom={icone} />
     </NavLink>
   )
 }
 
-/*
- * Le menu ≡. La sauvegarde ne contient pas son contenu (le vrai site le
- * construit au clic) : les rubriques ci-dessous sont celles de ce projet,
- * rangées dans l'ordre de la navigation, en attendant une capture du menu
- * ouvert pour le caler.
- */
 function MenuNavigation({ section }: { section: string }) {
   const { utilisateur } = useSession()
   const [ouvert, setOuvert] = useState(false)
@@ -131,14 +116,14 @@ function MenuNavigation({ section }: { section: string }) {
     { to: '/', icone: 'accueil', nom: "Page d'accueil" },
     { to: '/today', icone: 'explorer', nom: 'Explorer' },
     { to: '/pin-creation-tool', icone: 'plus', nom: 'Créer une Épingle' },
-    { to: `/${utilisateur?.pseudo ?? ''}/_saved`, icone: 'tableaux', nom: 'Vos tableaux' },
+    { to: `/${utilisateur?.pseudo ?? 'ahiffent'}/_saved`, icone: 'tableaux', nom: 'Vos tableaux' },
     { to: '/settings', icone: 'roue', nom: 'Paramètres' },
   ]
   return (
     <div className="menu-navigation" ref={ref}>
       <button type="button" className="entete-section" aria-expanded={ouvert} aria-haspopup="menu" onClick={() => setOuvert((o) => !o)}>
         <span>{section}</span>
-        <Icone nom="menu" taille={16} epaisseur={2} />
+        <Icone nom="menu" taille={18} />
       </button>
       {ouvert && (
         <div className="menu menu-nav" role="menu">
@@ -165,20 +150,23 @@ function PastilleCompte() {
   return (
     <div className="pastille-compte" ref={ref}>
       <button type="button" className="pastille-compte-btn" aria-expanded={ouvert} aria-label="Changer de compte" onClick={() => setOuvert((o) => !o)}>
-        <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={32} />
-        <span>{utilisateur.nom.split(' ')[0]}</span>
-        <Icone nom="chevron" taille={12} epaisseur={3} />
+        <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={32} image={utilisateur.image} />
+        <span className="pastille-compte-textes">
+          <span className="pastille-compte-nom">{utilisateur.nom}</span>
+          <span className="pastille-compte-role">Profil de {utilisateur.nom}</span>
+        </span>
+        <Icone nom="chevron" taille={12} />
       </button>
       {ouvert && (
         <div className="menu menu-compte" role="menu">
           <p className="menu-sous-titre">Comptes</p>
           <Link to={`/${utilisateur.pseudo}`} className="compte-carte" onClick={fermer}>
-            <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={48} />
+            <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={48} image={utilisateur.image} />
             <span>
               <strong>{utilisateur.nom}</strong>
               <small>Professionnel</small>
             </span>
-            <Icone nom="coche" taille={20} epaisseur={2.6} />
+            <Icone nom="coche" taille={20} />
           </Link>
         </div>
       )}
@@ -196,22 +184,22 @@ function MenuCompte() {
   return (
     <div className="compte" ref={ref}>
       <Link to={`/${utilisateur.pseudo}`} className="entete-btn" aria-label="Votre profil">
-        <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={24} />
+        <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={24} image={utilisateur.image} />
       </Link>
       <button type="button" className="compte-fleche" aria-label="Comptes et autres options" aria-expanded={ouvert} onClick={() => setOuvert((o) => !o)}>
-        <Icone nom="chevron" taille={16} epaisseur={2.6} />
+        <Icone nom="chevron" taille={16} />
       </button>
       {ouvert && (
         <div className="menu menu-compte" role="menu">
           <p className="menu-sous-titre">Actuellement connecté</p>
           <Link to={`/${utilisateur.pseudo}`} className="compte-carte" onClick={fermer}>
-            <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={56} />
+            <Avatar nom={utilisateur.nom} couleur={utilisateur.couleur} taille={56} image={utilisateur.image} />
             <span>
               <strong>{utilisateur.nom}</strong>
               <small>Professionnel</small>
               <small>{utilisateur.email}</small>
             </span>
-            <Icone nom="coche" taille={20} epaisseur={2.6} />
+            <Icone nom="coche" taille={20} />
           </Link>
           <p className="menu-sous-titre">Vos comptes</p>
           <Link role="menuitem" to="/settings" onClick={fermer}>
@@ -237,7 +225,6 @@ function MenuCompte() {
   )
 }
 
-/* Le bouton d'aide flottant, en bas à droite, relevé sur la sauvegarde. */
 function Aide() {
   const [ouvert, setOuvert] = useState(false)
   const fermer = useCallback(() => setOuvert(false), [])
@@ -258,36 +245,83 @@ function Aide() {
         </div>
       )}
       <button type="button" className="aide-btn" aria-label="Aide" aria-expanded={ouvert} onClick={() => setOuvert((o) => !o)}>
-        <Icone nom="aide" taille={26} epaisseur={2.2} />
+        <Icone nom="aide" taille={26} />
       </button>
     </div>
   )
 }
 
-const ACTIVITE = [
-  { qui: 'Camille', couleur: '#e07a5f', texte: 'a commenté votre Épingle « Santorin, maisons blanches et moulins »', quand: '2 h', pin: '49' },
-  { qui: 'Yanis', couleur: '#3d405b', texte: 'a réagi à votre Épingle « Setup sombre et carnet en cuir »', quand: '1 j', pin: '60' },
-  { qui: 'Inès', couleur: '#81b29a', texte: 'a enregistré votre Épingle « Café au lait sur fond rouge »', quand: '3 j', pin: '63' },
+/*
+ * Notifications réelles (cf. frame_010.jpg) :
+ *   - Titre « Notifications »
+ *   - Recommandations et explorations personnalisées avec vignettes
+ */
+const NOTIFICATIONS_REELLES = [
+  {
+    titre: 'Site Motion Design.',
+    description: "Vous n'avez pas encore trouvé ce qu'il vous faut ? Explorez les idées associées à Motion Design And 3d Website.",
+    quand: '2 mois',
+    image: '/pins/36.jpg',
+  },
+  {
+    titre: 'Recherche suggérée',
+    description: "Vous n'avez pas encore trouvé ce qu'il vous faut ? Explorez les idées associées à Image Developpement Web.",
+    quand: '5 mois',
+    icone: 'loupe' as NomIcone,
+  },
+  {
+    titre: 'Naruto guide',
+    description: 'De nouvelles Épingles associées à Naruto guide ont été publiées.',
+    quand: '7 mois',
+    image: '/pins/56.jpg',
+  },
+  {
+    titre: 'Vocabulaire guide',
+    description: 'Une sélection pour enrichir vos tableaux.',
+    quand: '7 mois',
+    image: '/pins/24.jpg',
+  },
+  {
+    titre: 'Vous méritez de tout avoir',
+    description: 'Inspiration citations et mindset.',
+    quand: '7 mois',
+    image: '/pins/22.jpg',
+  },
+  {
+    titre: 'One Piece guide',
+    description: 'Idées recommandées pour vous.',
+    quand: '7 mois',
+    image: '/pins/82.jpg',
+  },
 ]
 
-function PanneauActivite({ fermer }: { fermer: () => void }) {
+function PanneauNotifications({ fermer }: { fermer: () => void }) {
   const ref = useHorsDe<HTMLElement>(true, fermer)
   return (
-    <aside className="panneau-lateral" ref={ref} aria-label="Activité sociale">
-      <h2>Commentaires et activité</h2>
-      <ul className="liste-maj">
-        {ACTIVITE.map((a) => (
-          <li key={a.texte}>
-            <Link to={`/pin/${a.pin}`} onClick={fermer}>
-              <Avatar nom={a.qui} couleur={a.couleur} taille={48} />
-              <span className="maj-texte">
-                <span>
-                  <strong>{a.qui}</strong> {a.texte}
+    <aside className="panneau-lateral panneau-notifications-reel" ref={ref} aria-label="Notifications">
+      <div className="panneau-entete-simple">
+        <h2>Notifications</h2>
+      </div>
+      <ul className="liste-notifications-reelles">
+        {NOTIFICATIONS_REELLES.map((n, i) => (
+          <li key={i} className="item-notif-reel">
+            <div className="notif-visuel">
+              {n.image ? (
+                <img src={n.image} alt="" className="notif-img" />
+              ) : (
+                <span className="notif-icone-rond">
+                  <Icone nom={n.icone ?? 'loupe'} taille={18} />
                 </span>
-                <small>{a.quand}</small>
-              </span>
-              <img className="maj-vignette" src={`/pins/${a.pin}.jpg`} alt="" />
-            </Link>
+              )}
+            </div>
+            <div className="notif-corps">
+              <strong className="notif-titre">{n.titre}</strong>
+              <p className="notif-desc">{n.description}</p>
+              <span className="notif-temps">{n.quand}</span>
+            </div>
+            <button type="button" className="btn-rond nu notif-options" aria-label="Options">
+              <Icone nom="points" taille={16} />
+            </button>
           </li>
         ))}
       </ul>
@@ -295,42 +329,14 @@ function PanneauActivite({ fermer }: { fermer: () => void }) {
   )
 }
 
-const MISES_A_JOUR = [
-  { texte: 'Des idées qui pourraient vous plaire pour votre tableau Voyages à faire', quand: '2 h', pins: ['128', '108', '54'] },
-  { texte: 'Atelier Brume a publié de nouvelles Épingles', quand: '6 h', pins: ['11', '19', '33'] },
-  { texte: 'Inspirée de vos recherches : bureau minimaliste', quand: '1 j', pins: ['60', '48', '20'] },
-  { texte: 'Votre tableau Recettes a de nouvelles suggestions', quand: '3 j', pins: ['102', '75', '113'] },
-  { texte: 'Photographier la brume : sélection de la semaine', quand: '5 j', pins: ['95', '70', '121'] },
-]
-
-function PanneauMisesAJour({ fermer }: { fermer: () => void }) {
-  const ref = useHorsDe<HTMLElement>(true, fermer)
-  return (
-    <aside className="panneau-lateral" ref={ref} aria-label="Mises à jour">
-      <h2>Mises à jour</h2>
-      <p className="panneau-section">Nouveau</p>
-      <ul className="liste-maj">
-        {MISES_A_JOUR.map((m, i) => (
-          <li key={m.texte}>
-            <Link to={`/pin/${m.pins[0]}`} onClick={fermer} className={i < 3 ? 'non-lu' : undefined}>
-              <span className="maj-collage">
-                {m.pins.map((id) => (
-                  <img key={id} src={`/pins/${id}.jpg`} alt="" />
-                ))}
-              </span>
-              <span className="maj-texte">
-                {m.texte}
-                <small>{m.quand}</small>
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </aside>
-  )
-}
-
-function PanneauMessages({ fermer }: { fermer: () => void }) {
+/*
+ * Volet « Boîte de réception » / Messages (cf. frame_015.jpg) :
+ *   - En-tête « ✕ Boîte de réception »
+ *   - Bouton rouge « Nouveau message »
+ *   - Ligne « Invitez vos amis »
+ *   - Illustration bouteille et message : « Lancer une conversation »
+ */
+function PanneauBoiteReception({ fermer }: { fermer: () => void }) {
   const ref = useHorsDe<HTMLElement>(true, fermer)
   const { conversations, envoyer } = useSession()
   const [ouverte, setOuverte] = useState<string | null>(null)
@@ -365,7 +371,7 @@ function PanneauMessages({ fermer }: { fermer: () => void }) {
         >
           <input value={texte} onChange={(e) => setTexte(e.target.value)} placeholder="Envoyer un message" aria-label="Votre message" autoFocus />
           <button type="submit" className="btn-rond rouge" aria-label="Envoyer" disabled={!texte.trim()}>
-            <Icone nom="envoyer" taille={20} epaisseur={2.6} />
+            <Icone nom="envoyer" taille={20} />
           </button>
         </form>
       </aside>
@@ -373,34 +379,80 @@ function PanneauMessages({ fermer }: { fermer: () => void }) {
   }
 
   return (
-    <aside className="panneau-lateral" ref={ref} aria-label="Messages">
-      <h2>Messages</h2>
-      <button type="button" className="ligne-action" onClick={() => setOuverte(conversations[0]?.id ?? null)}>
-        <span className="rond-rouge">
-          <Icone nom="crayon" taille={20} />
-        </span>
-        <strong>Nouveau message</strong>
-      </button>
-      <p className="panneau-section">Messages</p>
-      {conversations.map((c) => (
-        <button type="button" key={c.id} className="ligne-conv" onClick={() => setOuverte(c.id)}>
-          <Avatar nom={c.avec} couleur={c.couleur} taille={48} />
-          <span>
-            <strong>{c.avec}</strong>
-            <small>{c.messages[c.messages.length - 1]?.texte}</small>
-          </span>
+    <aside className="panneau-lateral panneau-inbox-reel" ref={ref} aria-label="Boîte de réception">
+      <div className="inbox-entete">
+        <button type="button" className="btn-rond nu inbox-fermer" onClick={fermer} aria-label="Fermer">
+          <Icone nom="croix" taille={18} />
         </button>
-      ))}
-      <div className="ligne-action inviter">
-        <span className="rond-gris">
-          <Icone nom="personnes" taille={20} />
-        </span>
-        <span>
-          <strong>Invitez vos amis</strong>
-          <small>Partagez vos idées avec eux.</small>
-        </span>
-        <img src={PINS[3].image} alt="" />
+        <h2>Boîte de réception</h2>
       </div>
+
+      <div className="inbox-action-nouveau">
+        <button type="button" className="btn-nouveau-message" onClick={() => setOuverte(conversations[0]?.id ?? 'camille')}>
+          <span className="rond-crayon-rouge">
+            <Icone nom="crayon" taille={18} />
+          </span>
+          <strong>Nouveau message</strong>
+        </button>
+      </div>
+
+      <div className="inbox-inviter">
+        <div className="inviter-icone">
+          <Icone nom="personnes" taille={20} />
+        </div>
+        <div className="inviter-textes">
+          <strong>Invitez vos amis</strong>
+          <small>Connectez-vous pour entamer une discussion</small>
+        </div>
+      </div>
+
+      <div className="inbox-vide-illustration">
+        <div className="illustration-bouteille">
+          <svg width="120" height="120" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" fill="#e8f3f8" />
+            <path d="M42 28h16v6h-16z" fill="#e60023" rx="2" />
+            <rect x="44" y="34" width="12" height="6" fill="#fff" opacity="0.8" />
+            <path d="M38 42c0-2 2-4 4-4h16c2 0 4 2 4 4l-2 36c0 3-3 5-6 5H46c-3 0-6-2-6-5l-2-36z" fill="#4a90e2" opacity="0.85" />
+            <rect x="43" y="48" width="14" height="20" rx="3" fill="#fff" />
+            <path d="M46 54h8M46 58h6M46 62h8" stroke="#e60023" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
+        <h3>Lancer une conversation</h3>
+        <p>
+          Utilisez la messagerie pour discuter avec vos amis, partager des Épingles et des tableaux, et trouver des idées ensemble. Vos conversations apparaîtront ici.
+        </p>
+      </div>
+    </aside>
+  )
+}
+
+const ACTIVITE = [
+  { qui: 'Camille', couleur: '#e07a5f', texte: 'a commenté votre Épingle « Santorin, maisons blanches et moulins »', quand: '2 h', pin: '49' },
+  { qui: 'Yanis', couleur: '#3d405b', texte: 'a réagi à votre Épingle « Setup sombre et carnet en cuir »', quand: '1 j', pin: '60' },
+  { qui: 'Inès', couleur: '#81b29a', texte: 'a enregistré votre Épingle « Café au lait sur fond rouge »', quand: '3 j', pin: '63' },
+]
+
+function PanneauActivite({ fermer }: { fermer: () => void }) {
+  const ref = useHorsDe<HTMLElement>(true, fermer)
+  return (
+    <aside className="panneau-lateral" ref={ref} aria-label="Activité sociale">
+      <h2>Commentaires et activité</h2>
+      <ul className="liste-maj">
+        {ACTIVITE.map((a) => (
+          <li key={a.texte}>
+            <Link to={`/pin/${a.pin}`} onClick={fermer}>
+              <Avatar nom={a.qui} couleur={a.couleur} taille={48} />
+              <span className="maj-texte">
+                <span>
+                  <strong>{a.qui}</strong> {a.texte}
+                </span>
+                <small>{a.quand}</small>
+              </span>
+              <img className="maj-vignette" src={`/pins/${a.pin}.jpg`} alt="" />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </aside>
   )
 }

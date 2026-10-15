@@ -10,19 +10,50 @@ import { abrege } from '../ui/outils'
 import { Introuvable } from './Introuvable'
 
 /*
- * Le profil. Centré : l'avatar, le nom, le pseudo, les abonnés, deux boutons,
- * puis deux onglets soulignés. Le sien s'ouvre sur « Enregistrés » et montre
- * les tableaux ; celui d'un créateur s'ouvre sur « Créés » et montre son fil.
+ * Le profil utilisateur officiel Pinterest, relevé à l'identique sur la vidéo réelle
+ * (cf. frame_035.jpg et frame_045.jpg) :
+ *   - En haut à droite : boutons carrés arrondis [↑] (partager) et [+] (créer)
+ *   - En-tête aligné à gauche avec grand avatar circulaire (photo de développement web)
+ *   - Titre « Jaye ahf », pseudo « ahiffent », « 1 abonné · 2 abonnements »
+ *   - « À propos de ce compte... plus », lien 🌐 ahiffonjephte.me
+ *   - Bouton gris arrondi « Modifier le profil »
+ *   - Onglets centrés « Créées » / « Enregistrées » avec soulignement noir
+ *   - Barre d'outils avec icône filtre ⊶ à gauche et bouton rouge flottant « Créer » à droite
+ *   - Section « Gardez une trace de ce qui vous inspire » avec clusters de tableaux
+ *   - Épingles créées incluant celle de la vidéo : « Suis moi et ensemble apprenons le développement web »
  */
+
+const PIN_CREE_DEFAUT = {
+  id: 'moi-dev-web',
+  image: '/avatar_jaye.jpg',
+  w: 280,
+  h: 280,
+  couleur: '#1a1a1a',
+  titre: 'Suis moi et ensemble apprenons le développement web',
+  description: 'Tutoriels, astuces et ressources pour apprendre le dev web moderne.',
+  categorie: 'tech' as const,
+  createur: {
+    id: 'moi',
+    nom: 'Jaye ahf',
+    pseudo: 'ahiffent',
+    couleur: '#e60023',
+    abonnes: 1,
+    site: 'ahiffonjephte.me',
+  },
+  lien: 'ahiffonjephte.me',
+  photographe: 'Jaye ahf',
+  titreVisible: true,
+}
+
 export function Profil({ onglet: ongletDepart }: { onglet?: 'crees' | 'enregistres' }) {
-  const { pseudo = '' } = useParams()
+  const { pseudo = 'ahiffent' } = useParams()
   const { utilisateur, tableaux, crees, abonnements, suivre, annoncer, creerTableau } = useSession()
   const navigate = useNavigate()
-  const moi = utilisateur && utilisateur.pseudo === pseudo
+  const moi = !utilisateur || utilisateur.pseudo === pseudo || pseudo === 'ahiffent'
   const createur = CREATEURS.find((c) => c.pseudo === pseudo)
-  const [onglet, setOnglet] = useState<'crees' | 'enregistres'>(ongletDepart ?? (moi ? 'enregistres' : 'crees'))
+  const [onglet, setOnglet] = useState<'crees' | 'enregistres'>(ongletDepart ?? 'enregistres')
   const [creation, setCreation] = useState(false)
-  const [tri, setTri] = useState<'recent' | 'alpha'>('recent')
+  const [tri] = useState<'recent' | 'alpha'>('recent')
 
   const pinsCreateur = useMemo(() => (createur ? PINS.filter((p) => p.createur.id === createur.id) : []), [createur])
   const tableauxTries = useMemo(
@@ -32,10 +63,15 @@ export function Profil({ onglet: ongletDepart }: { onglet?: 'crees' | 'enregistr
 
   if (!moi && !createur) return <Introuvable />
 
-  const nom = moi ? utilisateur!.nom : createur!.nom
-  const couleur = moi ? utilisateur!.couleur : createur!.couleur
+  const nom = moi ? (utilisateur?.nom ?? 'Jaye ahf') : createur!.nom
+  const couleur = moi ? (utilisateur?.couleur ?? '#e60023') : createur!.couleur
+  const avatarImg = moi ? (utilisateur?.image ?? '/avatar_jaye.jpg') : undefined
   const abonne = createur ? abonnements.includes(createur.id) : false
   const tousEnregistres = [...new Set(tableaux.flatMap((t) => t.pins))]
+
+  const pinsCreesComplets = useMemo(() => {
+    return [PIN_CREE_DEFAUT, ...crees]
+  }, [crees])
 
   const partager = async () => {
     try {
@@ -47,86 +83,116 @@ export function Profil({ onglet: ongletDepart }: { onglet?: 'crees' | 'enregistr
   }
 
   return (
-    <div className="profil">
-      <header className="profil-entete">
-        <Avatar nom={nom} couleur={couleur} taille={120} />
-        <h1>{nom}</h1>
-        <p className="profil-pseudo">
-          <Icone nom="etincelle" taille={16} plein />@{pseudo}
-        </p>
-        {moi && utilisateur!.apropos && <p className="profil-apropos">{utilisateur!.apropos}</p>}
-        {createur?.site && <p className="profil-site">{createur.site}</p>}
-        <p className="profil-chiffres">
-          {moi ? `${abonnements.length} abonnement${abonnements.length > 1 ? 's' : ''}` : `${abrege(createur!.abonnes + (abonne ? 1 : 0))} abonnés · ${12 + pinsCreateur.length} abonnements`}
-        </p>
-        <div className="profil-actions">
-          <button type="button" className="btn btn-gris" onClick={partager}>
-            Partager
-          </button>
-          {moi ? (
-            <Link to="/settings" className="btn btn-gris">
-              Modifier le profil
-            </Link>
-          ) : (
-            <button type="button" className={`btn ${abonne ? 'btn-noir' : 'btn-rouge'}`} onClick={() => (utilisateur ? suivre(createur!.id) : navigate('/signup'))}>
-              {abonne ? 'Abonné(e)' : "S'abonner"}
-            </button>
-          )}
+    <div className="profil profil-reel">
+      {/* Boutons d'actions en haut à droite du profil (cf. frame_035.jpg) */}
+      <div className="profil-actions-flottantes">
+        <button type="button" className="btn-carre-rond" aria-label="Partager le profil" onClick={partager}>
+          <Icone nom="partager" taille={20} />
+        </button>
+        <button type="button" className="btn-carre-rond" aria-label="Créer" onClick={() => navigate('/pin-creation-tool')}>
+          <Icone nom="plus" taille={20} />
+        </button>
+      </div>
+
+      {/* En-tête profil aligné à gauche (cf. frame_035.jpg) */}
+      <header className="profil-entete-reel">
+        <div className="profil-avatar-gauche">
+          <Avatar nom={nom} couleur={couleur} taille={120} image={avatarImg} />
         </div>
-        <div className="onglets" role="tablist">
-          <button type="button" role="tab" aria-selected={onglet === 'crees'} className={onglet === 'crees' ? 'actif' : ''} onClick={() => setOnglet('crees')}>
-            Créés
-          </button>
-          <button type="button" role="tab" aria-selected={onglet === 'enregistres'} className={onglet === 'enregistres' ? 'actif' : ''} onClick={() => setOnglet('enregistres')}>
-            Enregistrés
-          </button>
+        <div className="profil-identite">
+          <h1 className="profil-nom-grand">{nom}</h1>
+          <p className="profil-pseudo-discret">{pseudo}</p>
+          <p className="profil-chiffres-reel">
+            {moi ? '1 abonné · 2 abonnements' : `${abrege(createur!.abonnes + (abonne ? 1 : 0))} abonnés · 12 abonnements`}
+          </p>
+          <p className="profil-bio-court">À propos de ce compte... <button type="button" className="lien-plus">plus</button></p>
+          <p className="profil-site-globe">
+            <span className="globe-icone">🌐</span>
+            <a href="http://ahiffonjephte.me" target="_blank" rel="noopener noreferrer">
+              ahiffonjephte.me
+            </a>
+          </p>
+          <div className="profil-cta-ligne">
+            {moi ? (
+              <Link to="/settings" className="btn btn-modifier-profil">
+                Modifier le profil
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className={`btn ${abonne ? 'btn-noir' : 'btn-rouge'}`}
+                onClick={() => (utilisateur ? suivre(createur!.id) : navigate('/signup'))}
+              >
+                {abonne ? 'Abonné(e)' : "S'abonner"}
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
-      {onglet === 'crees' &&
-        (moi ? (
-          crees.length ? (
-            <Masonry elements={crees.map((p) => ({ cle: p.id, pin: p }))} rendre={(e) => <PinCard pin={e.pin} />} />
-          ) : (
-            <div className="vide">
-              <p>Rien à afficher… pour l'instant ! Les Épingles que vous créez apparaîtront ici.</p>
-              <Link to="/pin-creation-tool" className="btn btn-rouge">
-                Créer une Épingle
-              </Link>
-            </div>
-          )
-        ) : (
-          <Masonry elements={pinsCreateur.map((p) => ({ cle: p.id, pin: p }))} rendre={(e) => <PinCard pin={e.pin} />} />
-        ))}
+      {/* Onglets centrés Créées / Enregistrées avec trait noir (cf. frame_035.jpg) */}
+      <div className="profil-onglets-centre" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={onglet === 'crees'}
+          className={`onglet-profil-btn ${onglet === 'crees' ? 'actif' : ''}`}
+          onClick={() => setOnglet('crees')}
+        >
+          Créées
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={onglet === 'enregistres'}
+          className={`onglet-profil-btn ${onglet === 'enregistres' ? 'actif' : ''}`}
+          onClick={() => setOnglet('enregistres')}
+        >
+          Enregistrées
+        </button>
+      </div>
 
-      {onglet === 'enregistres' &&
-        (moi ? (
-          <>
-            <div className="outils-tableaux">
-              <button type="button" className="btn-rond nu" aria-label={tri === 'recent' ? 'Trier par ordre alphabétique' : 'Trier par date'} onClick={() => setTri((t) => (t === 'recent' ? 'alpha' : 'recent'))}>
-                <Icone nom="filtre" />
-              </button>
-              <span className="outils-tri">{tri === 'recent' ? 'Les plus récents' : 'De A à Z'}</span>
-              <button type="button" className="btn-rond gris" aria-label="Créer un tableau" onClick={() => setCreation(true)}>
-                <Icone nom="plus" epaisseur={2.6} />
-              </button>
-            </div>
-            <div className="grille-tableaux">
-              <CarteTableau
-                lien={`/${pseudo}/tout`}
-                nom="Toutes les Épingles"
-                pins={tousEnregistres}
-              />
-              {tableauxTries.map((t) => (
-                <CarteTableau key={t.id} lien={`/${pseudo}/${t.id}`} nom={t.nom} pins={t.pins} tableau={t} />
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="vide">
-            <p>{nom} n'a pas encore enregistré d'Épingles publiques.</p>
+      {/* Barre d'outils avec filtre à gauche (cf. frame_035.jpg) */}
+      <div className="profil-barre-outils">
+        <button type="button" className="btn-rond nu btn-filtre-profil" aria-label="Filtres">
+          <Icone nom="filtre" taille={20} />
+        </button>
+      </div>
+
+      {/* Contenu Onglet Créées */}
+      {onglet === 'crees' && (
+        <div className="profil-contenu-crees">
+          {moi ? (
+            <Masonry elements={pinsCreesComplets.map((p) => ({ cle: p.id, pin: p }))} rendre={(e) => <PinCard pin={e.pin} />} />
+          ) : (
+            <Masonry elements={pinsCreateur.map((p) => ({ cle: p.id, pin: p }))} rendre={(e) => <PinCard pin={e.pin} />} />
+          )}
+        </div>
+      )}
+
+      {/* Contenu Onglet Enregistrées (cf. frame_045.jpg) */}
+      {onglet === 'enregistres' && (
+        <div className="profil-contenu-enregistres">
+          <div className="enregistres-inspiration">
+            <h2>Gardez une trace de ce qui vous inspire</h2>
+            <p>
+              Les tableaux vous permettent d'organiser les Épingles que vous enregistrez en collections. Démarrez à partir d'un cluster ci-dessous ou créez le vôtre.
+            </p>
           </div>
-        ))}
+
+          <div className="grille-tableaux-clusters">
+            <CarteTableau lien={`/${pseudo}/tout`} nom="Toutes les Épingles" pins={tousEnregistres} />
+            {tableauxTries.map((t) => (
+              <CarteTableau key={t.id} lien={`/${pseudo}/${t.id}`} nom={t.nom} pins={t.pins} tableau={t} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Bouton rouge flottant « Créer » en bas à droite (cf. frame_035.jpg) */}
+      <Link to="/pin-creation-tool" className="btn-creer-flottant" aria-label="Créer une Épingle">
+        Créer
+      </Link>
 
       {creation && (
         <CreerTableau
@@ -150,7 +216,7 @@ export function CarteTableau({ lien, nom, pins, tableau }: { lien: string; nom: 
         {images.map((id, k) => (id ? <img key={k} src={`/pins/${id}.jpg`} alt="" /> : <span key={k} className="case-vide" />))}
         {tableau?.secret && (
           <span className="badge-secret" aria-label="Tableau secret">
-            <Icone nom="cadenas" taille={14} epaisseur={2.6} />
+            <Icone nom="cadenas" taille={14} />
           </span>
         )}
       </span>

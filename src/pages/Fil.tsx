@@ -24,6 +24,11 @@ export function Fil() {
 
   return (
     <div className="fil">
+      <div className="fil-barre-onglets">
+        <button type="button" className="onglet-fil actif">
+          All
+        </button>
+      </div>
       <Masonry elements={elements} rendre={(e) => <PinCard pin={e.pin} />} surFin={suite} chargement={pages < PAGES_MAX} />
     </div>
   )

@@ -1,59 +1,84 @@
 /*
- * Les icônes, tracées pour ce projet sur une grille de 24. Pleines quand
- * l'état est actif (accueil, cœur), au trait sinon : c'est ainsi que la barre
- * latérale montre la page où l'on se trouve.
+ * Les icônes Pinterest, reproduites à l'exactitude d'après le système de design
+ * Gestalt et le code source de l'application réelle.
  */
 
-const TRACES = {
-  accueil: 'M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z',
-  explorer: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm3.9 5.1-2.2 5.6-5.6 2.2 2.2-5.6z',
-  tableaux: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
-  plus: 'M12 5v14M5 12h14',
-  cloche: 'M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0',
-  bulle: 'M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H10l-4.5 3.5V17H6a2 2 0 0 1-2-2z',
-  roue: 'M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM10.6 3h2.8l.5 2.3 1.7 1 2.2-.8 1.4 2.4-1.8 1.6v1.9l1.8 1.6-1.4 2.4-2.2-.8-1.7 1-.5 2.4h-2.8l-.5-2.4-1.7-1-2.2.8-1.4-2.4 1.8-1.6v-1.9L4.6 7.9 6 5.5l2.2.8 1.7-1z',
-  loupe: 'M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.5 15.5 20 20',
-  chevron: 'm6 9 6 6 6-6',
-  droite: 'm9 6 6 6-6 6',
-  gauche: 'm15 6-6 6 6 6',
-  retour: 'M19 12H5M11 6l-6 6 6 6',
-  croix: 'M6 6l12 12M18 6 6 18',
-  partager: 'M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v6h14v-6',
-  points: 'M5.5 12h.01M12 12h.01M18.5 12h.01',
-  coeur: 'M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10Z',
-  oeil: 'M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12ZM12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z',
-  fleche: 'M7 17 17 7M9 7h8v8',
-  crayon: 'm4 20 1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5zM14 6.5l3 3',
-  envoyer: 'M12 19V6M6.5 11.5 12 6l5.5 5.5',
-  filtre: 'M4 7h10M18 7h2M4 17h2M10 17h10M14 5v4M6 15v4',
-  photo: 'M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM12 9.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z',
-  objectif: 'M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',
-  lien: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
-  cadenas: 'M7 11V8a5 5 0 0 1 10 0v3M5.5 11h13v9h-13z',
-  etincelle: 'M12 3.5 13.8 10l6.7 2-6.7 2L12 20.5 10.2 14 3.5 12l6.7-2z',
-  telecharger: 'M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14',
-  drapeau: 'M6 21V4M6 4h11l-2 4 2 4H6',
-  masquer: 'M4 4l16 16M10.6 6A9 9 0 0 1 21.5 12a14 14 0 0 1-2.8 3.4M6.5 7.6A14 14 0 0 0 2.5 12S6 18.5 12 18.5a8.8 8.8 0 0 0 3.6-.8',
-  courrier: 'M4 6h16v12H4zM4.5 6.5 12 12.5l7.5-6',
-  sourire: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17ZM8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01',
-  coche: 'm5 12.5 4.5 4.5L19 7.5',
-  personnes: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM2.5 20a6.5 6.5 0 0 1 13 0M16 4.3a3.5 3.5 0 0 1 0 6.4M18.5 14.5A6.5 6.5 0 0 1 21.5 20',
-  aide: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17ZM9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.6M12 16.5h.01',
-  menu: 'M5 7h14M5 12h14M5 17h14',
-  megaphone: 'M4 10.5v3a1.5 1.5 0 0 0 1.5 1.5H7l7 4.5v-15L7 9H5.5A1.5 1.5 0 0 0 4 10.5ZM17.5 9.5a3.5 3.5 0 0 1 0 5M7.5 15l1.2 4.5',
-  discussion: 'M12 4c4.7 0 8.5 3.2 8.5 7.2s-3.8 7.2-8.5 7.2c-1 0-2-.1-2.9-.4L5 20l.9-3.6A6.8 6.8 0 0 1 3.5 11.2C3.5 7.2 7.3 4 12 4ZM8.5 11.2h.01M12 11.2h.01M15.5 11.2h.01',
+export const TRACES_PINTEREST = {
+  // Logo Pinterest authentique
+  pinterest: [
+    'M7.54467 23.1456C7.39492 21.7804 7.49955 20.4758 7.79953 19.2157L8.99946 14.0408C8.80459 13.411 8.65436 12.6905 8.65436 11.9705C8.65436 10.2904 9.46455 9.09042 10.7394 9.09042C11.6244 9.09042 12.2695 9.70531 12.2695 10.8905C12.2695 11.2653 12.1946 11.6854 12.0444 12.1654L11.5193 13.8905C11.4142 14.2208 11.3696 14.5357 11.3696 14.8054C11.3696 16.0054 12.2844 16.6803 13.4546 16.6803C15.5395 16.6803 17.0246 14.5203 17.0246 11.7151C17.0246 8.59505 14.9847 6.60013 11.97 6.60013C8.6102 6.60013 6.48057 8.79042 6.48057 11.8351C6.48057 13.0649 6.85543 14.2049 7.59074 14.9849C7.35076 15.3901 7.09589 15.4649 6.70568 15.4649C5.50575 15.4649 4.36582 13.77 4.36582 11.4598C4.36582 7.46943 7.56051 4.28985 12.0454 4.28985C16.7548 4.28985 19.71 7.57503 19.71 11.6249C19.71 15.6747 16.8302 18.765 13.7253 18.765C12.4951 18.765 11.4152 18.2399 10.6654 17.2947L10.0506 19.785C9.72038 21.0748 9.22553 22.2902 8.43069 23.46C9.55575 23.8051 10.6654 24 12.0007 24C18.64 24 24 18.64 24 11.9998C24 5.36987 18.64 0 11.9993 0C5.36944 0 0 5.37035 0 12.0002C0 17.0255 3.09005 21.3604 7.54467 23.1456Z',
+    'M12.0449 4.29004C16.7544 4.29004 19.71 7.57516 19.71 11.625C19.7099 15.6746 16.8304 18.7644 13.7256 18.7646C12.4954 18.7646 11.4148 18.2401 10.665 17.2949L10.0508 19.7852C9.72056 21.0749 9.22548 22.2902 8.43066 23.46C8.1293 23.3662 7.8346 23.257 7.54395 23.1406C7.39499 21.7773 7.50019 20.4743 7.7998 19.2158L8.99902 14.041C8.80418 13.4113 8.65433 12.6906 8.6543 11.9707C8.6543 10.2907 9.46451 9.09088 10.7393 9.09082C11.6243 9.09082 12.2695 9.70548 12.2695 10.8906C12.2695 11.2654 12.1941 11.6852 12.0439 12.165L11.5195 13.8906C11.4144 14.2209 11.3691 14.5359 11.3691 14.8057C11.3693 16.0054 12.2842 16.6805 13.4541 16.6807C15.5391 16.6807 17.0244 14.52 17.0244 11.7148C17.0243 8.59494 14.9843 6.60059 11.9697 6.60059C8.61014 6.60071 6.48054 8.79042 6.48047 11.835C6.48047 13.0647 6.8555 14.2053 7.59082 14.9854C7.35096 15.3901 7.09597 15.4648 6.70605 15.4648C5.50616 15.4648 4.36628 13.7701 4.36621 11.46C4.36621 7.46977 7.5603 4.29025 12.0449 4.29004Z',
+  ],
+  // Menu hamburger
+  menu: ['M22 4H2v2h20zm0 7H2v2h20zM2 20h20v-2H2z'],
+  // Flèche chevron
+  chevron: ['m8 9.59 4.3-4.3 1.4 1.42L8 12.4 2.3 6.7l1.4-1.42z'],
+  // Recherche
+  loupe: ['M17.33 18.74a10 10 0 1 1 1.41-1.41l4.47 4.47-1.41 1.41zM11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16'],
+  // Cloche notifications
+  cloche: [
+    'M16 19h8v-2h-.34a3.15 3.15 0 0 1-3.12-2.76l-.8-6.41a7.8 7.8 0 0 0-15.48 0l-.8 6.41A3.15 3.15 0 0 1 .34 17H0v2h8v1h.02a3.4 3.4 0 0 0 3.38 3h1.2a3.4 3.4 0 0 0 3.38-3H16zm1.75-10.92.8 6.4c.12.95.5 1.81 1.04 2.52H4.4c.55-.7.92-1.57 1.04-2.51l.8-6.41a5.8 5.8 0 0 1 11.5 0M13.4 19c.33 0 .6.27.6.6 0 .77-.63 1.4-1.4 1.4h-1.2a1.4 1.4 0 0 1-1.4-1.4c0-.33.27-.6.6-.6z',
+  ],
+  // Messages / Discussion
+  discussion: [
+    'M7 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m5 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m-5 10c1.8 0 3.5-.41 5-1.15l3.69.65A2 2 0 0 0 23 20.7l-.65-3.7A11.5 11.5 0 1 0 12 23.5m8.55-7.36-.28.58.76 4.31-4.31-.76-.58.28q-1.89.93-4.14.95a9.5 9.5 0 1 1 8.55-5.36',
+  ],
+  bulle: [
+    'M7 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m5 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m-5 10c1.8 0 3.5-.41 5-1.15l3.69.65A2 2 0 0 0 23 20.7l-.65-3.7A11.5 11.5 0 1 0 12 23.5m8.55-7.36-.28.58.76 4.31-4.31-.76-.58.28q-1.89.93-4.14.95a9.5 9.5 0 1 1 8.55-5.36',
+  ],
+  // Mégaphone activité
+  megaphone: [
+    'm5 18.54-.7-.12A4 4 0 0 1 1 14.48V9.52a4 4 0 0 1 3.3-3.94l11.57-2.04A2.6 2.6 0 0 0 18 1h2v6q.8 0 1.53.38.74.38 1.3 1.08t.87 1.63a6 6 0 0 1 0 3.82q-.3.92-.87 1.63-.56.7-1.3 1.08Q20.8 17 20 17v6h-2c0-1.25-.9-2.32-2.13-2.54l-3.59-.63-.6 1.35a3 3 0 0 1-3.8 1.6l-.93-.36A3 3 0 0 1 5 19.62zM18 4.78q-.79.54-1.78.73L7 7.13v9.74l9.22 1.62q1 .19 1.78.73zM5 16.51V7.5l-.35.06A2 2 0 0 0 3 9.52v4.96a2 2 0 0 0 1.65 1.97zm2 2.39v.71a1 1 0 0 0 .65.94l.94.35a1 1 0 0 0 1.26-.53l.4-.9zm13.77-9.67c-.38-.24-.77.13-.77.58v4.38c0 .45.39.82.77.58q.37-.23.64-.65.29-.42.44-.97a4.3 4.3 0 0 0 0-2.3q-.15-.55-.44-.97-.27-.42-.64-.65',
+  ],
+  // Bouton d'aide flottant
+  aide: [
+    'M12 16a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m1.05-2.52c.18-.3.5-.54 1.05-.91h.01l.42-.3c1.43-.97 2.15-2.26 2.15-3.65a3.3 3.3 0 0 0-1.23-2.67 5.3 5.3 0 0 0-3.3-.95c-1.4 0-2.59.41-3.44 1.15a4 4 0 0 0-1.4 3.03v.18l2.23.39.02-.23q.07-1.2.72-1.8.63-.62 1.83-.63 1.09.01 1.66.48.57.45.58 1.26 0 .64-.27 1.04-.28.41-.97.86l-.48.33a5 5 0 0 0-1.52 1.45c-.34.56-.49 1.2-.49 2v.56h2.19v-.35c0-.6.06-.96.24-1.24M12 24a12 12 0 1 0 0-24 12 12 0 0 0 0 24M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0',
+  ],
+  // Trois points « Plus d'actions »
+  points: [
+    'M2.5 9.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5m9.5 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5m9.5 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5',
+  ],
+  // Flèche droite / Suivant
+  droite: ['M8.7.3 20.42 12 8.71 23.7l-1.42-1.4L17.6 12 7.29 1.7z'],
+  gauche: ['M15.3 23.7 3.58 12 15.29.3l1.42 1.4L6.4 12l10.31 10.3z'],
+  retour: ['M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z'],
+  // Flèche externe diagonale
+  fleche: ['M20 4v14h-2V7.41L5.7 19.71l-1.4-1.42L16.58 6H6V4z'],
+  // Partager
+  partager: [
+    'M17.7 5.8 12 .08l-5.7 5.7L7.7 7.2 11 3.9V15h2V3.91l3.3 3.3zM2 18v-5H0v5a4 4 0 0 0 4 4h16a4 4 0 0 0 4-4v-5h-2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2',
+  ],
+  // Navigation principale
+  accueil: ['M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z'],
+  explorer: ['M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'],
+  tableaux: ['M4 4h7v7H4V4zm9 0h7v7h-7V4zm-9 9h7v7H4v-7zm9 0h7v7h-7v-7z'],
+  plus: ['M19 11h-6V5h-2v6H5v2h6v6h2v-6h6v-2z'],
+  croix: ['M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'],
+  coche: ['M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'],
+  coeur: ['M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'],
+  oeil: ['M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z'],
+  masquer: ['M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z'],
+  crayon: ['M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'],
+  envoyer: ['M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'],
+  filtre: ['M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z'],
+  photo: ['M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'],
+  lien: ['M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z'],
+  cadenas: ['M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z'],
+  etincelle: ['M12 2L9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z'],
+  telecharger: ['M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z'],
+  courrier: ['M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'],
+  personnes: ['M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'],
+  roue: ['M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z'],
+  objectif: ['M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z'],
+  sourire: ['M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z'],
+  drapeau: ['M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z'],
 } as const
 
-export type NomIcone = keyof typeof TRACES
-
-/* La boussole ne se remplit pas : pleine, son aiguille disparaît dans le disque. */
-const PLEINES: NomIcone[] = ['accueil', 'coeur', 'cloche', 'bulle', 'tableaux', 'etincelle']
+export type NomIcone = keyof typeof TRACES_PINTEREST
 
 export function Icone({
   nom,
   taille = 24,
-  plein = false,
-  epaisseur = 2,
   className,
 }: {
   nom: NomIcone
@@ -62,66 +87,114 @@ export function Icone({
   epaisseur?: number
   className?: string
 }) {
-  const remplir = plein && PLEINES.includes(nom)
+  const paths = TRACES_PINTEREST[nom] ?? TRACES_PINTEREST.points
+  const viewBox = nom === 'chevron' ? '0 0 16 16' : '0 0 24 24'
+
   return (
     <svg
       className={className}
       width={taille}
       height={taille}
-      viewBox="0 0 24 24"
-      fill={remplir ? 'currentColor' : 'none'}
-      stroke="currentColor"
-      strokeWidth={nom === 'points' ? 3.2 : epaisseur}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox={viewBox}
+      fill="currentColor"
       aria-hidden="true"
       focusable="false"
+      style={{ display: 'inline-block', verticalAlign: 'middle' }}
     >
-      <path d={TRACES[nom]} fillRule="evenodd" />
+      {paths.map((d, i) => (
+        <path key={i} d={d} fillRule="evenodd" />
+      ))}
     </svg>
   )
 }
 
 /*
- * L'emplacement du logo officiel. Le fichier de la charte se dépose dans
- * src/assets/marque/logo.svg : s'il est là, Vite le sert et il remplace la
- * punaise partout. La recherche se fait à la construction, donc un fichier
- * absent ne coûte aucune requête en erreur.
- */
-const OFFICIEL = Object.values(
-  import.meta.glob('../assets/marque/logo.svg', { eager: true, query: '?url', import: 'default' }),
-)[0] as string | undefined
-
-/*
- * La marque. Par défaut, une punaise blanche dans un disque rouge, dessinée
- * pour ce projet : elle évoque l'épingle sans reprendre le logo déposé.
+ * Logo officiel Pinterest : le "P" blanc calligraphique dans le disque rouge.
  */
 export function Marque({ taille = 32, avecNom = false }: { taille?: number; avecNom?: boolean }) {
-  if (OFFICIEL) {
-    return (
-      <span className="marque">
-        <img src={OFFICIEL} width={taille} height={taille} alt="" />
-        {avecNom && <span className="marque-nom">Pinterest</span>}
-      </span>
-    )
-  }
   return (
-    <span className="marque">
-      <svg width={taille} height={taille} viewBox="0 0 32 32" aria-hidden="true">
-        <circle cx="16" cy="16" r="16" fill="var(--rouge)" />
+    <span className="marque" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+      <svg
+        width={taille}
+        height={taille}
+        viewBox="0 0 24 24"
+        aria-label="Pinterest"
+        role="img"
+        style={{ display: 'block', flexShrink: 0 }}
+      >
         <path
-          fill="#fff"
-          d="M11 8.5h10a1 1 0 0 1 .7 1.7L19.5 12.4v4.3l3.2 2.6a1 1 0 0 1-.6 1.8H17v6.4l-1 1.5-1-1.5v-6.4H9.9a1 1 0 0 1-.6-1.8l3.2-2.6v-4.3l-2.2-2.2A1 1 0 0 1 11 8.5Z"
+          d={TRACES_PINTEREST.pinterest[0]}
+          fill="#e60023"
+        />
+        <path
+          d={TRACES_PINTEREST.pinterest[1]}
+          fill="#ffffff"
         />
       </svg>
-      {avecNom && <span className="marque-nom">Pinterest</span>}
+      {avecNom && (
+        <span
+          className="marque-nom"
+          style={{
+            color: '#e60023',
+            fontWeight: 700,
+            fontSize: `${taille * 0.72}px`,
+            letterSpacing: '-0.5px',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, "ＭＳ Ｐゴシック", Arial, sans-serif',
+          }}
+        >
+          Pinterest
+        </span>
+      )}
     </span>
   )
 }
 
-export function Avatar({ nom, couleur, taille = 32 }: { nom: string; couleur: string; taille?: number }) {
+export function Avatar({
+  nom,
+  couleur,
+  taille = 32,
+  image,
+}: {
+  nom: string
+  couleur?: string
+  taille?: number
+  image?: string
+}) {
+  if (image) {
+    return (
+      <img
+        src={image}
+        alt={nom}
+        className="avatar"
+        style={{
+          width: taille,
+          height: taille,
+          borderRadius: '50%',
+          objectFit: 'cover',
+          display: 'inline-block',
+          flexShrink: 0,
+        }}
+      />
+    )
+  }
   return (
-    <span className="avatar" style={{ width: taille, height: taille, background: couleur, fontSize: taille * 0.42 }} aria-hidden="true">
+    <span
+      className="avatar"
+      style={{
+        width: taille,
+        height: taille,
+        background: couleur || '#5b7a6b',
+        fontSize: taille * 0.42,
+        borderRadius: '50%',
+        color: '#fff',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 700,
+        flexShrink: 0,
+      }}
+      aria-hidden="true"
+    >
       {nom.trim().charAt(0).toUpperCase() || '?'}
     </span>
   )

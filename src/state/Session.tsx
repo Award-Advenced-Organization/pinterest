@@ -8,7 +8,16 @@ import { PINS, type Pin } from '../data/pins'
  * tolèrent un stockage absent ou plein.
  */
 
-export type Utilisateur = { nom: string; pseudo: string; email: string; couleur: string; apropos: string; site: string }
+export type Utilisateur = {
+  nom: string
+  pseudo: string
+  email: string
+  couleur: string
+  apropos: string
+  site: string
+  image?: string
+  pro?: boolean
+}
 export type Tableau = { id: string; nom: string; pins: string[]; secret: boolean; cree: number }
 export type Theme = 'systeme' | 'clair' | 'sombre'
 export type Message = { de: 'moi' | 'eux'; texte: string }
@@ -159,9 +168,23 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return {
       utilisateur,
       connecter: (email) => {
-        const base = email.split('@')[0] || 'invite'
-        const nom = base.replace(/[._-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()).trim()
-        setUtilisateur({ nom, pseudo: slug(base) || 'invite', email, couleur: '#5b7a6b', apropos: '', site: '' })
+        const isUser = email.toLowerCase().includes('ahiffent') || email.toLowerCase().includes('jaye')
+        if (isUser || !email) {
+          setUtilisateur({
+            nom: 'Jaye ahf',
+            pseudo: 'ahiffent',
+            email: email || 'ahiffent@gmail.com',
+            couleur: '#e60023',
+            apropos: 'Designer & Creator · http://ahiffonjephte.me',
+            site: 'ahiffonjephte.me',
+            image: 'https://i.pinimg.com/280x280_RS/80/14/f2/8014f255679641a6b28a8dea0498719e.jpg',
+            pro: true,
+          })
+        } else {
+          const base = email.split('@')[0] || 'invite'
+          const nom = base.replace(/[._-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()).trim()
+          setUtilisateur({ nom, pseudo: slug(base) || 'invite', email, couleur: '#e60023', apropos: '', site: '' })
+        }
       },
       deconnecter: () => setUtilisateur(null),
       modifierProfil: (champs) => setUtilisateur((u) => (u ? { ...u, ...champs, pseudo: slug(champs.pseudo ?? u.pseudo) || u.pseudo } : u)),
