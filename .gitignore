@@ -11,8 +11,6 @@ dist/
 .temp/
 *.tsbuildinfo
 
-# Serena : le cache d'index se reconstruit, la configuration se garde
-.serena/cache/
 
 # Enregistrements et captures des audits GOD2 (régénérables)
 .god2/
