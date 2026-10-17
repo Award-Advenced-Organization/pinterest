@@ -187,9 +187,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    '1 abonné(e) · 2 abonné(e)s',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                  Text(
+                    '${_user?.followerCount ?? 1} abonné(e) · ${_user?.followingCount ?? 2} abonné(e)s',
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 6),
                   Row(

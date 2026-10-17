@@ -18,9 +18,13 @@ class PinDetailScreen extends StatefulWidget {
 
 class _PinDetailScreenState extends State<PinDetailScreen> {
   final ApiService _api = ApiService();
+  final TextEditingController _commentCtrl = TextEditingController();
   bool _isSaved = false;
   bool _isFollowing = false;
+  bool _followBusy = false;
+  bool _postingComment = false;
   List<Pin> _relatedPins = [];
+  List<Map<String, dynamic>> _comments = [];
   bool _loadingRelated = true;
 
   @override
@@ -30,19 +34,62 @@ class _PinDetailScreenState extends State<PinDetailScreen> {
     _loadDetails();
   }
 
+  @override
+  void dispose() {
+    _commentCtrl.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadDetails() async {
     final detail = await _api.fetchPinDetail(widget.pin.id);
     if (detail != null && mounted) {
       final related = (detail['related_pins'] as List<dynamic>? ?? [])
           .map((j) => Pin.fromJson(j))
           .toList();
+      final comments = (detail['comments'] as List<dynamic>? ?? [])
+          .map((c) => Map<String, dynamic>.from(c as Map))
+          .toList();
       setState(() {
         _relatedPins = related;
+        _comments = comments;
+        _isFollowing = detail['is_following'] == true;
         _loadingRelated = false;
       });
     } else {
       if (mounted) setState(() => _loadingRelated = false);
     }
+  }
+
+  Future<void> _toggleFollow() async {
+    if (_followBusy) return;
+    setState(() => _followBusy = true);
+    final newState = await _api.toggleFollow(widget.pin.creator.username);
+    if (mounted) {
+      setState(() {
+        _isFollowing = newState;
+        _followBusy = false;
+      });
+    }
+  }
+
+  Future<void> _postComment() async {
+    final text = _commentCtrl.text.trim();
+    if (text.isEmpty || _postingComment) return;
+    setState(() => _postingComment = true);
+    final created = await _api.postComment(widget.pin.id, text);
+    if (!mounted) return;
+    setState(() {
+      _postingComment = false;
+      if (created != null) {
+        _comments.add(created);
+        _commentCtrl.clear();
+        FocusScope.of(context).unfocus();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Échec de l’envoi du commentaire.')),
+        );
+      }
+    });
   }
 
   Future<void> _toggleSave() async {
@@ -58,6 +105,86 @@ class _PinDetailScreenState extends State<PinDetailScreen> {
         ),
       );
     }
+  }
+
+  Widget _buildComment(Map<String, dynamic> c) {
+    final author = (c['author'] ?? '').toString();
+    final avatarUrl = (c['avatar_url'] ?? '').toString();
+    final initial = author.isNotEmpty ? author[0].toUpperCase() : '?';
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: const Color(0xFFD5D8FC),
+            backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(ApiEndpoints.resolveUrl(avatarUrl)) : null,
+            child: avatarUrl.isEmpty
+                ? Text(initial, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF333333)))
+                : null,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(child: Text(author, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
+                    const SizedBox(width: 8),
+                    Text((c['time_ago'] ?? '').toString(), style: const TextStyle(color: GestaltTheme.textMuted, fontSize: 12)),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text((c['text'] ?? '').toString(), style: const TextStyle(fontSize: 14, height: 1.35)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommentInput() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              color: GestaltTheme.softGrey,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _commentCtrl,
+              minLines: 1,
+              maxLines: 3,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (_) => _postComment(),
+              decoration: const InputDecoration(
+                hintText: 'Ajouter un commentaire',
+                hintStyle: TextStyle(color: GestaltTheme.textMuted, fontSize: 14),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 12),
+              ),
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        _postingComment
+            ? const Padding(
+                padding: EdgeInsets.all(10),
+                child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.5, color: GestaltTheme.pinterestRed)),
+              )
+            : IconButton(
+                icon: const Icon(Icons.arrow_upward, color: GestaltTheme.pinterestRed),
+                onPressed: _postComment,
+              ),
+      ],
+    );
   }
 
   @override
@@ -166,7 +293,7 @@ class _PinDetailScreenState extends State<PinDetailScreen> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () => setState(() => _isFollowing = !_isFollowing),
+                        onPressed: _followBusy ? null : _toggleFollow,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _isFollowing ? GestaltTheme.softGrey : GestaltTheme.textDark,
                           foregroundColor: _isFollowing ? GestaltTheme.textDark : Colors.white,
@@ -182,16 +309,21 @@ class _PinDetailScreenState extends State<PinDetailScreen> {
                     ],
                   ),
                   const Divider(height: 36),
-                  // Comments Section Preview
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Comments Section
+                  Row(
                     children: [
-                      Text('Commentaires', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-                      Icon(Icons.keyboard_arrow_down, color: GestaltTheme.textMuted),
+                      const Text('Commentaires', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 8),
+                      Text('${_comments.length}', style: const TextStyle(fontSize: 16, color: GestaltTheme.textMuted, fontWeight: FontWeight.w600)),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Partagez vos impressions ou posez une question.', style: TextStyle(color: GestaltTheme.textMuted, fontSize: 13)),
+                  const SizedBox(height: 12),
+                  if (_comments.isEmpty)
+                    const Text('Partagez vos impressions ou posez une question.', style: TextStyle(color: GestaltTheme.textMuted, fontSize: 13))
+                  else
+                    ..._comments.map(_buildComment),
+                  const SizedBox(height: 12),
+                  _buildCommentInput(),
                   const Divider(height: 36),
                   // Related Pins Section
                   const Text(

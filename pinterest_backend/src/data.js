@@ -193,7 +193,7 @@ function getAvailablePinImages() {
 }
 
 export function generateInitialPins() {
-  const pins = [...INITIAL_CREATED_PINS];
+  const pins = [];
   const availableImages = getAvailablePinImages();
   const pool = availableImages.length > 0
     ? availableImages

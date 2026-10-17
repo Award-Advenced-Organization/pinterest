@@ -33,12 +33,65 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// --- Persistence (survives restarts) ---
+const DB_FILE = path.join(__dirname, '..', 'db.json');
+
+const DEFAULT_COMMENTS = [
+  { id: 'c1', author: 'Léa M.', text: 'J’adore les couleurs et la composition !', time_ago: '2 j' },
+  { id: 'c2', author: 'Alexandre', text: 'Très inspirant pour mon prochain projet.', time_ago: '5 h' },
+];
+
 // In-memory mutable state
-let allPins = generateInitialPins();
 let userBoards = [...INITIAL_BOARDS];
 let savedPinIds = new Set(['pin_1', 'pin_2', 'pin_3', 'pin_4', 'pin_5', 'pin_6']);
 let userCreatedPins = [...INITIAL_CREATED_PINS];
 let conversations = [...CONVERSATIONS];
+let followedUsers = new Set();          // usernames the current user follows
+let pinComments = {};                   // pinId -> [comments]
+let followerCount = CURRENT_USER.follower_count;
+let followingCount = CURRENT_USER.following_count;
+
+function loadState() {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const s = JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
+      userBoards = s.userBoards ?? userBoards;
+      savedPinIds = new Set(s.savedPinIds ?? [...savedPinIds]);
+      userCreatedPins = s.userCreatedPins ?? userCreatedPins;
+      conversations = s.conversations ?? conversations;
+      followedUsers = new Set(s.followedUsers ?? []);
+      pinComments = s.pinComments ?? {};
+      followerCount = s.followerCount ?? followerCount;
+      followingCount = s.followingCount ?? followingCount;
+      console.log('💾 État restauré depuis db.json');
+    }
+  } catch (e) {
+    console.warn('⚠️  Lecture db.json impossible, démarrage avec les valeurs par défaut.', e.message);
+  }
+}
+
+function saveState() {
+  try {
+    const s = {
+      userBoards,
+      savedPinIds: [...savedPinIds],
+      userCreatedPins,
+      conversations,
+      followedUsers: [...followedUsers],
+      pinComments,
+      followerCount,
+      followingCount,
+    };
+    fs.writeFileSync(DB_FILE, JSON.stringify(s, null, 2));
+  } catch (e) {
+    console.warn('⚠️  Sauvegarde db.json impossible.', e.message);
+  }
+}
+
+loadState();
+
+// allPins = épingles créées (persistées) + feed généré
+let allPins = [...userCreatedPins, ...generateInitialPins()];
 
 // --- Official Pinterest v3 API Endpoints ---
 
@@ -73,19 +126,40 @@ app.get('/v3/pins/:id/', (req, res) => {
     .filter((p) => p.id !== id && (p.category === pin.category || Math.random() > 0.5))
     .slice(0, 16);
 
+  const comments = pinComments[id] ?? DEFAULT_COMMENTS;
+
   res.json({
     status: 'success',
     data: {
       ...pin,
       is_saved: savedPinIds.has(pin.id),
-      comments_count: 8,
-      comments: [
-        { id: 'c1', author: 'Léa M.', text: 'J’adore les couleurs et la composition !', time_ago: '2 j' },
-        { id: 'c2', author: 'Alexandre', text: 'Très inspirant pour mon prochain projet.', time_ago: '5 h' },
-      ],
+      is_following: followedUsers.has(pin.creator?.username),
+      comments_count: comments.length,
+      comments,
       related_pins: relatedPins,
     },
   });
+});
+
+// 2b. Add a comment to a pin
+app.post('/v3/pins/:id/comments/', (req, res) => {
+  const { id } = req.params;
+  const text = (req.body.text || '').trim();
+  if (!text) return res.status(400).json({ error: 'Comment text required' });
+
+  const base = pinComments[id] ?? [...DEFAULT_COMMENTS];
+  const newComment = {
+    id: `c_${Date.now()}`,
+    author: CURRENT_USER.full_name,
+    username: CURRENT_USER.username,
+    avatar_url: CURRENT_USER.avatar_url,
+    text,
+    time_ago: 'À l’instant',
+    mine: true,
+  };
+  pinComments[id] = [...base, newComment];
+  saveState();
+  res.status(201).json({ status: 'success', data: newComment, comments_count: pinComments[id].length });
 });
 
 // 3. Save / Unsave Pin
@@ -97,11 +171,13 @@ app.post('/v3/pins/:id/save/', (req, res) => {
     savedPinIds.delete(id);
     const board = userBoards.find((b) => b.id === boardId);
     if (board && board.pin_count > 0) board.pin_count--;
+    saveState();
     return res.json({ status: 'success', is_saved: false, message: 'Épingle retirée de vos tableaux' });
   } else {
     savedPinIds.add(id);
     const board = userBoards.find((b) => b.id === boardId);
     if (board) board.pin_count++;
+    saveState();
     return res.json({ status: 'success', is_saved: true, message: 'Épingle enregistrée !' });
   }
 });
@@ -146,6 +222,7 @@ app.post('/v3/pins/', upload.single('image'), (req, res) => {
   const targetBoard = userBoards.find((b) => b.id === (board_id || 'board_toutes_les_epingles'));
   if (targetBoard) targetBoard.pin_count++;
 
+  saveState();
   res.status(201).json({ status: 'success', data: newPin });
 });
 
@@ -186,6 +263,8 @@ app.get('/v3/users/:username/', (req, res) => {
       status: 'success',
       data: {
         ...CURRENT_USER,
+        follower_count: followerCount,
+        following_count: followingCount,
         created_pins_count: userCreatedPins.length,
         saved_pins_count: savedPinIds.size,
         boards_count: userBoards.length,
@@ -204,7 +283,29 @@ app.get('/v3/users/:username/', (req, res) => {
       bio: 'Créateur inspirant sur Pinterest.',
       follower_count: 1240,
       following_count: 42,
+      is_following: followedUsers.has(username),
     },
+  });
+});
+
+// 6b. Follow / Unfollow a user
+app.post('/v3/users/:username/follow/', (req, res) => {
+  const { username } = req.params;
+  let isFollowing;
+  if (followedUsers.has(username)) {
+    followedUsers.delete(username);
+    if (followingCount > 0) followingCount--;
+    isFollowing = false;
+  } else {
+    followedUsers.add(username);
+    followingCount++;
+    isFollowing = true;
+  }
+  saveState();
+  res.json({
+    status: 'success',
+    is_following: isFollowing,
+    following_count: followingCount,
   });
 });
 
@@ -257,6 +358,7 @@ app.post('/v3/conversations/:id/messages/', (req, res) => {
   conv.last_message = newMsg.text;
   conv.time_ago = 'À l’instant';
 
+  saveState();
   res.status(201).json({ status: 'success', data: newMsg });
 });
 

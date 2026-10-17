@@ -5,6 +5,7 @@ import '../models/pin.dart';
 import '../models/user.dart';
 import '../models/board.dart';
 import '../models/notification_item.dart';
+import '../models/conversation.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -154,5 +155,65 @@ class ApiService {
       }
     } catch (_) {}
     return [];
+  }
+
+  // 10. Conversations
+  Future<List<Conversation>> fetchConversations() async {
+    try {
+      final res = await _client.get(Uri.parse(ApiEndpoints.conversations));
+      if (res.statusCode == 200) {
+        final body = json.decode(res.body);
+        final list = body['data'] as List<dynamic>? ?? [];
+        return list.map((json) => Conversation.fromJson(json)).toList();
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  // 11. Send a message in a conversation
+  Future<ChatMessage?> sendMessage(String conversationId, String text) async {
+    try {
+      final res = await _client.post(
+        Uri.parse(ApiEndpoints.conversationMessages(conversationId)),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'text': text}),
+      );
+      if (res.statusCode == 201) {
+        final body = json.decode(res.body);
+        return ChatMessage.fromJson(body['data']);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  // 12. Follow / Unfollow a user — returns the new following state
+  Future<bool> toggleFollow(String username) async {
+    try {
+      final res = await _client.post(
+        Uri.parse('${ApiEndpoints.userProfile(username)}follow/'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (res.statusCode == 200) {
+        final body = json.decode(res.body);
+        return body['is_following'] ?? false;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  // 13. Post a comment on a pin — returns the created comment
+  Future<Map<String, dynamic>?> postComment(String pinId, String text) async {
+    try {
+      final res = await _client.post(
+        Uri.parse('${ApiEndpoints.pinDetail(pinId)}comments/'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'text': text}),
+      );
+      if (res.statusCode == 201) {
+        final body = json.decode(res.body);
+        return body['data'] as Map<String, dynamic>?;
+      }
+    } catch (_) {}
+    return null;
   }
 }
