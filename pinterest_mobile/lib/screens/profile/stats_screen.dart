@@ -1,6 +1,35 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/pin_icon.dart';
+import '../../core/widgets/ui.dart';
 import '../../core/theme/gestalt_theme.dart';
+import '../create/create_pin_screen.dart';
 
+class _Metric {
+  final PinIcons icon;
+  final String label;
+  final String help;
+  const _Metric(this.icon, this.label, this.help);
+}
+
+const _performance = [
+  _Metric(PinIcons.eye, 'Impressions', 'Nombre de fois où vos Épingles ont été affichées à l’écran.'),
+  _Metric(PinIcons.hand, 'Engagements',
+      'Nombre total d’interactions avec vos Épingles : clics, enregistrements, réactions.'),
+  _Metric(PinIcons.arrowUpRight, 'Clics sortants', 'Nombre de clics vers le site lié à vos Épingles.'),
+  _Metric(PinIcons.bookmarkFill, 'Épingles enregistrées',
+      'Nombre de fois où d’autres personnes ont enregistré vos Épingles.'),
+  _Metric(PinIcons.people, 'Audience totale', 'Nombre de personnes ayant vu vos Épingles.'),
+  _Metric(PinIcons.people, 'Audience engagée', 'Nombre de personnes ayant interagi avec vos Épingles.'),
+];
+
+const _audience = [
+  _Metric(PinIcons.people, 'Audience totale', 'Nombre de personnes ayant vu vos Épingles sur la période.'),
+  _Metric(PinIcons.people, 'Audience mensuelle',
+      'Nombre de personnes ayant vu vos Épingles au cours des 30 derniers jours.'),
+  _Metric(PinIcons.people, 'Audience engagée', 'Nombre de personnes ayant interagi avec vos Épingles.'),
+];
+
+/// Statistiques (Hub des créateurs) : cartes claires séparées par des bandes noires, comme sur la capture.
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
 
@@ -9,34 +38,66 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
-  int _activeTab = 0; // 0 = Statistiques, 1 = Audience
+  int _tab = 0;
+  int _days = 30;
 
-  Widget _buildStatRow({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Row(
-          children: [
-            Icon(icon, size: 22, color: Colors.black),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+  String _fmt(DateTime d) => '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+
+  String get _range {
+    final end = DateTime.now();
+    return '${_fmt(end.subtract(Duration(days: _days)))} - ${_fmt(end)}, Organique';
+  }
+
+  Future<void> _choosePeriod() async {
+    final days = await showPinSheet<int>(
+      context,
+      title: 'Période',
+      builder: (ctx) => ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(bottom: 16),
+        children: [
+          for (final d in [7, 14, 30, 90])
+            InkWell(
+              onTap: () => Navigator.pop(ctx, d),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: Text('$d derniers jours',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                    if (d == _days) const PinIcon(PinIcons.check, size: 20),
+                  ],
+                ),
               ),
             ),
-            Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
-          ],
+        ],
+      ),
+    );
+    if (days != null) setState(() => _days = days);
+  }
+
+  void _explain(_Metric m) {
+    showPinSheet(
+      context,
+      title: m.label,
+      builder: (_) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+        child: Text(m.help, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, height: 1.45)),
+      ),
+    );
+  }
+
+  void _help() {
+    showPinSheet(
+      context,
+      title: 'Aide',
+      builder: (_) => const Padding(
+        padding: EdgeInsets.fromLTRB(24, 8, 24, 32),
+        child: Text(
+          'Les statistiques se mettent à jour une fois par jour. Les valeurs restent à 0 tant que vos Épingles '
+          'n’ont pas été vues par d’autres personnes. Créez et partagez des Épingles pour commencer à recevoir des données.',
+          style: TextStyle(fontSize: 16, height: 1.45),
         ),
       ),
     );
@@ -44,201 +105,156 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.pal;
+    final card = context.isDark ? p.sheet : p.bg;
+    final metrics = _tab == 0 ? _performance : _audience;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: () => setState(() => _activeTab = 0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Statistiques',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: _activeTab == 0 ? Colors.black : Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 32,
-                    height: 3,
-                    color: _activeTab == 0 ? Colors.black : Colors.transparent,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 20),
-            GestureDetector(
-              onTap: () => setState(() => _activeTab = 1),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Audience',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: _activeTab == 1 ? Colors.black : Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 32,
-                    height: 3,
-                    color: _activeTab == 1 ? Colors.black : Colors.transparent,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.tune),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 16),
-            const Center(
+      backgroundColor: p.statsBackdrop,
+      body: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          _Card(
+            color: card,
+            topFlat: true,
+            child: SafeArea(
+              bottom: false,
               child: Column(
                 children: [
-                  Text(
-                    '30 derniers jours',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '16/09/2026 - 16/10/2026, Organique',
-                    style: TextStyle(fontSize: 13, color: Colors.black87),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Performances globales',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
-              ),
-            ),
-            const SizedBox(height: 8),
-            _buildStatRow(icon: Icons.remove_red_eye_outlined, title: 'Impressions', value: '0'),
-            const Divider(height: 1, indent: 20, endIndent: 20),
-            _buildStatRow(icon: Icons.touch_app_outlined, title: 'Engagements', value: '0'),
-            const Divider(height: 1, indent: 20, endIndent: 20),
-            _buildStatRow(icon: Icons.north_east, title: 'Clics sortants', value: '0'),
-            const Divider(height: 1, indent: 20, endIndent: 20),
-            _buildStatRow(icon: Icons.bookmark, title: 'Épingles enregistrées', value: '0'),
-            const Divider(height: 1, indent: 20, endIndent: 20),
-            _buildStatRow(icon: Icons.people_outline, title: 'Audience totale', value: '0'),
-            const Divider(height: 1, indent: 20, endIndent: 20),
-            _buildStatRow(icon: Icons.person_outline, title: 'Audience engagée', value: '0'),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Les changements en pourcentage sont comparés à 30 jours avant la période ci-dessus.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600], height: 1.4),
-              ),
-            ),
-            const SizedBox(height: 24),
-            // White card: Meilleures Épingles
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.grey[200]!),
-                boxShadow: const [
-                  BoxShadow(color: Color(0x0A000000), blurRadius: 10, offset: Offset(0, 4)),
-                ],
-              ),
-              child: Column(
-                children: [
-                  const Text('Meilleures Épingles', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 4),
-                  Text('Triées par impressions', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Aucune Épingle ne correspond à votre sélection de filtres. Pour afficher les données de performance, essayez de créer une Épingle pour l’audience que vous souhaitez atteindre.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.grey[800], height: 1.4),
+                  Row(
+                    children: [
+                      PinIconButton(PinIcons.back,
+                          iconSize: 26, tooltip: 'Retour', onPressed: () => Navigator.pop(context)),
+                      Expanded(
+                        child: PinTextTabs(
+                          labels: const ['Statistiques', 'Audience'],
+                          index: _tab,
+                          onChanged: (i) => setState(() => _tab = i),
+                          fontSize: 18,
+                        ),
+                      ),
+                      PinIconButton(PinIcons.filter, iconSize: 26, tooltip: 'Période', onPressed: _choosePeriod),
+                    ],
                   ),
                   const SizedBox(height: 18),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: GestaltTheme.pinterestRed,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                    child: const Text('Créer une Épingle', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            // White card: À propos de ces données
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.grey[200]!),
-                boxShadow: const [
-                  BoxShadow(color: Color(0x0A000000), blurRadius: 10, offset: Offset(0, 4)),
-                ],
-              ),
-              child: Column(
-                children: [
-                  const Text('À propos de ces données', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-                  const SizedBox(height: 12),
+                  Text('$_days derniers jours', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 6),
+                  Text(_range, style: const TextStyle(fontSize: 14)),
+                  const SizedBox(height: 18),
                   Text(
-                    'Les données rapportées ici sont une estimation. Certains graphiques nécessitent un nombre minimum d’utilisateurs pour être affichés. Les données quotidiennes sont enregistrées en heure UTC.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.grey[800], height: 1.4),
+                    _tab == 0 ? 'Performances globales' : 'Votre audience',
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: GestaltTheme.softGrey,
-                      foregroundColor: GestaltTheme.textDark,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  const SizedBox(height: 8),
+                  for (var i = 0; i < metrics.length; i++) ...[
+                    if (i > 0) Divider(height: 1, color: p.divider),
+                    _metricRow(metrics[i], p),
+                  ],
+                  const SizedBox(height: 14),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      _tab == 0
+                          ? 'Les changements en pourcentage sont comparés à $_days jours avant la période ci-dessus.'
+                          : 'Il n’y a pas encore assez de données d’audience. Revenez quand vos Épingles auront été vues.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: p.textMuted, height: 1.45),
                     ),
-                    child: const Text('Obtenir de l’aide', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
                   ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+          ),
+          const SizedBox(height: 10),
+          _Card(
+            color: card,
+            child: Column(
+              children: [
+                const Text('Meilleures Épingles', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 6),
+                const Text('Triées par impressions', style: TextStyle(fontSize: 14)),
+                const SizedBox(height: 8),
+                const Text(
+                  'Aucune Épingle ne correspond à votre sélection de filtres. Pour afficher les données de performance, '
+                  'essayez de créer une Épingle pour l’audience que vous souhaitez atteindre.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, height: 1.45),
+                ),
+                const SizedBox(height: 16),
+                PinButton(
+                  'Créer une Épingle',
+                  kind: PinButtonKind.red,
+                  large: true,
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CreatePinScreen(), fullscreenDialog: true),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          _Card(
+            color: card,
+            child: Column(
+              children: [
+                const Text('À propos de ces données', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 10),
+                const Text(
+                  'Les données rapportées ici sont une estimation. Certains graphiques nécessitent un nombre minimum '
+                  'd’utilisateurs pour être affichés. Les données quotidiennes sont enregistrées en heure UTC.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, height: 1.45),
+                ),
+                const SizedBox(height: 16),
+                PinButton('Obtenir de l’aide', large: true, onPressed: _help),
+              ],
+            ),
+          ),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _metricRow(_Metric m, PinPalette p) {
+    return InkWell(
+      onTap: () => _explain(m),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        child: Row(
+          children: [
+            PinIcon(m.icon, size: 22, strokeWidth: 1.8),
+            const SizedBox(width: 14),
+            Expanded(child: Text(m.label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),
+            const Text('0', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            const SizedBox(width: 10),
+            PinIcon(PinIcons.chevronRight, size: 16, color: p.textMuted),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  final Widget child;
+  final Color color;
+  final bool topFlat;
+  const _Card({required this.child, required this.color, this.topFlat = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: topFlat ? EdgeInsets.zero : const EdgeInsets.fromLTRB(24, 28, 24, 28),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(topFlat ? 0 : 40),
+          bottom: const Radius.circular(40),
+        ),
+      ),
+      child: child,
     );
   }
 }

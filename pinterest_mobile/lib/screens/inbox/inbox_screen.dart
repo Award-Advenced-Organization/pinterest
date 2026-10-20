@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/theme/gestalt_theme.dart';
-import '../../core/constants/api_endpoints.dart';
+import '../../core/widgets/pin_icon.dart';
+import '../../core/widgets/ui.dart';
 import '../../models/conversation.dart';
+import '../../models/notification_item.dart';
 import '../../services/api_service.dart';
+import '../../services/app_state.dart';
+import '../profile/user_profile_screen.dart';
+import '../search/search_results_screen.dart';
 import 'conversation_screen.dart';
+import 'inbox_lists.dart';
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});
@@ -14,306 +19,315 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
-  final ApiService _api = ApiService();
+  final _api = ApiService();
+  List<ActivityItem> _activity = [];
   List<Conversation> _conversations = [];
-  final Set<String> _followed = {};
+  List<NotificationItem> _updates = [];
   bool _loading = true;
+  bool _offline = false;
 
   @override
   void initState() {
     super.initState();
+    AppState.dataVersion.addListener(_load);
     _load();
   }
 
+  @override
+  void dispose() {
+    AppState.dataVersion.removeListener(_load);
+    super.dispose();
+  }
+
   Future<void> _load() async {
-    final convs = await _api.fetchConversations();
+    final results = await Future.wait([_api.fetchActivity(), _api.fetchConversations(), _api.fetchNotifications()]);
     if (!mounted) return;
     setState(() {
-      _conversations = convs;
+      _offline = results.every((r) => r == null);
+      _activity = (results[0] as List<ActivityItem>?) ?? _activity;
+      _conversations = (results[1] as List<Conversation>?) ?? _conversations;
+      _updates = (results[2] as List<NotificationItem>?) ?? _updates;
       _loading = false;
     });
   }
 
-  Future<void> _openConversation(Conversation conv) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => ConversationScreen(conversation: conv)),
-    );
-    if (!mounted) return;
-    // La dernière ligne a pu changer après l'envoi d'un message.
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
+    final p = context.pal;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        titleSpacing: 20,
-        title: const Text(
-          'Boîte de réception',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 24, letterSpacing: -0.5),
-        ),
+        centerTitle: false,
+        titleSpacing: 16,
+        title: const Text('Boîte de réception', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 24),
-            onPressed: () {},
+          PinIconButton(
+            PinIcons.compose,
+            iconSize: 26,
+            tooltip: 'Nouveau message',
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NewMessageScreen())),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
         ],
       ),
-      body: RefreshIndicator(
-        color: GestaltTheme.pinterestRed,
-        onRefresh: _load,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              _sectionHeader('Activité', showSeeAll: true),
-              const SizedBox(height: 8),
-              _activityItem(
-                avatar: _letterAvatar('A', const Color(0xFFD5D8FC)),
-                richText: const TextSpan(
-                  style: TextStyle(color: Colors.black, fontSize: 15, height: 1.3),
-                  children: [
-                    TextSpan(text: 'Vous connaissez peut-être ', style: TextStyle(fontWeight: FontWeight.w700)),
-                    TextSpan(text: 'Alassanemomo', style: TextStyle(fontWeight: FontWeight.w700)),
-                    TextSpan(text: '   1 sem.', style: TextStyle(color: Colors.grey, fontSize: 13)),
-                  ],
-                ),
-                actionLabel: 'S’abonner',
-                followUsername: 'alassanemomo',
-              ),
-              _activityItem(
-                avatar: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: const BoxDecoration(color: Colors.black, shape: BoxShape.circle),
-                  alignment: Alignment.center,
-                  child: const Text('ZORA', style: TextStyle(color: Color(0xFFE5C158), fontSize: 11, fontWeight: FontWeight.w900)),
-                ),
-                richText: const TextSpan(
-                  style: TextStyle(color: Colors.black, fontSize: 15, height: 1.3),
-                  children: [
-                    TextSpan(text: 'zora est abonné(e) à vos Épingles', style: TextStyle(fontWeight: FontWeight.w700)),
-                    TextSpan(text: '   03/26', style: TextStyle(color: Colors.grey, fontSize: 13)),
-                  ],
-                ),
-                actionLabel: 'Saluer',
-              ),
-
-              const SizedBox(height: 20),
-              _sectionHeader('Messages', showSeeAll: true),
-              const SizedBox(height: 8),
-              if (_loading)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(child: CircularProgressIndicator(color: GestaltTheme.pinterestRed, strokeWidth: 2.5)),
-                )
-              else
-                ..._conversations.map(_conversationTile),
-              _contactUserTile(),
-
-              const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                child: Text('Mises à jour', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
-              ),
-              const SizedBox(height: 8),
-              _updateItem('Vous n’avez pas encore trouvé ce qu’il vous faut ? Explorez les idées associées à Web Site Motion Design.', '07/26'),
-              _updateItem('Vous n’avez pas encore trouvé ce qu’il vous faut ? Explorez les idées associées à Naruto guide.', '07/26'),
-              const SizedBox(height: 32),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // --- Blocs réutilisables ---
-
-  Widget _sectionHeader(String title, {bool showSeeAll = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
-          if (showSeeAll)
-            InkWell(
-              onTap: () {},
-              child: Row(
-                children: [
-                  const Text('Tout voir', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                  Icon(Icons.chevron_right, size: 20, color: Colors.grey[700]),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _letterAvatar(String letter, Color bg) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-      alignment: Alignment.center,
-      child: Text(letter, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Color(0xFF333333))),
-    );
-  }
-
-  Widget _activityItem({required Widget avatar, required TextSpan richText, required String actionLabel, String? followUsername}) {
-    final isFollowed = followUsername != null && _followed.contains(followUsername);
-    final label = isFollowed ? 'Abonné' : actionLabel;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        children: [
-          avatar,
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(text: richText),
-                const SizedBox(height: 6),
-                ElevatedButton(
-                  onPressed: followUsername == null
-                      ? () {}
-                      : () async {
-                          final newState = await _api.toggleFollow(followUsername);
-                          if (!mounted) return;
-                          setState(() {
-                            if (newState) {
-                              _followed.add(followUsername);
-                            } else {
-                              _followed.remove(followUsername);
-                            }
-                          });
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isFollowed ? GestaltTheme.hoverGrey : GestaltTheme.softGrey,
-                    foregroundColor: GestaltTheme.textDark,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    minimumSize: Size.zero,
+      body: _loading
+          ? const Center(child: CircularProgressIndicator(strokeWidth: 2.5))
+          : _offline
+              ? Center(child: OfflineState(onRetry: _load))
+              : RefreshIndicator(
+                  color: GestaltTheme.pinterestRed,
+                  onRefresh: _load,
+                  child: ListView(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    children: [
+                      SectionHeader(
+                        'Activité',
+                        onSeeAll: () =>
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ActivityScreen())),
+                      ),
+                      for (final a in _activity.take(2)) ActivityTile(item: a, onChanged: () => setState(() {})),
+                      SectionHeader(
+                        'Messages',
+                        onSeeAll: () =>
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ConversationsScreen())),
+                      ),
+                      for (final c in _conversations.take(3))
+                        ConversationTile(
+                          conversation: c,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => ConversationScreen(conversation: c)),
+                          ).then((_) => setState(() {})),
+                        ),
+                      _contactTile(p),
+                      const SectionHeader('Mises à jour'),
+                      if (_updates.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                          child: Text('Vous êtes à jour.', style: TextStyle(color: p.textMuted, fontSize: 15)),
+                        ),
+                      for (final n in _updates) _updateTile(n, p),
+                    ],
                   ),
-                  child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
                 ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _conversationTile(Conversation conv) {
-    final user = conv.withUser;
+  Widget _contactTile(PinPalette p) {
     return InkWell(
-      onTap: () => _openConversation(conv),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const NewMessageScreen())),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: [
-            _convAvatar(user),
-            const SizedBox(width: 14),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(color: p.secondaryButton, borderRadius: BorderRadius.circular(14)),
+              alignment: Alignment.center,
+              child: const PinIcon(PinIcons.personAdd, size: 24, strokeWidth: 1.8),
+            ),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(user.name, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                  const Text('Contacter un utilisateur', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 2),
-                  Text(
-                    conv.lastMessage,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: GestaltTheme.textMuted, fontSize: 14),
-                  ),
+                  Text('Connectez-vous pour entamer une discussion',
+                      style: TextStyle(fontSize: 14, color: p.textMuted)),
                 ],
               ),
             ),
-            const SizedBox(width: 10),
-            Text(conv.timeAgo, style: const TextStyle(color: GestaltTheme.textMuted, fontSize: 12)),
           ],
         ),
       ),
     );
   }
 
-  Widget _convAvatar(ChatUser user) {
-    final fallback = _letterAvatar(user.name.isNotEmpty ? user.name[0].toUpperCase() : '?', const Color(0xFFD5D8FC));
-    if (user.avatarUrl.isEmpty) return fallback;
-    return ClipOval(
-      child: CachedNetworkImage(
-        imageUrl: ApiEndpoints.resolveUrl(user.avatarUrl),
-        width: 48,
-        height: 48,
-        fit: BoxFit.cover,
-        placeholder: (_, __) => fallback,
-        errorWidget: (_, __, ___) => fallback,
+  Widget _updateTile(NotificationItem n, PinPalette p) {
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SearchResultsScreen(query: n.query))),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 4, 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            n.imageUrl != null
+                ? ClipOval(child: PinNetImage(n.imageUrl!, width: 48, height: 48))
+                : Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(color: p.secondaryButton, shape: BoxShape.circle),
+                    alignment: Alignment.center,
+                    child: const PinIcon(PinIcons.search, size: 22),
+                  ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(n.text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.35)),
+                  const SizedBox(height: 4),
+                  Text(n.timeAgo, style: TextStyle(fontSize: 13, color: p.textMuted)),
+                ],
+              ),
+            ),
+            PinIconButton(
+              PinIcons.ellipsis,
+              iconSize: 18,
+              tooltip: 'Options',
+              onPressed: () => showPinSheet(
+                context,
+                title: 'Options',
+                builder: (ctx) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: SheetOption(
+                    'Masquer cette mise à jour',
+                    onTap: () async {
+                      Navigator.pop(ctx);
+                      setState(() => _updates.remove(n));
+                      await _api.dismissNotification(n.id);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _contactUserTile() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(color: GestaltTheme.softGrey, borderRadius: BorderRadius.circular(16)),
-            child: const Icon(Icons.person_add_alt_1_outlined, size: 24, color: Colors.black),
-          ),
-          const SizedBox(width: 14),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Contacter un utilisateur', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-                SizedBox(height: 2),
-                Text('Connectez-vous pour entamer une discussion', style: TextStyle(color: GestaltTheme.textMuted, fontSize: 13)),
-              ],
+/// Ligne « Activité » : suggestion d'abonnement ou nouvel abonné.
+class ActivityTile extends StatefulWidget {
+  final ActivityItem item;
+  final VoidCallback? onChanged;
+  const ActivityTile({super.key, required this.item, this.onChanged});
+
+  @override
+  State<ActivityTile> createState() => _ActivityTileState();
+}
+
+class _ActivityTileState extends State<ActivityTile> {
+  final _api = ApiService();
+  bool _busy = false;
+
+  ActivityItem get a => widget.item;
+
+  Future<void> _follow() async {
+    setState(() => _busy = true);
+    final r = await _api.toggleFollow(a.user.username);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (r != null) a.isFollowing = r;
+    });
+    if (r == null) showPinToast(context, 'Action impossible. Réessayez.');
+    widget.onChanged?.call();
+  }
+
+  Future<void> _greet() async {
+    setState(() => _busy = true);
+    final conv = await _api.openConversation(a.user.username);
+    final sent = conv == null ? null : await _api.sendMessage(conv.id, 'Salut ! 👋 Merci pour l’abonnement.');
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (conv == null || sent == null) return showPinToast(context, 'Envoi impossible. Réessayez.');
+    conv.messages.add(sent);
+    AppState.dataChanged();
+    Navigator.push(context, MaterialPageRoute(builder: (_) => ConversationScreen(conversation: conv)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.pal;
+    final isSuggestion = a.type == 'suggestion';
+    return InkWell(
+      onTap: () =>
+          Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfileScreen(username: a.user.username))),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PinAvatar(url: a.user.avatarUrl, name: a.user.name, size: 48),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          isSuggestion ? '${a.text} ${a.user.name}' : '${a.user.name} ${a.text}',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, height: 1.35),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(a.timeAgo, style: TextStyle(fontSize: 13, color: p.textMuted)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  isSuggestion
+                      ? PinButton(
+                          a.isFollowing ? 'Abonné(e)' : 'S’abonner',
+                          kind: a.isFollowing ? PinButtonKind.dark : PinButtonKind.grey,
+                          loading: _busy,
+                          onPressed: _follow,
+                        )
+                      : PinButton('Saluer', loading: _busy, onPressed: _greet),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _updateItem(String text, String date) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: const BoxDecoration(color: GestaltTheme.softGrey, shape: BoxShape.circle),
-            child: const Icon(Icons.search, size: 24, color: Colors.black),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(text, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, height: 1.3)),
-                const SizedBox(height: 4),
-                Text(date, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-              ],
+class ConversationTile extends StatelessWidget {
+  final Conversation conversation;
+  final VoidCallback onTap;
+  const ConversationTile({super.key, required this.conversation, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.pal;
+    final u = conversation.withUser;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          children: [
+            PinAvatar(url: u.avatarUrl, name: u.name, size: 48),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(u.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 2),
+                  Text(
+                    conversation.lastMessage.isEmpty ? 'Nouvelle conversation' : conversation.lastMessage,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14, color: p.textMuted),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          const Icon(Icons.more_horiz, color: Colors.black, size: 20),
-        ],
+            const SizedBox(width: 10),
+            Text(conversation.timeAgo, style: TextStyle(fontSize: 13, color: p.textMuted)),
+          ],
+        ),
       ),
     );
   }

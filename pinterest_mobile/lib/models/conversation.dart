@@ -3,7 +3,11 @@ class ChatMessage {
   final String text;
   final String time;
 
-  ChatMessage({required this.from, required this.text, required this.time});
+  /// Épingle partagée dans le message (aperçu affiché au-dessus du texte).
+  final String? pinId;
+  final String? pinImage;
+
+  ChatMessage({required this.from, required this.text, required this.time, this.pinId, this.pinImage});
 
   bool get isMine => from == 'me';
 
@@ -12,6 +16,8 @@ class ChatMessage {
       from: json['from'] ?? 'them',
       text: json['text'] ?? '',
       time: json['time'] ?? '',
+      pinId: json['pin_id'],
+      pinImage: json['pin_image'],
     );
   }
 }

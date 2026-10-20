@@ -65,28 +65,31 @@ flutter build apk --release
 
 ---
 
-## Fonctionnalités reproduites à l'identique
+## Fonctionnalités
 
-1. **Accueil (Flux Masonry)** :
-   - Grille échelonnée 2 colonnes avec badges vidéo (`0:22`) et icône muet.
-   - Carrousels multi-images avec indicateurs `• • • • ·`.
-   - Bouton contextuel `...` et menu d'actions (Enregistrer, Partager, Masquer).
+Interface calibrée sur les 11 captures de `reference_screenshots/`, en mode clair et en mode sombre (Profil > … > Apparence).
+Les icônes sont un jeu original à trait fin dessiné dans le style des captures (`lib/core/widgets/pin_icon.dart`) ; le logo Pinterest n'est pas reproduit.
 
-2. **Rechercher** :
-   - Barre de recherche avec caméra visuelle.
-   - 8 tuiles de « Des idées pour vous » conformes aux captures.
-   - 4 tuiles de « Populaire sur Pinterest ».
+1. **Accueil** : grille en mosaïque aux vraies proportions des images, couleur dominante pendant le chargement, chargement continu,
+   onglets « Tout » + vos tableaux, carrousels balayables, menu « … » et menu circulaire à l'appui long (Enregistrer, Partager, Masquer).
+2. **Épingle** : image pleine largeur, J'aime, commentaires, partage, Enregistrer (puis choix du tableau), abonnement au créateur,
+   lien « Visiter », Épingles similaires, suppression de ses propres Épingles.
+3. **Rechercher** : recherche par mots-clés (titres, mots-clés, catégories, créateurs), recherches récentes,
+   recherche par image (Épingles de couleur proche de la photo choisie).
+4. **Créer** : Épingle (image de l'appareil, titre, description, lien, tableau), Tableau (public ou secret), Collage (2 à 4 Épingles).
+5. **Boîte de réception** : activité (s'abonner, saluer), messagerie avec envoi d'Épingles, nouveau message, mises à jour masquables.
+6. **Profil** : Créées, Enregistrées (tableaux, regroupements proposés à transformer en tableaux, « Organiser » pour ranger),
+   page de tableau (modifier, rendre secret, supprimer), modifier le profil et la photo, statistiques (période au choix).
 
-3. **Créer (`+`)** :
-   - Feuille modale « Laissez libre cours à votre créativité dès maintenant ».
-   - Boutons Épingle, Collage et Tableau.
+Toutes les actions sont enregistrées par le backend dans `pinterest_backend/db.json` (supprimer ce fichier pour repartir de zéro).
 
-4. **Boîte de réception** :
-   - Sections Activité (Alassanemomo, Zora), Messages et Mises à jour.
+---
 
-5. **Profil & Sous-écrans** :
-   - En-tête profil réel (Jaye ahf, @ahiffent, 1 abonné(e) · 2 abonné(e)s, ahiffonjephte.me).
-   - Onglet Créées avec tuile vidéo `0:07`.
-   - Onglet Enregistrées avec recherche, carrousel de clusters et idées non organisées.
-   - Hub des créateurs / Statistiques (Performances globales, 30 derniers jours).
-   - Modifier le profil avec champs bordés et gestion de l'avatar.
+## Notes
+
+- **Windows / Android** : les extensions `image_picker` et `url_launcher` demandent le *Mode développeur* de Windows
+  pour compiler l'application native (`start ms-settings:developers`). La version web n'en a pas besoin.
+- **Adresse du serveur** : `--dart-define=API_URL=http://10.0.2.2:3018` pour l'émulateur Android, ou l'IP du PC pour un téléphone.
+- **Captures** (version web) : `?theme=dark&tab=4&open=stats` ouvre directement un écran
+  (`tab` 0 à 4 ; `open` = `pin:<id>`, `search:<mots>`, `stats`, `edit`, `create`, `board`, `collage`, `sheet`).
+- **Tests** : `flutter test` dans `pinterest_mobile`.

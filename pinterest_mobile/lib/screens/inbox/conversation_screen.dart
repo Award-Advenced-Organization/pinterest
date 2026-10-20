@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../core/theme/gestalt_theme.dart';
-import '../../core/constants/api_endpoints.dart';
+import '../../core/widgets/pin_icon.dart';
+import '../../core/widgets/ui.dart';
 import '../../models/conversation.dart';
+import '../../models/pin.dart';
 import '../../services/api_service.dart';
+import '../../services/app_state.dart';
+import '../pin_detail/pin_detail_screen.dart';
+import '../profile/user_profile_screen.dart';
 
 class ConversationScreen extends StatefulWidget {
   final Conversation conversation;
@@ -14,17 +19,20 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-  final ApiService _api = ApiService();
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scroll = ScrollController();
+  final _api = ApiService();
+  final _controller = TextEditingController();
+  final _scroll = ScrollController();
   bool _sending = false;
 
-  List<ChatMessage> get _messages => widget.conversation.messages;
+  Conversation get _conv => widget.conversation;
+  List<ChatMessage> get _messages => _conv.messages;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToBottom());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scroll.hasClients) _scroll.jumpTo(_scroll.position.maxScrollExtent);
+    });
   }
 
   @override
@@ -34,114 +42,125 @@ class _ConversationScreenState extends State<ConversationScreen> {
     super.dispose();
   }
 
-  void _jumpToBottom() {
-    if (_scroll.hasClients) {
-      _scroll.jumpTo(_scroll.position.maxScrollExtent);
-    }
+  String _now() {
+    final t = TimeOfDay.now();
+    return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _send() async {
-    final text = _controller.text.trim();
-    if (text.isEmpty || _sending) return;
-
+  Future<void> _send({Pin? pin}) async {
+    final text = pin == null ? _controller.text.trim() : '';
+    if ((text.isEmpty && pin == null) || _sending) return;
+    final optimistic = ChatMessage(from: 'me', text: text, time: _now(), pinId: pin?.id, pinImage: pin?.imageUrl);
     setState(() {
-      _messages.add(ChatMessage(from: 'me', text: text, time: _nowLabel()));
-      _controller.clear();
+      _messages.add(optimistic);
+      if (pin == null) _controller.clear();
       _sending = true;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    _scrollToBottom();
 
-    final saved = await _api.sendMessage(widget.conversation.id, text);
+    final saved = await _api.sendMessage(_conv.id, text, pinId: pin?.id);
     if (!mounted) return;
     setState(() {
       _sending = false;
       if (saved == null) {
-        // La requête a échoué : on retire l'envoi optimiste.
-        if (_messages.isNotEmpty && _messages.last.from == 'me' && _messages.last.text == text) {
-          _messages.removeLast();
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Échec de l’envoi. Réessayez.')),
-        );
+        _messages.remove(optimistic);
+      } else {
+        _conv
+          ..lastMessage = text.isEmpty ? 'A envoyé une Épingle' : text
+          ..timeAgo = 'À l’instant';
+      }
+    });
+    if (saved == null) {
+      showPinToast(context, 'Échec de l’envoi. Réessayez.');
+    } else {
+      AppState.dataChanged();
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scroll.hasClients) {
+        _scroll.animateTo(_scroll.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 220), curve: Curves.easeOut);
       }
     });
   }
 
-  String _nowLabel() {
-    final now = TimeOfDay.now();
-    final h = now.hour.toString().padLeft(2, '0');
-    final m = now.minute.toString().padLeft(2, '0');
-    return '$h:$m';
+  Future<void> _pickPin() async {
+    final pin = await showPinSheet<Pin>(
+      context,
+      title: 'Envoyer une Épingle',
+      fullHeight: true,
+      builder: (_) => const _SavedPinPicker(),
+    );
+    if (pin != null) _send(pin: pin);
   }
 
-  void _scrollToBottom() {
-    if (_scroll.hasClients) {
-      _scroll.animateTo(
-        _scroll.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOut,
-      );
-    }
+  void _openProfile() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => UserProfileScreen(username: _conv.withUser.username)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = widget.conversation.withUser;
+    final p = context.pal;
+    final user = _conv.withUser;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 24),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            _Avatar(url: user.avatarUrl, label: user.name, size: 36),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    user.name,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: Colors.black),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '@${user.username}',
-                    style: const TextStyle(fontSize: 12, color: GestaltTheme.textMuted),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
+        leading: PinIconButton(PinIcons.back, tooltip: 'Retour', onPressed: () => Navigator.pop(context)),
+        title: Pressable(
+          onTap: _openProfile,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PinAvatar(url: user.avatarUrl, name: user.name, size: 32),
+              const SizedBox(width: 10),
+              Flexible(child: Text(user.name, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline, size: 24),
-            onPressed: () {},
-          ),
+          PinIconButton(PinIcons.info, tooltip: 'Voir le profil', onPressed: _openProfile),
           const SizedBox(width: 4),
         ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              itemCount: _messages.length,
-              itemBuilder: (context, i) => _Bubble(message: _messages[i]),
-            ),
+            child: _messages.isEmpty
+                ? _emptyHeader(user, p)
+                : ListView.builder(
+                    controller: _scroll,
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, i) => _Bubble(message: _messages[i]),
+                  ),
           ),
-          _InputBar(
-            controller: _controller,
-            onSend: _send,
-          ),
+          _InputBar(controller: _controller, onSend: () => _send(), onAttach: _pickPin),
         ],
+      ),
+    );
+  }
+
+  Widget _emptyHeader(ChatUser user, PinPalette p) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            PinAvatar(url: user.avatarUrl, name: user.name, size: 88),
+            const SizedBox(height: 14),
+            Text(user.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 4),
+            Text('@${user.username}', style: TextStyle(color: p.textMuted, fontSize: 14)),
+            const SizedBox(height: 16),
+            Text(
+              'Envoyez un message ou une Épingle pour démarrer la conversation.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: p.textMuted, fontSize: 15),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -151,46 +170,52 @@ class _Bubble extends StatelessWidget {
   final ChatMessage message;
   const _Bubble({required this.message});
 
+  Future<void> _openPin(BuildContext context) async {
+    final d = await ApiService().fetchPinDetail(message.pinId!);
+    if (d == null || !context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (_) => PinDetailScreen(pin: Pin.fromJson(d), heroTag: 'msg_${message.pinId}_${message.time}')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final p = context.pal;
     final mine = message.isMine;
+    final maxW = MediaQuery.sizeOf(context).width * 0.72;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Align(
-        alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
+      child: Column(
+        crossAxisAlignment: mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          if (message.pinImage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Pressable(
+                onTap: message.pinId == null ? null : () => _openPin(context),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: PinNetImage(message.pinImage!, width: 180, height: 230),
+                ),
+              ),
+            ),
+          if (message.text.isNotEmpty)
             Container(
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+              constraints: BoxConstraints(maxWidth: maxW),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: mine ? GestaltTheme.pinterestRed : GestaltTheme.softGrey,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: Radius.circular(mine ? 20 : 6),
-                  bottomRight: Radius.circular(mine ? 6 : 20),
-                ),
+                color: mine ? p.text : p.secondaryButton,
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: mine ? Colors.white : GestaltTheme.textDark,
-                  fontSize: 15,
-                  height: 1.3,
-                ),
-              ),
+              child: Text(message.text, style: TextStyle(color: mine ? p.bg : p.text, fontSize: 15, height: 1.3)),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 3, left: 4, right: 4),
-              child: Text(
-                message.time,
-                style: const TextStyle(fontSize: 11, color: GestaltTheme.textMuted),
-              ),
-            ),
-          ],
-        ),
+          Padding(
+            padding: const EdgeInsets.only(top: 3, left: 4, right: 4),
+            child: Text(message.time, style: TextStyle(fontSize: 11, color: p.textMuted)),
+          ),
+        ],
       ),
     );
   }
@@ -199,55 +224,40 @@ class _Bubble extends StatelessWidget {
 class _InputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
-  const _InputBar({required this.controller, required this.onSend});
+  final VoidCallback onAttach;
+
+  const _InputBar({required this.controller, required this.onSend, required this.onAttach});
 
   @override
   Widget build(BuildContext context) {
+    final p = context.pal;
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: GestaltTheme.softGrey, width: 1)),
-        ),
+        padding: const EdgeInsets.fromLTRB(8, 8, 12, 8),
+        decoration: BoxDecoration(border: Border(top: BorderSide(color: p.divider))),
         child: Row(
           children: [
+            PinIconButton(PinIcons.plus, tooltip: 'Envoyer une Épingle', onPressed: onAttach),
+            const SizedBox(width: 4),
             Expanded(
               child: Container(
-                decoration: BoxDecoration(
-                  color: GestaltTheme.softGrey,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.add, size: 24, color: GestaltTheme.textDark),
-                      onPressed: () {},
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        minLines: 1,
-                        maxLines: 4,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: (_) => onSend(),
-                        decoration: const InputDecoration(
-                          hintText: 'Envoyer un message',
-                          hintStyle: TextStyle(color: GestaltTheme.textMuted, fontSize: 15),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        style: const TextStyle(fontSize: 15, color: GestaltTheme.textDark),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.camera_alt_outlined, size: 22, color: GestaltTheme.textDark),
-                      onPressed: () {},
-                    ),
-                  ],
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(border: Border.all(color: p.border), borderRadius: BorderRadius.circular(24)),
+                child: TextField(
+                  controller: controller,
+                  minLines: 1,
+                  maxLines: 4,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => onSend(),
+                  style: TextStyle(fontSize: 15, color: p.text),
+                  decoration: InputDecoration(
+                    hintText: 'Envoyer un message',
+                    hintStyle: TextStyle(color: p.placeholder, fontSize: 15),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                 ),
               ),
             ),
@@ -256,21 +266,14 @@ class _InputBar extends StatelessWidget {
               valueListenable: controller,
               builder: (context, value, _) {
                 final active = value.text.trim().isNotEmpty;
-                return GestureDetector(
-                  onTap: active ? onSend : null,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: active ? GestaltTheme.pinterestRed : GestaltTheme.hoverGrey,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_upward,
-                      size: 22,
-                      color: active ? Colors.white : GestaltTheme.textMuted,
-                    ),
-                  ),
+                return PinIconButton(
+                  PinIcons.send,
+                  size: 44,
+                  iconSize: 20,
+                  tooltip: 'Envoyer',
+                  color: active ? Colors.white : p.textMuted,
+                  background: active ? GestaltTheme.pinterestRed : p.secondaryButton,
+                  onPressed: active ? onSend : null,
                 );
               },
             ),
@@ -281,35 +284,46 @@ class _InputBar extends StatelessWidget {
   }
 }
 
-class _Avatar extends StatelessWidget {
-  final String url;
-  final String label;
-  final double size;
-  const _Avatar({required this.url, required this.label, required this.size});
+/// Grille des Épingles enregistrées pour en joindre une à un message.
+class _SavedPinPicker extends StatefulWidget {
+  const _SavedPinPicker();
+
+  @override
+  State<_SavedPinPicker> createState() => _SavedPinPickerState();
+}
+
+class _SavedPinPickerState extends State<_SavedPinPicker> {
+  List<Pin>? _pins;
+
+  @override
+  void initState() {
+    super.initState();
+    ApiService().fetchSavedPins().then((p) {
+      if (mounted) setState(() => _pins = p ?? []);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final initial = label.isNotEmpty ? label[0].toUpperCase() : '?';
-    final fallback = Container(
-      width: size,
-      height: size,
-      decoration: const BoxDecoration(color: Color(0xFFD5D8FC), shape: BoxShape.circle),
-      alignment: Alignment.center,
-      child: Text(
-        initial,
-        style: TextStyle(fontSize: size * 0.42, fontWeight: FontWeight.w700, color: const Color(0xFF333333)),
-      ),
-    );
-    if (url.isEmpty) return fallback;
-    return ClipOval(
-      child: CachedNetworkImage(
-        imageUrl: ApiEndpoints.resolveUrl(url),
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-        placeholder: (_, __) => fallback,
-        errorWidget: (_, __, ___) => fallback,
-      ),
+    if (_pins == null) return const Center(child: CircularProgressIndicator(strokeWidth: 2.5));
+    if (_pins!.isEmpty) return const EmptyState(title: 'Aucune Épingle enregistrée');
+    return MasonryGridView.count(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 24),
+      crossAxisCount: 3,
+      mainAxisSpacing: 6,
+      crossAxisSpacing: 6,
+      itemCount: _pins!.length,
+      itemBuilder: (_, i) {
+        final pin = _pins![i];
+        return Pressable(
+          onTap: () => Navigator.pop(context, pin),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: AspectRatio(
+                aspectRatio: pin.aspectRatio.clamp(0.5, 1.8), child: PinNetImage(pin.imageUrl, placeholder: pin.color)),
+          ),
+        );
+      },
     );
   }
 }

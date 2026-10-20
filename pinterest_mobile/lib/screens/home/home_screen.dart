@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../core/theme/gestalt_theme.dart';
-import '../../core/widgets/pin_card.dart';
+import '../../core/widgets/pin_grid.dart';
+import '../../core/widgets/ui.dart';
+import '../../models/board.dart';
 import '../../models/pin.dart';
 import '../../services/api_service.dart';
+import '../../services/app_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,166 +15,194 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ApiService _api = ApiService();
+  final _api = ApiService();
+  final _scroll = ScrollController();
+
+  List<Board> _boards = [];
+  int _tab = 0; // 0 = Tout, puis un onglet par tableau
   final List<Pin> _pins = [];
-  bool _isLoading = true;
-  int _activeTab = 0;
-  String _activeCategory = 'Tout';
-  final List<String> _categories = ['Tout', 'Dev Web', 'Design', 'Tech', 'Nature', 'Mode', 'Art'];
+  int _page = 1;
+  bool _hasMore = true;
+  bool _loading = true;
+  bool _loadingMore = false;
+  bool _offline = false;
 
   @override
   void initState() {
     super.initState();
-    _loadPins();
+    _scroll.addListener(_onScroll);
+    AppState.dataVersion.addListener(_onDataChanged);
+    AppState.homeReselected.addListener(_onReselected);
+    _loadBoards();
+    _reload();
   }
 
-  Future<void> _loadPins() async {
-    setState(() => _isLoading = true);
-    final pins = _activeCategory == 'Tout'
-        ? await _api.fetchHomeFeed()
-        : await _api.searchPins(category: _activeCategory.toLowerCase().replaceAll(' ', ''));
-    if (mounted) {
-      setState(() {
-        _pins.clear();
-        _pins.addAll(pins);
-        _isLoading = false;
-      });
+  @override
+  void dispose() {
+    AppState.dataVersion.removeListener(_onDataChanged);
+    AppState.homeReselected.removeListener(_onReselected);
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  Board? get _board => _tab == 0 || _tab > _boards.length ? null : _boards[_tab - 1];
+
+  Future<void> _loadBoards() async {
+    final boards = await _api.fetchBoards();
+    if (!mounted || boards == null) return;
+    setState(() {
+      final current = _board?.id;
+      _boards = boards;
+      final i = boards.indexWhere((b) => b.id == current);
+      _tab = i < 0 ? 0 : i + 1;
+    });
+  }
+
+  void _onDataChanged() {
+    _loadBoards();
+    if (_board != null) _reload();
+  }
+
+  void _onReselected() {
+    if (_scroll.hasClients && _scroll.offset > 0) {
+      _scroll.animateTo(0, duration: const Duration(milliseconds: 400), curve: Curves.easeOutCubic);
+    } else {
+      _reload();
     }
+  }
+
+  Future<void> _reload() async {
+    setState(() {
+      _loading = _pins.isEmpty;
+      _offline = false;
+    });
+    final board = _board;
+    if (board != null) {
+      final pins = await _api.fetchBoardPins(board.id);
+      if (!mounted) return;
+      setState(() {
+        _offline = pins == null;
+        _pins
+          ..clear()
+          ..addAll(pins ?? []);
+        _hasMore = false;
+        _loading = false;
+      });
+      return;
+    }
+    final page = await _api.fetchHomeFeed(page: 1);
+    if (!mounted) return;
+    setState(() {
+      _offline = page == null;
+      _pins
+        ..clear()
+        ..addAll(page?.pins ?? []);
+      _page = 1;
+      _hasMore = page?.hasMore ?? false;
+      _loading = false;
+    });
+  }
+
+  void _onScroll() {
+    if (!_hasMore || _loadingMore || _board != null) return;
+    if (_scroll.position.extentAfter < 900) _loadMore();
+  }
+
+  Future<void> _loadMore() async {
+    _loadingMore = true;
+    final page = await _api.fetchHomeFeed(page: _page + 1);
+    _loadingMore = false;
+    if (!mounted || page == null) return;
+    setState(() {
+      _page++;
+      final known = _pins.map((p) => p.id).toSet();
+      _pins.addAll(page.pins.where((p) => !known.contains(p.id)));
+      _hasMore = page.hasMore;
+    });
+  }
+
+  void _selectTab(int i) {
+    if (i == _tab) return;
+    setState(() {
+      _tab = i;
+      _pins.clear();
+    });
+    if (_scroll.hasClients) _scroll.jumpTo(0);
+    _reload();
   }
 
   @override
   Widget build(BuildContext context) {
+    final p = context.pal;
+    final showTabs = _boards.isNotEmpty;
     return Scaffold(
       body: SafeArea(
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              elevation: 0,
-              backgroundColor: Colors.white,
-              titleSpacing: 16,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (_activeTab != 0) {
-                        setState(() => _activeTab = 0);
-                        _loadPins();
-                      }
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Pour vous',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: _activeTab == 0 ? GestaltTheme.textDark : GestaltTheme.textMuted,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          width: 28,
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: _activeTab == 0 ? GestaltTheme.textDark : Colors.transparent,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ],
+        bottom: false,
+        child: RefreshIndicator(
+          color: GestaltTheme.pinterestRed,
+          backgroundColor: p.sheet,
+          onRefresh: () async {
+            await _loadBoards();
+            await _reload();
+          },
+          child: CustomScrollView(
+            controller: _scroll,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              if (showTabs)
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
+                  toolbarHeight: 52,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: p.bg,
+                  // Hors du titre de la barre, qui tronquerait les noms de tableaux.
+                  flexibleSpace: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: PinTextTabs(
+                      labels: ['Tout', ..._boards.map((b) => b.name)],
+                      index: _tab,
+                      onChanged: _selectTab,
+                      scrollable: true,
                     ),
                   ),
-                  const SizedBox(width: 24),
-                  GestureDetector(
-                    onTap: () {
-                      if (_activeTab != 1) {
-                        setState(() => _activeTab = 1);
-                        _loadPins();
-                      }
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Abonnements',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: _activeTab == 1 ? GestaltTheme.textDark : GestaltTheme.textMuted,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          width: 28,
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: _activeTab == 1 ? GestaltTheme.textDark : Colors.transparent,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ],
+                )
+              else
+                const SliverToBoxAdapter(child: SizedBox(height: 6)),
+              if (_loading)
+                const SliverPinSkeleton()
+              else if (_offline && _pins.isEmpty)
+                SliverFillRemaining(hasScrollBody: false, child: Center(child: OfflineState(onRetry: _reload)))
+              else if (_pins.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: EmptyState(
+                      title: _board == null ? 'Rien à afficher pour l’instant' : 'Aucune Épingle dans ce tableau',
+                      message: _board == null
+                          ? 'Tirez vers le bas pour actualiser le fil.'
+                          : 'Enregistrez des Épingles dans « ${_board!.name} » pour les retrouver ici.',
                     ),
                   ),
-                ],
-              ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(44),
+                )
+              else
+                SliverPinGrid(
+                  pins: _pins,
+                  heroScope: 'home',
+                  onRemove: (pin) => setState(() => _pins.remove(pin)),
+                  onRestore: (i, pin) => setState(() => _pins.insert(i.clamp(0, _pins.length), pin)),
+                ),
+              SliverToBoxAdapter(
                 child: SizedBox(
-                  height: 40,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                    itemCount: _categories.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
-                    itemBuilder: (context, index) {
-                      final cat = _categories[index];
-                      final isSelected = cat == _activeCategory;
-                      return ChoiceChip(
-                        label: Text(cat),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          if (selected) {
-                            setState(() => _activeCategory = cat);
-                            _loadPins();
-                          }
-                        },
-                        selectedColor: GestaltTheme.textDark,
-                        backgroundColor: GestaltTheme.softGrey,
-                        labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : GestaltTheme.textDark,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                        ),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        side: BorderSide.none,
-                        showCheckmark: false,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                      );
-                    },
-                  ),
+                  height: 72,
+                  child: _hasMore && !_loading
+                      ? const Center(
+                          child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5)))
+                      : null,
                 ),
               ),
-            ),
-          ],
-          body: _isLoading
-              ? const Center(child: CircularProgressIndicator(color: GestaltTheme.pinterestRed))
-              : RefreshIndicator(
-                  color: GestaltTheme.pinterestRed,
-                  onRefresh: _loadPins,
-                  child: MasonryGridView.count(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    itemCount: _pins.length,
-                    itemBuilder: (context, index) {
-                      return PinCard(pin: _pins[index]);
-                    },
-                  ),
-                ),
+            ],
+          ),
         ),
       ),
     );
