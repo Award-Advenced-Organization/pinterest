@@ -1,7 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Accès au backend local (HTTP sur le réseau Wi-Fi). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="pinterest_mobile"
+        android:label="Pinterest repro"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
