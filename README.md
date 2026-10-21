@@ -18,11 +18,15 @@ Conforme à la méthode GOD2 (réflexe 01 : calibrage sur la référence ; réfl
 │   │   └── services/          # Client API HTTP REST
 │   └── pubspec.yaml
 │
-├── pinterest_backend/         # API REST compagnon Express (port 3018)
-│   ├── src/
-│   │   ├── server.js          # Serveur HTTP et endpoints REST v3
-│   │   └── data.js            # Données réalistes et flux d'Épingles
-│   └── package.json
+├── pinterest_api/             # API REST Laravel 13 (port 3018), backend actuel
+│   ├── app/Http/Controllers/  # Fil, Épingles, recherche, profils, tableaux, boîte de réception, images
+│   ├── app/Http/Resources/    # Format JSON attendu par l'application
+│   ├── app/Models/            # Modèles Eloquent (Pin, Board, User, Conversation…)
+│   ├── database/              # Migrations et données de départ (seeders/data/pinterest.json)
+│   ├── storage/app/media/     # Images du fil (pins/) et envois de l'application (uploads/)
+│   └── tests/Feature/         # Tests Pest de toutes les routes
+│
+├── pinterest_backend/         # Ancien backend Express, remplacé par pinterest_api
 │
 └── reference_screenshots/     # 11 captures d'écran réelles du smartphone
 ```
@@ -31,13 +35,16 @@ Conforme à la méthode GOD2 (réflexe 01 : calibrage sur la référence ; réfl
 
 ## 1. Lancer le Backend API (Port 3018)
 
+Prérequis : PHP 8.3 ou plus et Composer (sous Windows, la commande `php.new` de la documentation Laravel installe les deux).
+
 ```powershell
-cd pinterest_backend
-npm install
-node src/server.js
+cd pinterest_api
+composer setup     # dépendances, .env, base SQLite et données de départ
+composer serve     # http://localhost:3018, accessible aussi depuis le téléphone sur le Wi-Fi
 ```
 
-Le serveur écoute sur `http://localhost:3018`.
+Les adresses (`/v3/…`) et le format JSON sont identiques à l'ancien backend : l'application n'a rien à changer.
+Pour repartir des données de départ : `php artisan migrate:fresh --seed`. Tests : `php artisan test`.
 
 ---
 
@@ -81,7 +88,7 @@ Les icônes sont un jeu original à trait fin dessiné dans le style des capture
 6. **Profil** : Créées, Enregistrées (tableaux, regroupements proposés à transformer en tableaux, « Organiser » pour ranger),
    page de tableau (modifier, rendre secret, supprimer), modifier le profil et la photo, statistiques (période au choix).
 
-Toutes les actions sont enregistrées par le backend dans `pinterest_backend/db.json` (supprimer ce fichier pour repartir de zéro).
+Toutes les actions sont enregistrées dans la base SQLite du backend (`pinterest_api/database/database.sqlite`).
 
 ---
 

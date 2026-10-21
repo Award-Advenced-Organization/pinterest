@@ -1,0 +1,3 @@
+# Images de départ versionnées ; les envois depuis l’application restent locaux.
+uploads/*
+!uploads/avatar_jaye.jpg
