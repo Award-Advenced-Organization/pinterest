@@ -1,0 +1,101 @@
+/* USW : les messages et les erreurs (E37). Rien n arrete l utilisateur
+   quand tout va bien ; quand quelque chose coince, une phrase dit quoi faire,
+   avec une seule action principale. Le rouge de la charte pour ce qui est
+   refuse ou ce qui coupe ; les icones restent a l encre. */
+
+/* ------------------------------------------------------------ un champ en erreur */
+.champ-bloc.erreur .champ { outline-color: var(--erreur); }
+.champ-bloc.erreur .champ-aide { color: var(--erreur); }
+.champ-bloc.erreur .champ-aide .ic { color: var(--erreur); }
+/* Le champ tremble une fois, a l arrivee de l erreur. */
+.champ-bloc.erreur .champ { animation: tremble 0.45s 0.5s var(--interface); }
+@keyframes tremble { 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } }
+
+/* ------------------------------------------------------------ un ecran d etat */
+.etat { display: flex; flex-direction: column; }
+.etat-haut { padding: 0 var(--marge-app); }
+.etat-corps { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 0 calc(var(--marge-app) + 8px) 12vh; text-align: center; }
+.etat-icone { display: grid; place-items: center; width: 76px; height: 76px; margin-bottom: 18px; border-radius: 24px; background: hsl(0 0% 100% / 0.75); box-shadow: 0 16px 34px -24px hsl(229 50% 20% / 0.5); animation: monte 0.8s 0.15s var(--signature) both; }
+.etat-icone .ic { width: 36px; height: 36px; }
+.etat-titre { margin: 0 0 8px; font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.12; }
+.etat-texte { max-width: 34ch; margin: 0 0 26px; color: var(--discret); font-size: 15px; line-height: 1.5; animation: monte 0.8s 0.35s var(--signature) both; }
+.etat-actions { display: grid; gap: 8px; width: min(100%, 360px); animation: monte 0.8s 0.45s var(--signature) both; }
+.danger-etat .etat-icone { background: hsl(0 84% 60% / 0.12); color: var(--erreur); }
+.bouton-verre.rouge { color: #fff; background: var(--erreur); box-shadow: 0 10px 22px -12px hsl(0 84% 45% / 0.7); }
+
+/* ------------------------------------------------------------ la fenetre de confirmation */
+.dialogue {
+  position: fixed;
+  z-index: 52;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  justify-items: center;
+  width: min(100% - 40px, 360px);
+  padding: 24px 20px 18px;
+  border-radius: 28px;
+  background: hsl(229 40% 97%);
+  text-align: center;
+  translate: -50% -50%;
+  animation: dialogue-entre 0.5s 0.6s var(--signature) both;
+}
+@keyframes dialogue-entre { from { transform: scale(0.92); opacity: 0; } }
+.dialogue-icone { display: grid; place-items: center; width: 52px; height: 52px; margin-bottom: 12px; border-radius: 16px; background: hsl(0 84% 60% / 0.12); color: var(--erreur); }
+.dialogue h2 { margin: 0 0 6px; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.dialogue p { margin: 0 0 18px; color: var(--discret); font-size: 14.5px; line-height: 1.5; }
+.dialogue-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.dialogue-actions .bouton-verre { min-height: 46px; }
+
+/* ------------------------------------------------------------ les bulles et les messages */
+/* La bulle d aide : posee sous le badge, sa pointe vers lui. */
+.photo-grande .badge.verifie { z-index: 3; }
+.bulle-aide {
+  position: absolute;
+  z-index: 4;
+  left: 12px;
+  bottom: 52px;
+  display: grid;
+  gap: 3px;
+  width: min(270px, calc(100% - 24px));
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--texte);
+  color: hsl(0 0% 100% / 0.82);
+  font-size: 13px;
+  line-height: 1.45;
+  animation: bulle-entre 0.5s 0.9s var(--signature) both;
+}
+.bulle-aide::after { content: ''; position: absolute; left: 26px; bottom: -6px; width: 12px; height: 12px; border-radius: 2px; background: inherit; rotate: 45deg; }
+.bulle-aide strong { color: #fff; font-size: 14px; }
+.bulle-aide .lien-encre { color: #fff; font-size: 13px; }
+@keyframes bulle-entre { from { transform: translateY(8px) scale(0.96); opacity: 0; } }
+/* Le message : un bandeau a l encre, en bas, qui part seul apres 4 s. */
+.message {
+  position: fixed;
+  z-index: 45;
+  left: 50%;
+  bottom: calc(var(--haut-onglets) + 26px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100% - 2 * var(--marge-app), 420px);
+  padding: 8px 14px 8px 8px;
+  border-radius: 18px;
+  background: var(--texte);
+  color: #fff;
+  font-size: 14px;
+  translate: -50% 0;
+  animation: message 4.5s 0.6s var(--signature) both;
+}
+.message .photo { flex: none; width: 40px; height: 40px; border-radius: 10px; aspect-ratio: auto; }
+.message span:not(.photo) { flex: 1; }
+.message-action { color: var(--limonade); font-weight: 700; cursor: pointer; }
+@keyframes message { 0% { transform: translateY(140%); } 10%, 100% { transform: none; } }
+
+/* ------------------------------------------------------------ un etat vide dans une page */
+.vide { display: grid; justify-items: center; padding: 48px calc(var(--marge-app) + 8px) 24px; text-align: center; }
+.vide h2 { margin: 0 0 8px; font-size: 21px; font-weight: 700; letter-spacing: -0.02em; animation: monte 0.8s 0.3s var(--signature) both; }
+.vide p { max-width: 34ch; margin: 0 0 22px; color: var(--discret); font-size: 14.5px; line-height: 1.5; animation: monte 0.8s 0.38s var(--signature) both; }
+.vide-recherche { padding-top: 28px; }
+.vide-recherche .etat-icone { width: 64px; height: 64px; border-radius: 20px; }
+.vide-recherche .etat-icone .ic { width: 30px; height: 30px; }

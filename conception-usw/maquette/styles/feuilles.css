@@ -1,0 +1,308 @@
+/* USW : les feuilles et les dernieres pages. Filtres (E04), commentaires
+   (E07), telecharger l original (E08), enregistrer (E09), partager (E10),
+   carte des reels (E11), collection (E19), signaler (E22), regles (E23),
+   moderation (E24, E25), confidentialite (E38). La feuille de base est dans
+   profil.css ; ici, son en-tete, ses hauteurs et ce qu elle contient. */
+
+/* ------------------------------------------------------------ la feuille */
+/* Sur une page sombre (les reels), la feuille garde l encre. */
+.feuille { gap: 14px; padding: 8px 16px 16px; max-height: calc(100% - 60px); color: var(--texte); }
+.reels .feuille .verre:not(.rouge), .reels .feuille .rond-verre { color: var(--texte); }
+.feuille-poignee { margin-bottom: 0; }
+.feuille-tete { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 38px; }
+.feuille-tete h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+/* Les longues listes : la feuille monte haut, sa liste defile, la saisie reste en bas. */
+.feuille.haute { top: 14%; grid-template-rows: auto auto 1fr auto; overflow: hidden; }
+@media (min-width: 600px) { .feuille.haute { top: 18%; width: 520px; } .feuille-large { width: 480px; } }
+.feuille-texte { margin: -6px 0 0; color: var(--discret); font-size: 14.5px; line-height: 1.5; }
+.feuille-note { margin: 0; color: var(--discret); font-size: 13px; line-height: 1.5; text-align: center; }
+.feuille-sous-titre { margin: 4px 0 -4px; color: var(--discret); font-size: 13px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+.feuille .bouton-verre.large { width: 100%; }
+.feuille .modeles { margin-top: 0; background: #fff; }
+.feuille-pied { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 4px; }
+.feuille-pied .bouton-verre { flex: 1; max-width: 240px; min-height: 50px; }
+.feuille-pied .lien-encre { border: none; background: none; font-size: 15px; }
+
+/* ------------------------------------------------------------ E04 filtres */
+.filtre-groupe { display: grid; gap: 10px; }
+.filtre-groupe h3 { display: flex; justify-content: space-between; margin: 0; font-size: 15px; font-weight: 700; }
+.filtre-groupe h3 span { color: var(--discret); font-weight: 600; font-size: 13.5px; }
+.filtre-groupe .champ { min-height: 48px; padding-block: 0; background: #fff; }
+.pastilles { display: flex; flex-wrap: wrap; gap: 8px; }
+.feuille .pastille:not([aria-checked='true']) { background: #fff; }
+.curseur-rayon { position: relative; height: 28px; }
+.rail { position: absolute; left: 0; right: 0; top: 12px; height: 4px; border-radius: 2px; background: hsl(229 30% 30% / 0.14); }
+.rail-plein { position: absolute; inset: 0 auto 0 0; width: var(--p); border-radius: inherit; background: var(--texte); }
+.bouton-rayon { position: absolute; top: 0; left: var(--p); width: 28px; height: 28px; margin-left: -14px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px hsl(229 30% 30% / 0.08), 0 4px 12px -2px hsl(229 50% 20% / 0.3); }
+.rayon-reperes { display: flex; justify-content: space-between; margin-top: -4px; color: var(--discret); font-size: 12px; }
+.filtre-ligne { display: flex; align-items: center; gap: 14px; }
+.filtre-ligne > div { display: grid; flex: 1; gap: 2px; color: var(--discret); font-size: 13px; }
+.filtre-ligne strong { color: var(--texte); font-size: 15px; }
+
+/* ------------------------------------------------------------ E07 commentaires */
+.avis-liste { display: grid; align-content: start; gap: 18px; margin: 0 -16px; padding: 4px 16px 12px; overflow: hidden; }
+.avis { display: flex; gap: 10px; }
+.avis .avatar.petit { width: 34px; height: 34px; }
+.avis-corps { flex: 1; min-width: 0; }
+.avis-corps p { margin: 0; font-size: 14.5px; line-height: 1.45; }
+.avis-corps b { font-weight: 700; }
+.avis .epingle { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 3px; color: var(--discret); font-size: 12px; font-weight: 600; }
+.marque-auteur { margin-left: 6px; padding: 1px 7px; border-radius: 6px; background: var(--texte); color: #fff; font-size: 11px; font-weight: 700; vertical-align: 1px; }
+.mention { color: var(--ocean); font-weight: 600; }
+.avis-pied { display: flex; gap: 16px; margin-top: 4px; color: var(--discret); font-size: 12.5px; }
+.avis-pied button { padding: 0; border: none; background: none; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.avis-aime { display: grid; justify-items: center; align-self: start; gap: 1px; padding: 2px 0 0; border: none; background: none; color: var(--discret); font-size: 11.5px; font-weight: 600; cursor: pointer; }
+.avis-aime .ic { width: 18px; height: 18px; }
+/* Aime : le coeur se remplit au rouge de la charte. */
+.avis-aime.aime .ic { color: var(--erreur); fill: var(--erreur); }
+.reponses { display: grid; gap: 12px; margin-top: 12px; }
+.reponses .avatar.petit { width: 26px; height: 26px; font-size: 10px; }
+.voir-reponses { display: flex; align-items: center; gap: 10px; padding: 0; border: none; background: none; color: var(--discret); font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.voir-reponses span { width: 22px; height: 1px; background: currentColor; }
+.saisie-bloc { position: relative; display: grid; gap: 8px; margin: 0 -16px -16px; padding: 10px 16px 16px; border-top: 1px solid hsl(229 30% 30% / 0.08); background: hsl(229 40% 97%); }
+.mentions { position: absolute; left: 16px; right: 16px; bottom: calc(100% + 6px); display: grid; padding: 6px; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px -20px hsl(229 50% 20% / 0.45); animation: bulle-entre 0.5s 0.9s var(--signature) both; }
+.mention-ligne { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 12px; }
+.mention-ligne.choisie { background: var(--secondaire); }
+.mention-ligne > div { display: grid; color: var(--discret); font-size: 12.5px; }
+.mention-ligne strong { color: var(--texte); font-size: 14px; }
+.repondre-a { display: flex; align-items: center; gap: 6px; color: var(--discret); font-size: 12.5px; }
+.repondre-a b { color: var(--texte); }
+.repondre-a button { display: grid; place-items: center; padding: 2px; border: none; background: none; color: var(--discret); cursor: pointer; }
+.saisie { display: flex; align-items: center; gap: 8px; }
+.saisie .champ { flex: 1; min-height: 46px; padding-block: 0; background: #fff; }
+.saisie .champ-valeur { font-size: 14.5px; }
+.saisie .envoyer { flex: none; color: #fff; background: var(--texte); }
+
+/* ------------------------------------------------------------ E08 telecharger l original */
+.fichier-ligne { display: flex; align-items: center; gap: 12px; }
+.fichier-ligne .photo { flex: none; width: 64px; height: 64px; border-radius: 14px; aspect-ratio: auto !important; }
+.fichier-ligne > div { display: grid; gap: 1px; color: var(--discret); font-size: 13px; }
+.fichier-ligne strong { color: var(--texte); font-size: 14.5px; word-break: break-all; }
+.avertissement { display: flex; gap: 10px; padding: 12px 14px; border-radius: 16px; background: hsl(45 100% 50% / 0.14); }
+.avertissement .ic { flex: none; width: 20px; height: 20px; color: hsl(35 90% 32%); }
+.avertissement p { display: grid; gap: 2px; margin: 0; color: hsl(229 20% 28%); font-size: 13.5px; line-height: 1.45; }
+.avertissement strong { color: var(--texte); font-size: 14.5px; }
+
+/* ------------------------------------------------------------ E09 enregistrer */
+.collections { display: grid; gap: 2px; margin: 0 -8px; }
+.collection-ligne { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 18px; animation: monte 0.7s calc(0.8s + var(--n) * 0.05s) var(--signature) both; }
+.collection-ligne.choisie { background: #fff; }
+.collection-vignettes { display: grid; flex: none; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; width: 60px; height: 60px; border-radius: 14px; overflow: hidden; }
+.collection-vignettes .photo { aspect-ratio: auto !important; height: 100%; }
+.collection-vignettes .photo:first-child { grid-row: span 2; }
+.collection-ligne > div { display: grid; flex: 1; gap: 2px; }
+.collection-ligne strong { font-size: 15.5px; }
+.collection-ligne span:not(.photo):not(.collection-vignettes):not(.coche-ronde) { display: inline-flex; align-items: center; gap: 4px; color: var(--discret); font-size: 13px; }
+.coche-ronde { display: grid; flex: none; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--texte); color: #fff; }
+.coche-ronde .ic { width: 16px; height: 16px; stroke-width: 2.6; }
+.nouvelle-collection { display: flex; align-items: center; gap: 12px; padding: 8px 0; border: none; background: none; font-size: 15.5px; font-weight: 700; cursor: pointer; }
+.nouvelle-collection .ic { width: 60px; height: 60px; padding: 18px; border-radius: 14px; background: #fff; }
+
+/* ------------------------------------------------------------ E10 partager */
+.partage-apercu { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 20px; background: #fff; }
+.partage-apercu .photo { flex: none; width: 56px; height: 72px; border-radius: 12px; aspect-ratio: auto !important; }
+.partage-apercu > div { display: grid; gap: 1px; color: var(--discret); font-size: 13px; }
+.partage-apercu strong { color: var(--texte); font-size: 15px; }
+.lien-court { color: var(--texte); font-weight: 600; }
+.membres, .applis { display: flex; justify-content: space-between; gap: 6px; }
+.membre, .appli { display: grid; justify-items: center; gap: 6px; width: 64px; padding: 0; border: none; background: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+.membre .avatar { width: 54px; height: 54px; font-size: 17px; }
+.appli-icone { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: #fff; }
+.appli-icone .ic { width: 24px; height: 24px; }
+.appli-icone.marque .ic { width: 54px; height: 54px; }
+.appli-icone.marque { background: none; }
+
+/* ------------------------------------------------------------ E22 signaler */
+.feuille-signaler .motifs { overflow: hidden; }
+.motifs .modele { padding-block: 11px; }
+.feuille .champ.zone { align-items: flex-start; min-height: 0; padding-block: 12px; background: #fff; }
+.feuille .champ.zone .ic { margin-top: 2px; }
+
+/* ------------------------------------------------------------ E11 carte des reels */
+.carte-reels { background: #eceef4; }
+.carte-reels .barre-etat { position: relative; z-index: 3; }
+.carte-haut { position: absolute; z-index: 3; top: 44px; left: var(--marge-app); right: var(--marge-app); display: grid; gap: 10px; }
+.lieu-haut-ligne { display: flex; gap: 8px; }
+.lieu-haut-ligne .champ { flex: 1; min-height: 44px; padding-block: 0; }
+.carte-haut .filtres { margin-right: calc(-1 * var(--marge-app)); }
+.carte-haut .pastille:not([aria-checked='true']) { background: hsl(0 0% 100% / 0.88); }
+/* Un contenu sur la carte : sa photo dans un cadre blanc, la pointe vers le lieu. */
+.repere-contenu {
+  position: absolute;
+  z-index: 2;
+  left: var(--x);
+  top: var(--y);
+  width: 52px;
+  height: 52px;
+  padding: 3px;
+  border: none;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 20px -10px hsl(229 50% 20% / 0.6);
+  translate: -50% -100%;
+  cursor: pointer;
+  animation: repere-tombe 0.8s calc(0.4s + var(--n) * 0.08s) var(--signature) both;
+}
+.repere-contenu::after { content: ''; position: absolute; left: 50%; bottom: -5px; width: 12px; height: 12px; margin-left: -6px; border-radius: 0 0 3px 0; background: inherit; rotate: 45deg; }
+.repere-contenu .photo { height: 100%; border-radius: 13px; aspect-ratio: auto !important; }
+.repere-contenu.choisi { z-index: 3; width: 68px; height: 68px; background: var(--texte); }
+.repere-contenu.choisi .photo { border-radius: 13px; }
+.repere-reel { position: absolute; right: -6px; top: -6px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--texte); color: #fff; box-shadow: 0 0 0 2px #fff; }
+.repere-reel .ic { width: 11px; height: 11px; fill: currentColor; }
+.groupe-reperes { position: absolute; z-index: 2; left: var(--x); top: var(--y); display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--texte); color: #fff; font-size: 14px; font-weight: 700; box-shadow: 0 0 0 4px hsl(0 0% 100% / 0.7); translate: -50% -50%; animation: fondu 0.6s 0.9s var(--interface) both; }
+.ma-position-point { position: absolute; z-index: 2; left: var(--x); top: var(--y); width: 18px; height: 18px; border-radius: 50%; background: #4285f4; box-shadow: 0 0 0 3px #fff, 0 0 0 14px hsl(217 89% 61% / 0.18); translate: -50% -50%; }
+.carte-reels .ma-position { bottom: calc(var(--haut-onglets) + 222px); }
+.carte-apercu {
+  position: absolute;
+  z-index: 3;
+  left: 8px;
+  right: 8px;
+  bottom: calc(var(--haut-onglets) + 24px);
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 26px;
+  background: hsl(229 40% 97%);
+  animation: feuille-monte 0.7s 0.8s var(--signature) both;
+}
+@media (min-width: 600px) { .carte-apercu { left: 50%; right: auto; width: 460px; translate: -50% 0; } }
+.carte-apercu > .photo { position: relative; flex: none; width: 96px; height: 150px; border-radius: 18px; aspect-ratio: auto !important; }
+.apercu-texte { display: grid; flex: 1; align-content: start; gap: 4px; min-width: 0; color: var(--discret); font-size: 12.5px; }
+.apercu-texte strong { color: var(--texte); font-size: 16px; }
+.apercu-texte > span:not(.badge) { display: flex; align-items: center; gap: 4px; }
+.apercu-texte .badge { justify-self: start; height: 24px; font-size: 11.5px; }
+.apercu-actions { display: grid; gap: 6px; margin-top: auto; padding-top: 6px; }
+.apercu-actions .bouton-verre { min-height: 40px; font-size: 14px; }
+
+/* ------------------------------------------------------------ E19 une collection */
+.collection-tete { display: grid; justify-items: center; padding: 4px var(--marge-app) 6px; text-align: center; }
+.collection-couverture { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; width: 168px; height: 128px; border-radius: 26px; overflow: hidden; animation: monte 0.8s 0.1s var(--signature) both; }
+.collection-couverture .photo { height: 100%; aspect-ratio: auto !important; }
+.collection-couverture .photo:first-child { grid-row: span 2; }
+.collection-tete .profil-pseudo { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 18px; }
+
+/* ------------------------------------------------------------ E23 regles communautaires */
+.regles { display: grid; gap: 14px; margin-bottom: 26px; }
+.regle { display: flex; gap: 14px; padding: 16px; border-radius: 22px; background: hsl(0 0% 100% / 0.6); animation: monte 0.9s calc(0.45s + var(--n) * 0.05s) var(--signature) both; }
+.regle-icone { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: #fff; }
+.regle-icone .ic { width: 22px; height: 22px; }
+.regle h2 { margin: 2px 0 4px; font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; }
+.regle p { margin: 0; color: hsl(229 20% 28%); font-size: 14.5px; line-height: 1.55; }
+.exemples { display: grid; gap: 6px; margin-top: 10px; }
+.exemples p { display: flex; gap: 8px; font-size: 13.5px; line-height: 1.45; }
+.exemples .ic { flex: none; width: 18px; height: 18px; margin-top: 1px; padding: 3px; border-radius: 50%; stroke-width: 2.6; }
+.exemples .oui .ic { background: var(--limonade); color: hsl(71 60% 14%); }
+.exemples .non .ic { background: hsl(0 84% 60% / 0.14); color: var(--erreur); }
+.sanctions { display: grid; margin: 0 0 6px; padding: 4px 16px; border-radius: 22px; list-style: none; }
+.sanctions li { display: flex; gap: 12px; padding: 12px 0; }
+.sanctions li + li { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.sanctions .numero { display: inline-grid; flex: none; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--texte); color: #fff; font-size: 13px; font-weight: 700; }
+.sanctions li div { display: grid; gap: 2px; color: var(--discret); font-size: 13.5px; }
+.sanctions strong { color: var(--texte); font-size: 15px; }
+.sanctions li:last-child .numero { background: var(--erreur); }
+
+/* ------------------------------------------------------------ E38 confidentialite */
+.en-bref { margin-bottom: 26px; padding: 16px; border-radius: 22px; animation: monte 0.9s 0.4s var(--signature) both; }
+.en-bref h2 { margin: 0 0 10px; font-size: 17px; font-weight: 700; }
+.en-bref ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.en-bref li { display: flex; gap: 10px; font-size: 14.5px; line-height: 1.45; }
+.en-bref .ic { flex: none; width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: var(--limonade); color: hsl(71 60% 14%); stroke-width: 2.6; }
+.donnees { display: grid; margin-bottom: 26px; padding: 0 16px; border-radius: 22px; }
+.donnee { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.donnee + .donnee { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.donnee > .ic { flex: none; }
+.donnee > div { display: grid; flex: 1; gap: 1px; color: var(--discret); font-size: 13px; }
+.donnee strong { color: var(--texte); font-size: 14.5px; }
+.duree-garde { flex: none; max-width: 9em; color: var(--discret); font-size: 12.5px; font-weight: 600; text-align: right; }
+.droits { display: grid; justify-items: center; gap: 4px; margin-top: 26px; }
+.droits .bouton-verre { width: 100%; }
+
+/* ------------------------------------------------------------ E24 moderation, la file */
+.moderation .flux b { margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: hsl(229 30% 30% / 0.1); font-size: 12px; }
+.moderation .flux span[aria-current='true'] b { background: var(--texte); color: #fff; }
+.file-note { margin: 0 0 14px; color: var(--discret); font-size: 13.5px; }
+.dossiers { display: grid; gap: 4px; }
+.dossier { display: flex; align-items: center; gap: 12px; padding: 10px; margin: 0 -10px; border-radius: 18px; animation: monte 0.8s calc(0.35s + var(--n) * 0.05s) var(--signature) both; }
+.dossier:first-child { background: hsl(0 0% 100% / 0.6); }
+.dossier .photo { flex: none; width: 58px; height: 72px; border-radius: 12px; aspect-ratio: auto !important; }
+.dossier-texte { display: grid; flex: 1; gap: 2px; min-width: 0; color: var(--discret); font-size: 13px; }
+.dossier-texte strong { color: var(--texte); font-size: 15px; }
+.raison { display: inline-flex; align-items: center; gap: 5px; justify-self: start; margin-top: 3px; padding: 3px 9px 3px 7px; border-radius: 999px; background: hsl(229 30% 30% / 0.08); color: var(--texte); font-size: 12px; font-weight: 600; }
+.raison.forte { background: hsl(0 84% 60% / 0.12); color: var(--erreur); }
+.raison .ic { width: 14px; height: 14px; }
+.dossier .quand { align-self: start; margin: 2px 0 0; }
+
+/* ------------------------------------------------------------ E25 moderation, la decision */
+.decision .page-haut-titre { flex: 1; text-align: center; margin-right: 44px; color: var(--discret); font-size: 14.5px; }
+.decision-image { margin-bottom: 14px; border-radius: 24px; overflow: hidden; animation: monte 0.8s 0.1s var(--signature) both; }
+.decision-image .photo { aspect-ratio: 4 / 3 !important; }
+.decision-auteur { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.decision-auteur > div { display: grid; color: var(--discret); font-size: 13px; }
+.decision-auteur strong { color: var(--texte); font-size: 16px; }
+.analyse { margin-bottom: 14px; padding: 14px 16px; border-radius: 22px; animation: monte 0.9s 0.35s var(--signature) both; }
+.analyse-tete { display: flex; align-items: center; gap: 8px; }
+.analyse-tete strong { flex: 1; font-size: 15px; }
+.analyse-tete span { color: var(--erreur); font-size: 18px; font-weight: 700; }
+.jauge { position: relative; display: block; height: 6px; margin: 10px 0; border-radius: 3px; background: hsl(229 30% 30% / 0.1); overflow: hidden; }
+.jauge::after { content: ''; position: absolute; inset: 0; width: var(--p); border-radius: inherit; background: var(--erreur); transform-origin: left; animation: remplit 1s 0.6s var(--signature) both; }
+.analyse p { margin: 0; color: hsl(229 20% 28%); font-size: 13.5px; line-height: 1.5; }
+.decision .fiche { margin: 0 0 22px; }
+.compare-ligne { display: grid; grid-template-columns: 28px 1fr auto; align-items: start; gap: 4px 8px; padding: 10px 0; border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.compare-ligne:first-child { border-top: none; }
+.compare-ligne dt { font-size: 12px; color: var(--discret); }
+.compare-ligne dd { display: grid; margin: 1px 0 0; font-weight: 600; font-size: 14px; }
+.compare-ligne dd span { color: var(--discret); font-weight: 400; font-size: 12px; }
+.accord { display: inline-flex; align-items: center; gap: 4px; color: var(--erreur); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.accord.ok { color: hsl(140 55% 32%); }
+.accord .ic { width: 14px; height: 14px; }
+.decision .motifs { margin: 0 0 10px; background: #fff; }
+.decision-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+.decision-actions .bouton-verre .ic { width: 18px; height: 18px; stroke-width: 2.4; }
+/* Publier : la limonade, ce qui est sur. */
+.bouton-verre.valider { background: var(--limonade); color: hsl(71 60% 12%); box-shadow: 0 10px 22px -12px hsl(71 70% 35% / 0.7); }
+
+/* ------------------------------------------------------------ E06 reagir a un reel */
+/* Un appui long sur le coeur : les quatre reactions s ouvrent a sa gauche, le
+   reel s assombrit un peu pour les laisser lire. */
+.voile-reagir { position: absolute; inset: 0; z-index: 2; background: hsl(229 40% 4% / 0.35); animation: fondu 0.3s 0.5s var(--interface) both; }
+.reels-cote .bouton-reel.appui { position: relative; z-index: 4; }
+.reels-cote .bouton-reel.appui .rond-verre { transform: scale(1.12); }
+.reactions-choix {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: -8px;
+  display: flex;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 999px;
+  background: hsl(229 40% 97%);
+  color: var(--texte);
+  box-shadow: 0 18px 40px -16px hsl(229 50% 4% / 0.7);
+  transform-origin: right center;
+  animation: reactions-entre 0.45s 0.55s var(--ressort) both;
+}
+@keyframes reactions-entre { from { transform: scale(0.6); opacity: 0; } }
+.reaction { position: relative; display: grid; place-items: center; width: 50px; height: 50px; padding: 0; border: none; border-radius: 50%; background: none; cursor: pointer; animation: monte 0.5s calc(0.65s + var(--k) * 0.05s) var(--ressort) both; }
+.reaction .emoji { font-size: 30px; line-height: 1; }
+/* La reaction sous le doigt grossit et dit son nom au-dessus. */
+.reaction.choisie { background: #fff; transform: translateY(-6px) scale(1.18); box-shadow: 0 8px 18px -10px hsl(229 50% 20% / 0.5); }
+.reaction-nom { position: absolute; bottom: calc(100% + 6px); left: 50%; padding: 3px 9px; border-radius: 999px; background: var(--texte); color: #fff; font-size: 11px; font-weight: 700; white-space: nowrap; translate: -50% 0; opacity: 0; }
+.reaction.choisie .reaction-nom { opacity: 1; }
+
+/* ------------------------------------------------------------ E06 les reactions d un reel */
+.reactions-flux { gap: 18px; margin: -4px -16px 0; padding: 0 16px; overflow: hidden; font-size: 14.5px; white-space: nowrap; }
+.reacteurs { display: grid; align-content: start; gap: 4px; overflow: hidden; }
+.reacteur { display: flex; align-items: center; gap: 12px; padding: 6px 0; animation: monte 0.7s calc(0.8s + var(--n) * 0.05s) var(--signature) both; }
+.avatar-reaction { position: relative; flex: none; }
+.avatar-reaction .avatar { width: 46px; height: 46px; }
+.avatar-reaction .emoji { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #fff; font-size: 13px; box-shadow: 0 2px 6px hsl(229 50% 20% / 0.2); }
+.reacteur > div { display: grid; flex: 1; gap: 1px; color: var(--discret); font-size: 13px; }
+.reacteur strong { color: var(--texte); font-size: 15px; }
+.reacteur .bouton-verre { min-height: 38px; padding: 0 14px; font-size: 14px; }
+
+/* ------------------------------------------------------------ E06 commenter, partager, telecharger un reel */
+/* Un moment du reel, cite dans un commentaire : un appui y ramene la lecture. */
+.moment { padding: 1px 6px; border-radius: 6px; background: var(--secondaire); color: var(--texte); font-weight: 700; cursor: pointer; }
+.actions-reel { padding-top: 14px; border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.appli-icone.rouge-doux { background: hsl(0 84% 60% / 0.12); color: var(--erreur); }
+.fichier-ligne .photo.vertical { width: 48px; height: 76px; border-radius: 10px; }

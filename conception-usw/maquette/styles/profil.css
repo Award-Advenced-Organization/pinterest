@@ -1,0 +1,93 @@
+/* USW : le profil. Mon profil (E18), profil d un createur (E20), modifier le
+   profil et reglages (E21), notifications (E17). Les couleurs de la charte :
+   l ocean pour ce qui se clique, la limonade pour ce qui est sur, le rouge
+   (--erreur) pour ce qui coupe ou retire : se deconnecter, bloquer, signaler,
+   supprimer, un contenu retire. Les icones restent a l encre. */
+
+.espace { flex: 1; }
+.page-haut .rond-verre + .rond-verre { margin-left: 2px; }
+.page-haut-titre.centre { flex: 1; text-align: center; }
+.bouton-verre.petit { min-height: 38px; padding: 0 14px; font-size: 14px; border-radius: 12px; }
+.lien-encre { color: var(--texte); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: pointer; }
+.champ-valeur.multi { white-space: normal; line-height: 1.45; }
+.danger { color: var(--erreur); }
+
+/* ------------------------------------------------------------ E18 / E20 le profil */
+.profil-page { padding-bottom: 0; }
+.profil-haut { display: flex; padding: 0 var(--marge-app); }
+.profil-tete { display: grid; justify-items: center; padding: 4px var(--marge-app) 6px; text-align: center; }
+.profil-tete .avatar { animation: monte 0.8s 0.1s var(--signature) both; }
+.profil-nom { margin: 14px 0 2px; font-size: 26px; font-weight: 700; letter-spacing: -0.03em; }
+.profil-pseudo { margin: 0; color: var(--discret); font-size: 14.5px; font-weight: 600; animation: monte 0.8s 0.3s var(--signature) both; }
+.profil-bio { max-width: 34ch; margin: 10px 0 6px; font-size: 15px; line-height: 1.45; animation: monte 0.8s 0.35s var(--signature) both; }
+.profil-lieu { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 16px; color: var(--discret); font-size: 13.5px; font-weight: 600; animation: monte 0.8s 0.4s var(--signature) both; }
+.profil-lieu .ic { width: 16px; height: 16px; }
+.profil-chiffres { display: flex; gap: 28px; margin-bottom: 18px; animation: monte 0.8s 0.45s var(--signature) both; }
+.profil-chiffres div { display: grid; gap: 1px; }
+.profil-chiffres strong { font-size: 18px; font-weight: 700; }
+.profil-chiffres span { color: var(--discret); font-size: 12.5px; }
+.profil-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: min(100%, 420px); animation: monte 0.8s 0.5s var(--signature) both; }
+.profil-actions .bouton-verre { min-height: 44px; }
+.profil-flux { justify-content: center; margin: 18px var(--marge-app) 10px; }
+
+/* La feuille d options, ouverte depuis « ... » : elle monte du bas. */
+.feuille-fond { position: fixed; inset: 0; z-index: 50; background: hsl(229 40% 8% / 0.32); animation: fondu 0.4s 0.6s var(--interface) both; }
+.feuille {
+  position: fixed;
+  z-index: 51;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  padding: 8px 8px 12px;
+  border-radius: 28px;
+  background: hsl(229 40% 97%);
+  animation: feuille-monte 0.6s 0.65s var(--signature) both;
+}
+@media (min-width: 600px) { .feuille { left: 50%; right: auto; width: 440px; translate: -50% 0; } }
+@keyframes feuille-monte { from { transform: translateY(110%); } }
+.feuille-poignee { justify-self: center; width: 40px; height: 5px; margin: 2px 0 8px; border-radius: 3px; background: hsl(229 30% 30% / 0.2); }
+.feuille-ligne { display: flex; align-items: center; gap: 14px; padding: 15px 14px; border: none; border-radius: 16px; background: none; font-weight: 600; font-size: 15.5px; text-align: left; cursor: pointer; }
+.feuille-ligne + .feuille-ligne { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+
+/* ------------------------------------------------------------ E21 reglages */
+.reglages .page-titre { margin-bottom: 18px; }
+.compte-carte { display: flex; align-items: center; gap: 14px; padding: 14px 16px; margin-bottom: 22px; border-radius: 20px; animation: monte 0.8s 0.3s var(--signature) both; }
+.compte-carte .avatar.grand { width: 52px; height: 52px; font-size: 18px; margin: 0; }
+.compte-carte > div { display: grid; flex: 1; gap: 2px; color: var(--discret); font-size: 13.5px; }
+.compte-carte strong { color: var(--texte); font-size: 16px; }
+.compte-carte > .ic { color: var(--discret); }
+.groupe { margin-bottom: 20px; animation: monte 0.8s calc(0.4s + var(--n) * 0.06s) var(--signature) both; }
+.groupe-titre { margin: 0 0 8px 4px; color: var(--discret); font-size: 13px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+.groupe-corps { border-radius: 20px; overflow: hidden; }
+.reglage-ligne { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 8px 16px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.reglage-ligne + .reglage-ligne { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.reglage-ligne .reglage-icone { width: 34px; height: 34px; border-radius: 10px; }
+.reglage-ligne .reglage-icone .ic { width: 20px; height: 20px; }
+.reglage-texte { flex: 1; }
+.reglage-valeur { color: var(--discret); font-weight: 500; font-size: 14px; }
+.reglage-ligne > .ic:last-child { color: var(--discret); }
+/* Se deconnecter : le rouge de la charte, icone comprise. */
+.reglage-ligne.danger { color: var(--erreur); }
+.reglage-ligne.danger .reglage-icone { background: hsl(0 84% 60% / 0.1); }
+.supprimer { display: block; margin: 4px auto 0; padding: 10px; border: none; background: none; color: var(--erreur); font-size: 14.5px; font-weight: 600; cursor: pointer; }
+.version { margin: 18px 0 0; color: var(--discret); font-size: 12.5px; text-align: center; }
+
+/* ------------------------------------------------------------ E17 notifications */
+.notifications .page-titre { margin-bottom: 18px; }
+.notifications .groupe-titre { margin-top: 6px; }
+.notifs { display: grid; gap: 4px; margin-bottom: 18px; }
+.notif { display: flex; align-items: center; gap: 12px; padding: 10px; margin: 0 -10px; border-radius: 18px; animation: monte 0.8s calc(0.35s + var(--n) * 0.05s) var(--signature) both; }
+/* Pas encore lue : un fond de verre, sans point ni couleur. */
+.notif.nouvelle { background: hsl(0 0% 100% / 0.6); }
+.notif p { flex: 1; margin: 0; font-size: 14.5px; line-height: 1.4; }
+.notif p b { font-weight: 700; }
+.quand { margin-left: 6px; color: var(--discret); font-size: 13px; }
+.notif .avatar { width: 44px; height: 44px; }
+.vignette { flex: none; width: 46px; height: 58px; border-radius: 10px; aspect-ratio: auto; }
+.notif-icone { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: hsl(0 0% 100% / 0.75); }
+.notif-icone .ic { width: 22px; height: 22px; }
+.notif-icone.ok { background: var(--limonade); color: hsl(71 60% 14%); }
+.notif-icone.danger { background: hsl(0 84% 60% / 0.12); color: var(--erreur); }
+.notif .bouton-verre { min-height: 38px; padding: 0 14px; font-size: 14px; }
+.notif .lien-encre { flex: none; font-size: 13.5px; }

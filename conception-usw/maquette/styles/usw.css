@@ -1,0 +1,836 @@
+/* USW, United State of World : les ecrans.
+   La structure suit les ecrans de Pinterest du projet (reference_screenshots) :
+   mosaique, epingle, recherche par idees, profil. La matiere est celle de
+   SafeVault : fond lavande, verre liquide, ocean pour ce qui se clique,
+   limonade pour ce qui est sur (la capture verifiee). Le mouvement suit
+   MOUVEMENT.md : chaque animation part d un etat cache et finit sur le style
+   de base, que l atelier montre fige sur la toile. */
+
+/* ------------------------------------------------------------ l application */
+/* Un telephone ne montre pas de barre de defilement. */
+html { scrollbar-width: none; }
+.app {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+.app.fixe { height: 100vh; overflow: hidden; }
+
+/* La barre d etat du telephone. */
+.barre-etat {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 34px;
+  padding: 0 calc(var(--marge-app) + 6px);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.barre-etat .etat-icones { display: inline-flex; gap: 2px; align-items: center; }
+.barre-etat .ic { width: 17px; height: 17px; }
+.sombre .barre-etat, .barre-etat.claire { color: #fff; }
+
+/* ------------------------------------------------------------ la barre d onglets */
+.onglets {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: 14px;
+  translate: -50% 0;
+  width: min(100% - 2 * var(--marge-app), 440px);
+  height: var(--haut-onglets);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  border-radius: 999px;
+  /* Sur les photos, le verre seul ne se lirait pas : il prend un voile givre. */
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.62), hsl(229 40% 96% / 0.5));
+  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+  backdrop-filter: blur(18px) saturate(1.7);
+  animation: onglets-entre 0.9s 0.45s var(--signature) both;
+}
+.onglet {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: hsl(229 15% 35%);
+}
+/* L onglet actif : l icone passe a l encre et a sa version pleine, sans pastille ni point. */
+.onglet[aria-current='page'] { color: var(--texte); }
+.onglet[aria-current='page'] .ic { --ic-contour: none; --ic-plein: inline; }
+.onglet.creer {
+  width: 50px;
+  height: 50px;
+  color: #fff;
+}
+.onglet.creer .ic { width: 26px; height: 26px; stroke-width: 2.1; }
+
+.sombre .onglets {
+  background: linear-gradient(180deg, hsl(229 30% 12% / 0.42), hsl(229 30% 6% / 0.5));
+  box-shadow: inset 0 1px 0.5px hsl(0 0% 100% / 0.35), inset 0 -1px 0.5px hsl(0 0% 100% / 0.12), 0 10px 30px -12px hsl(0 0% 0% / 0.6);
+}
+.sombre .onglet { color: hsl(0 0% 100% / 0.78); }
+.sombre .onglet[aria-current='page'] { color: #fff; }
+
+/* ------------------------------------------------------------ les pieces */
+
+/* Le bouton rond de verre : retour, plus, fermer. */
+.rond-verre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  color: var(--texte);
+}
+.rond-verre.givre {
+  background: hsl(0 0% 100% / 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  backdrop-filter: blur(14px) saturate(1.6);
+}
+
+/* La pastille de filtre : un verre fin, comme les controles. */
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--texte);
+}
+.pastille .ic { width: 16px; height: 16px; }
+/* La pastille choisie passe a l encre : pas de contour ni de fond bleu. */
+.pastille.verre[aria-checked='true'] { color: #fff; background: var(--texte); box-shadow: none; }
+.pastille.verre[aria-checked='true']::before, .pastille.verre[aria-checked='true']::after { opacity: 0; }
+
+/* Le badge de capture : la limonade dit ce qui est sur. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px 0 7px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.badge .ic { width: 16px; height: 16px; stroke-width: 2; }
+.badge.verifie { background: var(--limonade); color: hsl(71 60% 14%); }
+.badge.declare { background: hsl(0 0% 100% / 0.7); color: var(--discret); box-shadow: inset 0 0 0 1px hsl(229 30% 30% / 0.14); }
+
+/* Les initiales d un createur : pas de visage invente. */
+.avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  background: var(--teinte, var(--ocean));
+}
+.avatar.petit { width: 30px; height: 30px; font-size: 12px; }
+
+/* Une photo : le fond est pose par l assembleur (.ph-pNN), avec ses
+   proportions ; la couleur dominante tient la place pendant le chargement. */
+.photo {
+  display: block;
+  width: 100%;
+  background-color: hsl(229 25% 84%);
+  background-size: cover;
+  background-position: center;
+}
+
+/* La mesure discrete d un compteur. */
+.compte { font-size: 13px; font-weight: 600; white-space: nowrap; }
+
+/* ------------------------------------------------------------ E00 ouverture */
+.ouverture {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--fond);
+}
+.ouverture .barre-etat { position: absolute; top: 0; left: 0; right: 0; }
+.ouverture-coeur { position: relative; text-align: center; }
+
+.sigle {
+  position: relative;
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  font-size: clamp(30px, 7.4vw, 60px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  white-space: nowrap;
+  /* Tout se pose sans a-coup : une seule courbe, longue, qui ralentit a la fin. */
+  --souple: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sigle .mot { display: inline-flex; align-items: baseline; }
+.sigle > * + * { margin-left: 0.24em; }
+.sigle .initiale {
+  display: inline-block;
+  color: var(--ocean);
+  /* U, puis S, puis W : chacune monte seule, la suivante attend. */
+  animation: initiale 1.1s calc(0.2s + var(--i) * 0.45s) var(--souple) both;
+}
+/* Le W prend la limonade. */
+.sigle .initiale.citron { color: var(--limonade); }
+/* Puis les mots se deroulent un par un, chacun a son tour (--t). */
+.sigle .suite {
+  display: inline-flex;
+  overflow: hidden;
+  max-width: var(--l);
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+  animation: deroule 1.2s var(--t) var(--souple) both;
+}
+.sigle .suite > span {
+  display: inline-block;
+  animation: lettre 1s calc(var(--t) + 0.1s + var(--j) * 0.06s) var(--souple) both;
+}
+/* L espace avant un mot s ouvre avec le mot qui le precede (--e). */
+.sigle .mot:not(:first-child) { animation: ecarte 1.2s var(--e) var(--souple) both; }
+.sigle .of {
+  display: inline-flex;
+  overflow: hidden;
+  max-width: 1.1em;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+  font-weight: 300;
+  color: var(--discret);
+  animation: petit-mot 1.1s var(--t) var(--souple) both;
+}
+.sigle .of > span { display: inline-block; animation: lettre 1s calc(var(--t) + 0.1s) var(--souple) both; }
+@keyframes initiale { from { transform: translateY(0.6em); opacity: 0; } }
+@keyframes deroule { from { max-width: 0; } }
+@keyframes lettre { from { transform: translateY(110%); opacity: 0; } }
+@keyframes ecarte { from { margin-left: 0; } }
+@keyframes petit-mot { from { max-width: 0; margin-left: 0; } }
+
+/* ------------------------------------------------------------ E03 piles de lieux */
+/* A l accueil, chaque lieu est une pile de ses photos, rangee comme un
+   paquet : les photos de derriere sont alignees sur celle de devant, un peu
+   plus petites, et ne depassent qu en haut. Toutes les 4 s, la photo de
+   devant glisse vers le bas en s effacant, la suivante avance a sa place
+   (0,8 s, sans rebond : un seul mouvement, facile a suivre), et celle qui est
+   partie revient au fond sans se voir. 4 photos, un tour en 16 s ; les piles
+   tournent l une apres l autre (--d), jamais toutes ensemble.
+   Le style de base est la pile au repos. Toucher la pile ouvre le lieu (E33). */
+.pile-lieu {
+  break-inside: avoid;
+  margin: 0 0 18px;
+  animation: carte 1.4s calc(0.35s + var(--n, 0) * 0.07s) var(--signature) both;
+}
+.pile {
+  position: relative;
+  display: grid;
+  margin-top: 16px;
+  /* L ordre des photos se joue en profondeur (translateZ) et non en z-index :
+     l animation ne touche que transform et opacite, le telephone la fait
+     tourner sans recalculer la page. */
+  transform-style: preserve-3d;
+}
+.pile-carte {
+  --pile-courbe: cubic-bezier(0.22, 1, 0.36, 1);
+  grid-area: 1 / 1;
+  overflow: hidden;
+  border-radius: 18px;
+  background: hsl(229 25% 84%);
+  transform-origin: 50% 0;
+  animation: pile 16s calc(var(--k) * 4s - 17.6s + var(--d, 0s)) var(--pile-courbe) infinite both;
+}
+.pile-carte .photo {
+  height: 100%;
+  aspect-ratio: auto;
+  animation: pile-image 16s calc(var(--k) * 4s - 17.6s + var(--d, 0s)) var(--pile-courbe) infinite both;
+}
+/* 3 devant, 2 et 1 derriere, 0 partie ; celle qui part passe a 5 pour rester dessus. */
+.pile-carte:nth-child(1) { transform: translateZ(3px); box-shadow: 0 10px 22px -16px hsl(229 50% 20% / 0.5); }
+.pile-carte:nth-child(2) { transform: translateZ(2px) translateY(-8px) scale(0.93); opacity: 0.75; }
+.pile-carte:nth-child(3) { transform: translateZ(1px) translateY(-15px) scale(0.86); opacity: 0.45; }
+.pile-carte:nth-child(4) { transform: translateZ(0) translateY(12%) scale(0.98); opacity: 0; }
+.pile-carte:not(:first-child) .photo { transform: scale(1.1); }
+.pile-lieu .carte-pied { padding-top: 9px; }
+/* Le tour d une photo, a partir du moment ou elle passe devant :
+   0-5 % elle avance, 25-30 % elle glisse et s efface, 50-55 % elle revient
+   au fond, 75-80 % elle monte d un rang. */
+@keyframes pile {
+  0%     { transform: translateZ(3px) translateY(-8px) scale(0.93); opacity: 0.75; }
+  5%     { transform: translateZ(3px); opacity: 1; }
+  24.99% { transform: translateZ(3px); opacity: 1; }
+  25%    { transform: translateZ(5px); opacity: 1; }
+  30%    { transform: translateZ(5px) translateY(12%) scale(0.98); opacity: 0; }
+  49.99% { transform: translateZ(5px) translateY(12%) scale(0.98); opacity: 0; }
+  50%    { transform: translateZ(0px) translateY(12%) scale(0.98); opacity: 0; }
+  55%    { transform: translateZ(0px) translateY(-15px) scale(0.86); opacity: 0.45; }
+  74.99% { transform: translateZ(0px) translateY(-15px) scale(0.86); opacity: 0.45; }
+  75%    { transform: translateZ(2px) translateY(-15px) scale(0.86); opacity: 0.45; }
+  80%    { transform: translateZ(2px) translateY(-8px) scale(0.93); opacity: 0.75; }
+  99.99% { transform: translateZ(2px) translateY(-8px) scale(0.93); opacity: 0.75; }
+  100%   { transform: translateZ(3px) translateY(-8px) scale(0.93); opacity: 0.75; }
+}
+/* L image se recadre doucement quand sa photo arrive devant. */
+@keyframes pile-image {
+  0% { transform: scale(1.1); }
+  9%, 100% { transform: scale(1); }
+}
+
+/* ------------------------------------------------------------ E33 lieu */
+.entete-lieu {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0 var(--marge-app) 8px;
+  background: var(--fond);
+}
+.lieu-titre { margin: 6px 0 6px; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.lieu-ligne { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.lieu-infos { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 600; color: var(--discret); animation: monte 0.9s 0.4s var(--signature) both; }
+.lieu-infos .ic { width: 17px; height: 17px; }
+.lieu-ligne .bouton-verre { animation: monte 0.9s 0.5s var(--signature) both; }
+
+/* ------------------------------------------------------------ l en-tete qui se range */
+/* A l accueil et sur un lieu, l en-tete (titre, flux, filtres) ne reste pas
+   fige : quand on descend, il se range sous la barre d etat et les photos
+   prennent tout l ecran ; des qu on remonte, il revient en entier. Un petit
+   script pose la classe .range (la toile de l atelier ne l execute pas :
+   l en-tete y est affiche). La barre d etat, elle, reste, pleine. */
+.app:has(> .entete-mobile) > .barre-etat {
+  position: sticky;
+  top: 0;
+}
+/* Sous l heure et les icones, pas de coupure nette : un voile lavande
+   (le fond a 85 %) un peu floute, qui s efface vers le bas, comme la barre
+   de Sika. Il deborde de la barre pour que les photos y entrent en douceur. */
+.app:has(> .entete-mobile) > .barre-etat::before,
+.entete-mobile::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  background: hsl(229 36% 92% / 0.85);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(#000 45%, #0000);
+  mask-image: linear-gradient(#000 45%, #0000);
+}
+.app:has(> .entete-mobile) > .barre-etat::before { inset: 0 0 -26px; }
+/* Le bas de l en-tete se fond de la meme facon dans les photos. */
+.entete-mobile::after { left: 0; right: 0; top: calc(100% - 1px); height: 26px; -webkit-mask-image: linear-gradient(#000, #0000); mask-image: linear-gradient(#000, #0000); }
+.entete-mobile {
+  top: 34px;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.1, 1);
+}
+.entete-mobile.range { transform: translateY(-100%); }
+
+/* ------------------------------------------------------------ au defilement */
+/* Une fois la pile deliee (la page du lieu, E33, ouverte en touchant une pile
+   de l accueil), ses photos entrent comme les projets de Nentem : quand une
+   carte monte dans l ecran, elle arrive de son cote (colonne de gauche par la
+   gauche, de droite par la droite, celle du milieu tout droit) en se
+   redressant, elle grandit de 80 % a 100 % et l image se recadre
+   (1,3 -> 1). Transform seulement : l animation tourne hors du fil
+   principal, liee au defilement. Le mouvement suit le doigt : il avance et recule avec
+   le defilement, et se termine quand la carte est entree en entier. Les
+   cartes deja visibles a l ouverture sont posees. La colonne (--cp au
+   telephone, --ct a la tablette, -1 / 0 / 1) est mesuree dans Chrome
+   (outils/colonnes.mjs), car une mosaique en colonnes ne la donne pas. */
+.lieu-page .mosaique > * { --cote: var(--cp, 0); }
+@media (min-width: 600px) { .lieu-page .mosaique > * { --cote: var(--ct, 0); } }
+@supports (animation-timeline: view()) {
+  .lieu-page .mosaique .carte-image {
+    animation: defile-entre linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 100%;
+    /* L image est dans ce cadre qui la coupe (overflow), qui serait son
+       propre defilement : elle suit donc la ligne de temps du cadre. */
+    view-timeline-name: --carte;
+  }
+  .lieu-page .mosaique .carte-image .photo {
+    animation: defile-image linear both;
+    animation-timeline: --carte;
+    animation-range: entry 0% entry 100%;
+  }
+  .lieu-page .mosaique .carte-pied {
+    animation: defile-pied linear both;
+    animation-timeline: view();
+    animation-range: entry 40% entry 100%;
+  }
+}
+@keyframes defile-entre {
+  from {
+    transform: translateX(calc(var(--cote) * 5vw)) rotate(calc(var(--cote) * 3deg)) scale(0.8);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  to { transform: none; }
+}
+@keyframes defile-image {
+  from { transform: scale(1.3); animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  to { transform: none; }
+}
+@keyframes defile-pied {
+  from { transform: translateY(14px); opacity: 0; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+  to { transform: none; opacity: 1; }
+}
+
+/* ------------------------------------------------------------ entrees communes */
+@keyframes monte { from { transform: translateY(1em); opacity: 0; } }
+@keyframes mot { from { transform: translateY(1.7em) rotate(15deg); } }
+@keyframes onglets-entre { from { transform: translateY(140%) scale(0.92); } }
+/* Une carte se pose : elle monte et grandit de 94 % a 100 %. Transform et
+   opacite seulement : le telephone l anime sans recalculer la page. */
+@keyframes carte {
+  from { transform: translateY(36px) scale(0.94); opacity: 0; }
+  40% { opacity: 1; }
+}
+@keyframes fondu { from { opacity: 0; } }
+
+/* Un texte coupe en mots, qui montent un a un. */
+.mots .m { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.mots .m > span { display: inline-block; animation: mot 1s calc(0.25s + var(--k, 0) * 0.05s) var(--signature) both; }
+
+/* ------------------------------------------------------------ E03 accueil */
+.entete-accueil {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0 var(--marge-app) 8px;
+  background: var(--fond);
+}
+.entete-ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+}
+.marque {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.marque b { color: var(--ocean); font-weight: 700; }
+.entete-actions { display: inline-flex; gap: 6px; }
+.point-nouveau {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--erreur);
+  box-shadow: 0 0 0 2px var(--fond);
+}
+.rond-verre { position: relative; }
+
+/* Les trois flux : des onglets de texte souligne, comme le « Tout » de Pinterest. */
+.flux {
+  display: flex;
+  gap: 22px;
+  margin: 2px 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--discret);
+}
+.flux span { position: relative; padding: 6px 0; }
+.flux span[aria-current='true'] { color: var(--texte); }
+.flux span[aria-current='true']::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--texte);
+  animation: souligne 0.6s 0.5s var(--signature) both;
+  transform-origin: left;
+}
+@keyframes souligne { from { transform: scaleX(0); } }
+.filtres { display: flex; gap: 8px; overflow: hidden; }
+
+/* La mosaique : deux colonnes au telephone, trois a la tablette. */
+.mosaique {
+  columns: 2;
+  column-gap: 10px;
+  padding: 4px var(--marge-app) calc(var(--haut-onglets) + 40px);
+}
+@media (min-width: 600px) { .mosaique { columns: 3; column-gap: 14px; } }
+.carte {
+  break-inside: avoid;
+  margin: 0 0 14px;
+  animation: carte 1.4s calc(0.35s + var(--n, 0) * 0.07s) var(--signature) both;
+}
+.carte-image {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 22px -16px hsl(229 50% 20% / 0.5);
+}
+.carte-image .photo { border-radius: inherit; }
+.duree, .son {
+  position: absolute;
+  top: 9px;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  background: hsl(229 30% 8% / 0.42);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.duree { left: 9px; }
+.son { right: 9px; width: 24px; padding: 0; justify-content: center; }
+.son .ic { width: 15px; height: 15px; }
+.carte-image .badge { position: absolute; left: 8px; bottom: 8px; height: 24px; font-size: 11.5px; }
+.carte-pied {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 7px 2px 0 4px;
+}
+.carte-lieu { font-size: 13.5px; font-weight: 600; line-height: 1.25; }
+.carte-appareil { display: flex; align-items: center; gap: 3px; margin-top: 2px; font-size: 12px; color: var(--discret); }
+.carte-pied .ic { color: var(--discret); }
+
+/* ------------------------------------------------------------ E05 photo */
+.photo-page { padding-bottom: calc(var(--haut-onglets) + 40px); }
+.photo-grande {
+  position: relative;
+  margin: 0 8px;
+  border-radius: 30px;
+  overflow: hidden;
+  animation: carte 1.3s 0.1s var(--signature) both;
+}
+.photo-grande .photo { border-radius: inherit; }
+.photo-grande .commandes {
+  position: absolute;
+  top: 12px; left: 12px; right: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+.photo-grande .badge { position: absolute; left: 14px; bottom: 14px; height: 30px; font-size: 13px; padding: 0 12px 0 8px; }
+.photo-grande .badge .ic { width: 18px; height: 18px; }
+
+.actions-photo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px calc(var(--marge-app) - 6px) 4px;
+  animation: monte 0.9s 0.45s var(--signature) both;
+}
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 44px;
+  padding: 0 8px;
+  border: none;
+  background: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+.action.aime { color: var(--erreur); }
+.action.aime .ic { fill: currentColor; }
+.actions-photo .espace { flex: 1; }
+.bouton-verre.plein .ic { stroke-width: 2; }
+.bouton-verre .bouton-verre-texte .ic { width: 19px; height: 19px; }
+
+.photo-texte { padding: 6px var(--marge-app) 0; }
+.photo-titre { margin: 4px 0 6px; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.photo-legende { margin: 0 0 16px; color: hsl(229 12% 28%); animation: monte 0.9s 0.6s var(--signature) both; }
+
+/* La fiche de capture : ce qui rend le contenu verifiable. */
+.fiche {
+  margin: 0 var(--marge-app) 16px;
+  padding: 14px 16px 6px;
+  border-radius: 22px;
+  animation: monte 1s 0.7s var(--signature) both;
+}
+.fiche-tete { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.fiche-tete h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.fiche dl { margin: 0; }
+.fiche-ligne {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: start;
+  gap: 4px 8px;
+  padding: 10px 0;
+  border-top: 1px solid hsl(229 30% 30% / 0.08);
+}
+.fiche-ligne:first-child { border-top: none; }
+.fiche-ligne .ic { color: var(--texte); margin-top: 1px; }
+.fiche-ligne dt { font-size: 12px; color: var(--discret); }
+.fiche-ligne dd { margin: 1px 0 0; font-weight: 600; }
+.fiche-ligne .origine { display: block; font-weight: 400; font-size: 12px; color: var(--discret); }
+
+.createur {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 var(--marge-app) 18px;
+  animation: monte 1s 0.8s var(--signature) both;
+}
+.createur-nom { font-weight: 600; }
+.createur-sous { font-size: 13px; color: var(--discret); }
+.createur .bouton-verre { margin-left: auto; min-height: 42px; }
+
+.commentaires { margin: 0 var(--marge-app) 20px; animation: monte 1s 0.9s var(--signature) both; }
+.commentaires h3 { margin: 0 0 10px; font-size: 16px; }
+.commentaire { display: flex; gap: 10px; margin-bottom: 12px; font-size: 14px; }
+.commentaire b { font-weight: 600; }
+.commentaire .epingle { display: block; margin-bottom: 2px; font-size: 11.5px; color: var(--ocean); font-weight: 600; }
+.saisie-commentaire {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: var(--discret);
+  font-size: 14px;
+}
+
+.suite-titre { margin: 8px var(--marge-app) 12px; font-size: 18px; font-weight: 700; }
+
+/* A la tablette : la photo a gauche, le reste a droite. */
+@media (min-width: 600px) {
+  .photo-page .colonnes {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 6px;
+    align-items: start;
+    padding: 0 12px;
+  }
+  .photo-grande { margin: 0; position: sticky; top: 8px; }
+  .photo-page .colonne-infos { padding-top: 4px; }
+  .photo-page .mosaique { columns: 3; }
+}
+
+/* ------------------------------------------------------------ E06 reels */
+.reels { position: relative; height: 100vh; overflow: hidden; background: #000; color: #fff; }
+.reel-video {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  animation: fondu 1.2s var(--interface) both;
+}
+.reels::before, .reels::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.reels::before { top: 0; height: 180px; background: linear-gradient(180deg, hsl(229 40% 5% / 0.55), transparent); }
+.reels::after { bottom: 0; height: 60%; background: linear-gradient(0deg, hsl(229 40% 4% / 0.88) 22%, hsl(229 40% 4% / 0.45) 60%, transparent); }
+.reels .barre-etat, .reels .reels-haut { position: relative; z-index: 2; }
+.reels .barre-etat { color: #fff; }
+.reels-haut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px var(--marge-app) 0;
+}
+.reels-flux { display: flex; gap: 18px; font-weight: 600; font-size: 16px; color: hsl(0 0% 100% / 0.7); }
+.reels-flux span[aria-current='true'] { color: #fff; position: relative; }
+.reels-flux span[aria-current='true']::after {
+  content: '';
+  position: absolute;
+  left: 25%; right: 25%; bottom: -6px;
+  height: 3px;
+  border-radius: 3px;
+  background: #fff;
+}
+.reels .rond-verre { color: #fff; }
+.reels .verre { color: #fff; }
+
+.reels-cote {
+  position: absolute;
+  z-index: 3;
+  right: 10px;
+  bottom: calc(var(--haut-onglets) + 46px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.reels-cote .bouton-reel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  animation: monte 0.9s calc(0.4s + var(--k) * 0.07s) var(--signature) both;
+}
+.reels-cote .rond-verre { width: 48px; height: 48px; }
+.reels-cote .aime .ic { fill: var(--erreur); stroke: var(--erreur); }
+.reels-cote .avatar { width: 46px; height: 46px; box-shadow: 0 0 0 2px #fff; }
+.reels-cote .suivre {
+  position: absolute;
+  bottom: -9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ocean);
+  color: #fff;
+}
+.reels-cote .suivre .ic { width: 14px; height: 14px; stroke-width: 2.2; }
+.reels-cote .profil-reel { position: relative; display: flex; justify-content: center; margin-bottom: 6px; }
+
+.reels-bas {
+  position: absolute;
+  z-index: 3;
+  left: var(--marge-app);
+  right: 84px;
+  bottom: calc(var(--haut-onglets) + 34px);
+}
+.reels-bas .createur-ligne { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; animation: monte 0.9s 0.5s var(--signature) both; }
+.reels-bas .createur-ligne b { font-size: 15px; }
+.reels-bas .suivre-texte {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid hsl(0 0% 100% / 0.6);
+  background: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.reels-bas p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.4; animation: monte 0.9s 0.6s var(--signature) both; }
+.reels-bas .infos-capture {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+  animation: monte 0.9s 0.7s var(--signature) both;
+}
+.reels-bas .info {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: hsl(0 0% 100% / 0.16);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.reels-bas .info .ic { width: 15px; height: 15px; }
+.reels-bas .y-aller { min-height: 46px; animation: monte 0.9s 0.8s var(--signature) both; }
+.reels-son { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12.5px; color: hsl(0 0% 100% / 0.85); }
+.reels-progres {
+  position: absolute;
+  z-index: 3;
+  left: var(--marge-app);
+  right: var(--marge-app);
+  bottom: calc(var(--haut-onglets) + 24px);
+  height: 3px;
+  border-radius: 3px;
+  background: hsl(0 0% 100% / 0.25);
+  overflow: hidden;
+}
+.reels-progres::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 38%;
+  border-radius: inherit;
+  background: #fff;
+}
+
+@media (min-width: 600px) {
+  .reels-bas { right: 120px; max-width: 520px; }
+  .reels-cote { right: 22px; }
+}
+
+/* ------------------------------------------------------------ E31 recherche */
+.recherche { padding: 0 var(--marge-app) calc(var(--haut-onglets) + 40px); }
+.champ-recherche {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  margin: 6px 0 16px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: var(--discret);
+  font-size: 15px;
+  animation: monte 0.9s 0.1s var(--signature) both;
+}
+.champ-recherche .curseur { width: 1.5px; height: 20px; margin-left: -6px; background: var(--ocean); animation: clignote 1s steps(1) infinite; }
+@keyframes clignote { 50% { opacity: 0; } }
+.recentes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.recentes .pastille { animation: monte 0.8s calc(0.2s + var(--k) * 0.05s) var(--signature) both; }
+.recentes .pastille .ic { color: var(--discret); }
+.section-titre {
+  margin: 0 0 12px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.idees {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+@media (min-width: 600px) { .idees { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
+.idee {
+  position: relative;
+  height: 92px;
+  border-radius: 16px;
+  overflow: hidden;
+  animation: carte 1.2s calc(0.3s + var(--n) * 0.06s) var(--signature) both;
+}
+@media (min-width: 600px) { .idee { height: 120px; } }
+.idee .photo { position: absolute; inset: 0; aspect-ratio: auto !important; height: 100%; }
+.idee::after { content: ''; position: absolute; inset: 0; background: hsl(229 40% 8% / 0.38); }
+.idee span {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  text-align: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.2;
+  text-shadow: 0 1px 8px hsl(0 0% 0% / 0.35);
+}

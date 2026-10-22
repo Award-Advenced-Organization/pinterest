@@ -1,0 +1,92 @@
+/* Les actions d appoint : du texte seul, sans socle. Le verre est reserve
+   aux vraies actions (voir verre/BoutonVerre.css). */
+.bouton-discret {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 3.1rem;
+  padding: 0 0.9rem;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--discret);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.15s var(--courbe);
+}
+.bouton-discret svg { width: 1.05rem; height: 1.05rem; }
+.bouton-discret:focus-visible { outline: 2px solid var(--ocean); outline-offset: 2px; }
+.bouton-discret:disabled { opacity: 0.4; cursor: not-allowed; }
+.bouton-discret.petit { min-height: 2rem; padding: 0 0.4rem; font-size: 0.85rem; }
+
+/* La croix qui retire un fichier ou un destinataire. */
+.croix {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--discret);
+  cursor: pointer;
+  transition: color 0.15s var(--courbe), background 0.15s var(--courbe);
+}
+.croix svg { width: 1.05rem; height: 1.05rem; }
+.croix:focus-visible { background: hsl(0 0% 100% / 0.6); outline: none; }
+
+/* Le jeton d initiales, pour le compte et les collegues. */
+.jeton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--texte);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* Les sorties (Annuler, Fermer, retirer) rougissent : on voit qu on
+   s apprete a defaire quelque chose. */
+.sortie { transition: color 0.2s var(--courbe); }
+.sortie:focus-visible,
+.sortie:active:not(:disabled),
+.croix:focus-visible,
+.croix:active { color: var(--erreur); }
+
+/* Le survol n existe qu avec une souris : sur un ecran tactile il resterait
+   colle au dernier bouton touche. */
+@media (hover: hover) {
+  .bouton-discret:hover:not(:disabled) { color: var(--texte); }
+  .croix:hover { background: hsl(0 0% 100% / 0.6); }
+  .sortie:hover:not(:disabled),
+  .croix:hover { color: var(--erreur); }
+
+  /* Les icones se retracent au survol de leur bouton, trait apres trait,
+     sans hate. Chaque trait mesure 1 (pathLength, voir pieces/Icone.tsx). */
+  :is(button, a):hover:not(:disabled) .icone :is(path, circle, rect) {
+    stroke-dasharray: 1 2;
+    animation: icone-trace 1.5s cubic-bezier(0.5, 0, 0.2, 1) both;
+  }
+  :is(button, a):hover:not(:disabled) .icone :nth-child(2) { animation-delay: 0.22s; }
+  :is(button, a):hover:not(:disabled) .icone :nth-child(3) { animation-delay: 0.44s; }
+  :is(button, a):hover:not(:disabled) .icone :nth-child(4) { animation-delay: 0.66s; }
+}
+@keyframes icone-trace {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* Au doigt, les petites cibles grandissent jusqu a 44px. */
+@media (pointer: coarse) {
+  .croix { width: 2.75rem; height: 2.75rem; }
+  .bouton-discret.petit { min-height: 2.75rem; padding: 0 0.6rem; }
+}

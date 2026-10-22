@@ -1,0 +1,55 @@
+/* Le socle des ecrans de USW : la page d un telephone ou d une tablette.
+   Les couleurs, le verre et les boutons sont ceux de SafeVault, tels quels
+   (tokens.css, verre.css, boutons.css, bouton-verre.css). */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: 'WuraMi', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button { font: inherit; color: inherit; }
+
+/* Les courbes de la charte du mouvement (MOUVEMENT.md, section 1). */
+:root {
+  --signature: cubic-bezier(0.35, 0, 0, 1);
+  --interface: cubic-bezier(0.4, 0, 0.1, 1);
+  --marge-app: 16px;
+  --haut-onglets: 64px;
+}
+@media (min-width: 600px) {
+  :root { --marge-app: 28px; --haut-onglets: 68px; }
+  body { font-size: 16px; }
+}
+
+/* Une icone du pack USW : a l encre, trait appuye comme les symboles d iOS.
+   Jamais de bleu ni de pastille bleue derriere une icone ; seules les icones
+   d information gardent les couleurs de Google. */
+.ic {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ic.petite { width: 18px; height: 18px; }
+.ic.mini { width: 15px; height: 15px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.2s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}

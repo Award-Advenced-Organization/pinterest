@@ -1,0 +1,26 @@
+' Style commun des diagrammes de USW
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam ArrowColor #444444
+skinparam usecase {
+  BackgroundColor #EEF1FE
+  BorderColor #1F3BF7
+}
+skinparam package {
+  BorderColor #9AA6C8
+  FontColor #1F2A44
+}
+skinparam rectangle {
+  BorderColor #1F3BF7
+  FontSize 15
+}
+skinparam class {
+  BackgroundColor #EEF1FE
+  BorderColor #1F3BF7
+}
+skinparam classAttributeIconSize 0
+skinparam titleFontSize 18

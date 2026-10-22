@@ -1,0 +1,162 @@
+/* Le verre liquide, d apres celui d Apple et le curseur de Noomo,
+   sur le fond lavande de la page. C est de l eau plus que du verre : presque
+   rien dans la masse, tout se joue sur les bords et a la surface.
+   Quatre couches :
+   1. la masse : transparente. La lentille (useVerreLiquide) courbe le fond
+      le long des aretes ; une ombre fine sous l arete du haut et une clarte
+      au bas donnent l epaisseur d une goutte ;
+   2. l arete speculaire (::before) : un filet de lumiere qui tourne vers
+      le pointeur, vif d un cote, doux de l autre ;
+   3. l onde (::after) : au survol, un cercle de lumiere part de la main et
+      s elargit a la surface, comme sur l eau qu on touche ;
+   4. l ombre portee, douce.
+   Deux epaisseurs : .verre pour les controles et les cartes, .verre-plaque
+   pour les grandes surfaces (panneau, liste), sans lentille. */
+
+/* Le rayon de l onde. Declare, il peut s animer. */
+@property --onde {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.verre,
+.verre-plaque {
+  position: relative;
+  isolation: isolate;
+}
+
+.verre {
+  /* Pas de flou de repli : sur un fond uni il ne se verrait pas, et il
+     couterait cher. La lentille, elle, est posee par useVerreLiquide. */
+  background: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 0.1),
+    hsl(0 0% 100% / 0.02) 40%,
+    hsl(0 0% 100% / 0.07)
+  );
+  box-shadow:
+    inset 0 1px 0.5px hsl(0 0% 100% / 0.9),
+    inset 0 -1px 0.5px hsl(0 0% 100% / 0.5),
+    inset 0 6px 9px -7px hsl(229 55% 30% / 0.22),
+    inset 0 -6px 8px -7px hsl(0 0% 100% / 0.5),
+    0 0 0 0.5px hsl(229 40% 30% / 0.14),
+    0 10px 24px -14px hsl(229 50% 20% / 0.36);
+}
+
+.verre-plaque {
+  /* Pas de backdrop-filter ici : il couperait les verres poses dessus du
+     fond de la page, et leur lentille n aurait plus rien a courber. */
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.16), hsl(0 0% 100% / 0.08));
+  box-shadow:
+    inset 0 1px 0.5px hsl(0 0% 100% / 0.9),
+    inset 0 -1px 0.5px hsl(0 0% 100% / 0.45),
+    inset 0 14px 24px -18px hsl(229 55% 30% / 0.14),
+    0 0 0 0.5px hsl(229 40% 30% / 0.1),
+    0 40px 80px -48px hsl(229 50% 20% / 0.35);
+}
+
+/* L arete : un anneau de 1,25px peint par un degrade conique dont le point
+   le plus vif regarde le pointeur (--angle, ecrit par useLumiere). */
+.verre::before,
+.verre-plaque::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1.25px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--angle, 315deg),
+    hsl(0 0% 100% / 1) 0deg,
+    hsl(0 0% 100% / 0.35) 50deg,
+    hsl(0 0% 100% / 0.05) 110deg,
+    hsl(0 0% 100% / 0.6) 180deg,
+    hsl(0 0% 100% / 0.05) 250deg,
+    hsl(0 0% 100% / 0.35) 310deg,
+    hsl(0 0% 100% / 1) 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+/* L onde : un anneau de lumiere centre sur la main (--lx, --ly, ecrits par
+   useLumiere). Au repos son rayon est nul et il ne se voit pas. */
+.verre::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle farthest-corner at var(--lx, 50%) var(--ly, 50%),
+    hsl(0 0% 100% / 0.14) 0%,
+    hsl(0 0% 100% / 0.05) calc(var(--onde) - 32%),
+    /* Le creux, un peu plus sombre, juste derriere la crete claire. */
+    hsl(229 70% 45% / 0.1) calc(var(--onde) - 15%),
+    hsl(0 0% 100% / 0.62) calc(var(--onde) - 4%),
+    hsl(0 0% 100% / 0.2) var(--onde),
+    transparent calc(var(--onde) + 8%)
+  );
+}
+
+@media (hover: hover) {
+  .verre:hover::after { animation: onde 1.25s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+}
+/* Sous le doigt ou le clic, l onde repart. */
+.verre-appuyable:active:not(:disabled)::after { animation: onde-appui 0.9s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+
+@keyframes onde {
+  0%   { --onde: 0%; opacity: 0; }
+  14%  { opacity: 1; }
+  70%  { opacity: 0.7; }
+  100% { --onde: 125%; opacity: 0; }
+}
+@keyframes onde-appui {
+  0%   { --onde: 0%; opacity: 1; }
+  100% { --onde: 125%; opacity: 0; }
+}
+
+/* L appui : la goutte se tasse, puis revient avec un leger rebond. Au
+   survol elle gonfle a peine. */
+.verre-appuyable {
+  transition: transform 0.5s var(--ressort), background-color 0.3s var(--courbe), opacity 0.2s var(--courbe);
+}
+@media (hover: hover) {
+  .verre-appuyable:hover:not(:disabled) { transform: scale(1.012); }
+}
+.verre-appuyable:active:not(:disabled) { transform: scale(0.965); transition-duration: 0.12s; }
+
+/* L eau teintee d ocean, pour l action principale de l ecran. */
+.verre.plein {
+  background: linear-gradient(180deg, hsl(229 97% 60% / 0.8), hsl(229 97% 52% / 0.84));
+  color: #fff;
+  box-shadow:
+    inset 0 1px 0.5px hsl(0 0% 100% / 0.6),
+    inset 0 -1px 0.5px hsl(0 0% 100% / 0.25),
+    inset 0 7px 10px -7px hsl(229 90% 20% / 0.3),
+    inset 0 -9px 12px -9px hsl(200 100% 80% / 0.5),
+    0 0 0 0.5px hsl(229 90% 30% / 0.35),
+    0 14px 30px -14px hsl(229 97% 45% / 0.65);
+}
+.verre.plein::before { opacity: 0.7; }
+
+/* Le verre retenu : une carte ou une pastille choisie prend l ocean. */
+.verre[aria-checked='true'] {
+  background: hsl(229 97% 55% / 0.1);
+  box-shadow:
+    inset 0 0 0 1.5px var(--ocean),
+    inset 0 1px 0.5px hsl(0 0% 100% / 0.75),
+    0 10px 24px -14px hsl(229 97% 45% / 0.4);
+}
+
+.lentille-filtre {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}

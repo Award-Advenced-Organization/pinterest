@@ -1,0 +1,23 @@
+:root {
+  /* Le fond d e-freeshop, a la valeur pres : un lavande tres clair. */
+  --fond: hsl(229 36% 92%);
+  --texte: hsl(0 0% 7%);
+  --discret: hsl(215 16% 47%);
+  --carte: hsl(0 0% 100%);
+  --secondaire: hsl(240 10% 96%);
+  --bord: hsl(240 6% 90%);
+
+  /* Un role par couleur. L ocean : ce qui se clique et l etape en cours.
+     La limonade : ce qui est sur, fait, valide. */
+  --ocean: hsl(229 97% 55%);
+  --limonade: hsl(71 88% 56%);
+  --erreur: hsl(0 84% 60%);
+
+  --courbe: cubic-bezier(0.22, 1, 0.36, 1);
+  --souple: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Le rebond de l appui, celui des controles d iOS. */
+  --ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* La marge de page : le logo touche le bord gauche, le profil le droit. */
+  --marge: clamp(1rem, 4vw, 3.5rem);
+}

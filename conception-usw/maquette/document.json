@@ -1,0 +1,3517 @@
+{
+  "nom": "USW · United State of World",
+  "auteurs": [
+    "Boiry",
+    "Gédéon",
+    "Siméon Céphas",
+    "Jamal"
+  ],
+  "formats": [
+    {
+      "nom": "Tablette",
+      "largeur": 800,
+      "hauteur": 1280
+    },
+    {
+      "nom": "Téléphone",
+      "largeur": 412,
+      "hauteur": 915
+    }
+  ],
+  "ecrans": [
+    {
+      "id": "ouverture",
+      "nom": "E00 Ouverture",
+      "adresse": "usw.app",
+      "source": "e00-ouverture.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".app",
+          "vers": "bienvenue-1"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "bienvenue-1",
+      "nom": "E01 Bienvenue 1/3",
+      "adresse": "usw.app/bienvenue-1",
+      "source": "e01-bienvenue-1.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "bienvenue-2",
+          "texte": "Suivant"
+        },
+        {
+          "selecteur": ".lien-discret",
+          "vers": "entree",
+          "texte": "Passer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "bienvenue-2",
+      "nom": "E01 Bienvenue 2/3",
+      "adresse": "usw.app/bienvenue-2",
+      "source": "e01-bienvenue-2.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "bienvenue-3",
+          "texte": "Suivant"
+        },
+        {
+          "selecteur": ".lien-discret",
+          "vers": "entree",
+          "texte": "Passer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "bienvenue-3",
+      "nom": "E01 Bienvenue 3/3",
+      "adresse": "usw.app/bienvenue-3",
+      "source": "e01-bienvenue-3.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "entree",
+          "texte": "Commencer"
+        },
+        {
+          "selecteur": ".lien-discret",
+          "vers": "accueil",
+          "texte": "Explorer sans compte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "entree",
+      "nom": "E02 Entrée (e-mail ou Google)",
+      "adresse": "usw.app/entree",
+      "source": "e02-entree.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "completer-1",
+          "texte": "Google"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "creer-mdp",
+          "texte": "Continuer"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "cgu",
+          "texte": "conditions"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "confidentialite",
+          "texte": "confidentialité"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "mot-de-passe",
+      "nom": "E02 Mot de passe (compte existant)",
+      "adresse": "usw.app/mot-de-passe",
+      "source": "e02-mot-de-passe.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Se connecter"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "oubli",
+          "texte": "oublié"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "entree",
+          "texte": "Changer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "creer-mdp",
+      "nom": "E02 Créer le mot de passe",
+      "adresse": "usw.app/creer-mdp",
+      "source": "e02-creer-mdp.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "code",
+          "texte": "Continuer"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "cgu",
+          "texte": "conditions"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "confidentialite",
+          "texte": "confidentialité"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "code",
+      "nom": "E02 Code de vérification",
+      "adresse": "usw.app/code",
+      "source": "e02-code.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "completer-1",
+          "texte": "Vérifier"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "retour",
+          "texte": "corriger"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "oubli",
+      "nom": "E02 Mot de passe oublié",
+      "adresse": "usw.app/oubli",
+      "source": "e02-oubli.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "nouveau-mdp",
+          "texte": "Envoyer le code"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "mot-de-passe",
+          "texte": "Se connecter"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "nouveau-mdp",
+      "nom": "E02 Nouveau mot de passe",
+      "adresse": "usw.app/nouveau-mdp",
+      "source": "e02-nouveau.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Enregistrer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "completer-1",
+      "nom": "E36 Compléter le profil 1/3",
+      "adresse": "usw.app/completer-1",
+      "source": "e36-completer-1.html",
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "completer-2",
+          "texte": "Continuer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "completer-2",
+      "nom": "E36 Compléter le profil 2/3",
+      "adresse": "usw.app/completer-2",
+      "source": "e36-completer-2.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "completer-3",
+          "texte": "Continuer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "completer-3",
+      "nom": "E36 Compléter le profil 3/3",
+      "adresse": "usw.app/completer-3",
+      "source": "e36-completer-3.html",
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Terminer"
+        },
+        {
+          "selecteur": ".lien-discret",
+          "vers": "accueil",
+          "texte": "Passer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "accueil",
+      "nom": "E03 Accueil",
+      "adresse": "usw.app/accueil",
+      "source": "e03-accueil.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".pile-lieu",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".filtres .pastille",
+          "vers": "filtres",
+          "texte": "Filtres"
+        },
+        {
+          "selecteur": ".flux .m",
+          "vers": "position-refusee",
+          "texte": "Près de moi"
+        },
+        {
+          "selecteur": "[aria-label=\"Rechercher\"]",
+          "vers": "recherche"
+        },
+        {
+          "selecteur": "[aria-label=\"Notifications\"]",
+          "vers": "notifications"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "filtres",
+      "nom": "E04 Filtres du flux",
+      "adresse": "usw.app/filtres",
+      "source": "e04-filtres.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Voir"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "lieu",
+      "nom": "E33 Lieu",
+      "adresse": "usw.app/lieu/grand-popo",
+      "source": "e33-lieu.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".mosaique .carte",
+          "vers": "photo"
+        },
+        {
+          "selecteur": "[aria-label=\"Partager\"]",
+          "vers": "partager"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "photo",
+      "nom": "E05 Photo",
+      "adresse": "usw.app/p/grand-popo",
+      "source": "e05-photo.html",
+      "liens": [
+        {
+          "selecteur": "[aria-label=\"Commentaires\"]",
+          "vers": "commentaires"
+        },
+        {
+          "selecteur": ".commentaires",
+          "vers": "commentaires"
+        },
+        {
+          "selecteur": "[aria-label=\"Partager\"]",
+          "vers": "partager"
+        },
+        {
+          "selecteur": "[aria-label=\"Télécharger l'original\"]",
+          "vers": "telecharger"
+        },
+        {
+          "selecteur": "[aria-label=\"Enregistrer\"]",
+          "vers": "enregistrer"
+        },
+        {
+          "selecteur": ".photo-grande .badge",
+          "vers": "bulles"
+        },
+        {
+          "selecteur": ".createur-nom, .createur .avatar",
+          "vers": "createur"
+        },
+        {
+          "selecteur": ".mosaique .carte",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "commentaires",
+      "nom": "E07 Commentaires",
+      "adresse": "usw.app/commentaires",
+      "source": "e07-commentaires.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "telecharger",
+      "nom": "E08 Télécharger l'original",
+      "adresse": "usw.app/telecharger",
+      "source": "e08-telecharger.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Télécharger"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "enregistrer",
+      "nom": "E09 Enregistrer",
+      "adresse": "usw.app/enregistrer",
+      "source": "e09-enregistrer.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".collection-ligne",
+          "vers": "bulles"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "partager",
+      "nom": "E10 Partager",
+      "adresse": "usw.app/partager",
+      "source": "e10-partager.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".appli, .membre",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reels",
+      "nom": "E06 Reels",
+      "adresse": "usw.app/reels",
+      "source": "e06-reels.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": "[aria-label=\"Commentaires\"]",
+          "vers": "reel-commentaires"
+        },
+        {
+          "selecteur": "[aria-label=\"Partager\"]",
+          "vers": "reel-partager"
+        },
+        {
+          "selecteur": "[aria-label=\"Enregistrer\"]",
+          "vers": "reel-enregistrer"
+        },
+        {
+          "selecteur": ".bouton-reel.aime",
+          "vers": "reel-reagir"
+        },
+        {
+          "selecteur": ".profil-reel, .createur-ligne b",
+          "vers": "createur"
+        },
+        {
+          "selecteur": "[aria-label=\"Rechercher\"]",
+          "vers": "recherche"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-reagir",
+      "nom": "E06 Réagir à un reel",
+      "adresse": "usw.app/reel-reagir",
+      "source": "e06-reel-reagir.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-reel.aime .rond-verre",
+          "vers": "reel-reactions"
+        },
+        {
+          "selecteur": ".reaction",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".voile-reagir",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-reactions",
+      "nom": "E06 Réactions du reel",
+      "adresse": "usw.app/reel-reactions",
+      "source": "e06-reel-reactions.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-commentaires",
+      "nom": "E07 Commentaires du reel",
+      "adresse": "usw.app/reel-commentaires",
+      "source": "e06-reel-commentaires.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-partager",
+      "nom": "E10 Partager le reel",
+      "adresse": "usw.app/reel-partager",
+      "source": "e06-reel-partager.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".appli",
+          "vers": "reel-telecharger",
+          "texte": "Télécharger"
+        },
+        {
+          "selecteur": ".appli",
+          "vers": "reel-enregistrer",
+          "texte": "Enregistrer"
+        },
+        {
+          "selecteur": ".appli",
+          "vers": "signaler",
+          "texte": "Signaler"
+        },
+        {
+          "selecteur": ".appli, .membre",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-enregistrer",
+      "nom": "E09 Enregistrer le reel",
+      "adresse": "usw.app/reel-enregistrer",
+      "source": "e06-reel-enregistrer.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".collection-ligne",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-telecharger",
+      "nom": "E08 Télécharger le reel",
+      "adresse": "usw.app/reel-telecharger",
+      "source": "e06-reel-telecharger.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Télécharger"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "signaler",
+      "nom": "E22 Signaler",
+      "adresse": "usw.app/signaler",
+      "source": "e22-signaler.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".lien-encre",
+          "vers": "regles"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Envoyer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "carte",
+      "nom": "E11 Carte des reels",
+      "adresse": "usw.app/carte",
+      "source": "e11-carte.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".repere-contenu",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "reels",
+          "texte": "Voir le reel"
+        },
+        {
+          "selecteur": "[aria-label=\"Filtres\"]",
+          "vers": "filtres"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "recherche",
+      "nom": "E31 Recherche",
+      "adresse": "usw.app/recherche",
+      "source": "e31-recherche.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".idee",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".recentes",
+          "vers": "recherche-vide"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "creer",
+      "nom": "E12 Créer",
+      "adresse": "usw.app/creer",
+      "source": "e12-creer.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".option-creer",
+          "vers": "details",
+          "texte": "Prendre une photo"
+        },
+        {
+          "selecteur": ".option-creer",
+          "vers": "autoriser",
+          "texte": "Tourner un reel"
+        },
+        {
+          "selecteur": ".option-creer",
+          "vers": "completer-capture",
+          "texte": "Importer"
+        },
+        {
+          "selecteur": ".lien-encre",
+          "vers": "regles"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "autoriser",
+      "nom": "E32 Autorisations (une seule fois)",
+      "adresse": "usw.app/autoriser",
+      "source": "e32-autoriser.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "reel-camera",
+          "texte": "Autoriser"
+        },
+        {
+          "selecteur": ".lien-discret",
+          "vers": "retour",
+          "texte": "Plus tard"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reel-camera",
+      "nom": "E27 Tourner un reel",
+      "adresse": "usw.app/reel-camera",
+      "source": "e27-reel.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "montage",
+          "texte": "Suivant"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "montage",
+      "nom": "E28 Monter le reel",
+      "adresse": "usw.app/montage",
+      "source": "e28-montage.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "details",
+          "texte": "Suivant"
+        },
+        {
+          "selecteur": ".outil",
+          "vers": "son",
+          "texte": "Son"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "son",
+      "nom": "E29 Choisir un son",
+      "adresse": "usw.app/son",
+      "source": "e29-son.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Suivant"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "completer-capture",
+      "nom": "E15 Compléter les informations",
+      "adresse": "usw.app/completer-capture",
+      "source": "e15-completer.html",
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "details",
+          "texte": "Continuer"
+        },
+        {
+          "selecteur": ".lien-encre",
+          "vers": "indiquer-lieu",
+          "texte": "Indiquer"
+        },
+        {
+          "selecteur": ".resultat, .lu, .manque",
+          "vers": "indiquer-lieu",
+          "texte": "Lieu"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "indiquer-lieu",
+      "nom": "E30 Indiquer le lieu",
+      "adresse": "usw.app/indiquer-lieu",
+      "source": "e30-lieu.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Choisir ce lieu"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "details",
+      "nom": "E14 Détails de la publication",
+      "adresse": "usw.app/details",
+      "source": "e14-details.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "en-route",
+          "texte": "Publier"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "en-route",
+      "nom": "E16 Envoi en route",
+      "adresse": "usw.app/en-route",
+      "source": "e16-en-route.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".envoi-pastille",
+          "vers": "envois"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "envois",
+      "nom": "E26 Mes envois",
+      "adresse": "usw.app/envois",
+      "source": "e26-envois.html",
+      "liens": [
+        {
+          "selecteur": ".lien-encre",
+          "vers": "refusee",
+          "texte": "Motif"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "nom": "E17 Notifications",
+      "adresse": "usw.app/notifications",
+      "source": "e17-notifications.html",
+      "liens": [
+        {
+          "selecteur": ".lien-encre",
+          "vers": "refusee",
+          "texte": "motif"
+        },
+        {
+          "selecteur": ".notif",
+          "vers": "photo"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "profil",
+      "nom": "E18 Mon profil",
+      "adresse": "usw.app/profil",
+      "source": "e18-profil.html",
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "modifier",
+          "texte": "Modifier le profil"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "collection",
+          "texte": "Mes collections"
+        },
+        {
+          "selecteur": "[aria-label=\"Réglages\"]",
+          "vers": "reglages"
+        },
+        {
+          "selecteur": "[aria-label=\"Mes envois\"]",
+          "vers": "envois"
+        },
+        {
+          "selecteur": ".mosaique .carte",
+          "vers": "photo"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "collection",
+      "nom": "E19 Collection",
+      "adresse": "usw.app/collection",
+      "source": "e19-collection.html",
+      "fenetre": false,
+      "liens": [
+        {
+          "selecteur": ".mosaique .carte",
+          "vers": "photo"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "modifier",
+      "nom": "E21 Modifier le profil",
+      "adresse": "usw.app/modifier",
+      "source": "e21-modifier.html",
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Terminé"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "reglages",
+      "nom": "E21 Réglages",
+      "adresse": "usw.app/reglages",
+      "source": "e21-reglages.html",
+      "liens": [
+        {
+          "selecteur": ".reglage-ligne",
+          "vers": "dialogue",
+          "texte": "Se déconnecter"
+        },
+        {
+          "selecteur": ".reglage-ligne",
+          "vers": "modifier",
+          "texte": "Modifier le profil"
+        },
+        {
+          "selecteur": ".reglage-ligne",
+          "vers": "aide",
+          "texte": "Aide"
+        },
+        {
+          "selecteur": ".reglage-ligne",
+          "vers": "regles",
+          "texte": "Règles"
+        },
+        {
+          "selecteur": ".reglage-ligne",
+          "vers": "cgu",
+          "texte": "Conditions"
+        },
+        {
+          "selecteur": ".reglage-ligne",
+          "vers": "confidentialite",
+          "texte": "Confidentialité"
+        },
+        {
+          "selecteur": ".compte-carte",
+          "vers": "profil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "createur",
+      "nom": "E20 Profil d'un créateur",
+      "adresse": "usw.app/createur",
+      "source": "e20-createur.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".feuille-ligne",
+          "vers": "signaler",
+          "texte": "Signaler"
+        },
+        {
+          "selecteur": ".feuille-ligne",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".mosaique .carte",
+          "vers": "photo"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "moderation",
+      "nom": "E24 Modération, la file",
+      "adresse": "usw.app/moderation",
+      "source": "e24-moderation.html",
+      "fenetre": false,
+      "liens": [
+        {
+          "selecteur": ".dossier",
+          "vers": "decision"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "nom": "E25 Modération, la décision",
+      "adresse": "usw.app/decision",
+      "source": "e25-decision.html",
+      "fenetre": false,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Refuser"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Publier"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "aide",
+      "nom": "E35 Aide",
+      "adresse": "usw.app/aide",
+      "source": "e35-aide.html",
+      "liens": [
+        {
+          "selecteur": ".liens-legaux a",
+          "vers": "regles",
+          "texte": "Règles"
+        },
+        {
+          "selecteur": ".liens-legaux a",
+          "vers": "cgu",
+          "texte": "Conditions"
+        },
+        {
+          "selecteur": ".liens-legaux a",
+          "vers": "confidentialite",
+          "texte": "Confidentialité"
+        },
+        {
+          "selecteur": ".sujet",
+          "vers": "regles",
+          "texte": "Signaler"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "cgu",
+      "nom": "E34 Conditions générales",
+      "adresse": "usw.app/cgu",
+      "source": "e34-cgu.html",
+      "liens": [
+        {
+          "selecteur": ".lien",
+          "vers": "regles",
+          "texte": "règles"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "confidentialite",
+          "texte": "confidentialité"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "regles",
+      "nom": "E23 Règles communautaires",
+      "adresse": "usw.app/regles",
+      "source": "e23-regles.html",
+      "fenetre": false,
+      "liens": [
+        {
+          "selecteur": ".lien",
+          "vers": "cgu",
+          "texte": "conditions"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "confidentialite",
+          "texte": "confidentialité"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "confidentialite",
+      "nom": "E38 Confidentialité",
+      "adresse": "usw.app/confidentialite",
+      "source": "e38-confidentialite.html",
+      "fenetre": false,
+      "liens": [
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "mdp-erreur",
+      "nom": "E37 Champ en erreur",
+      "adresse": "usw.app/mdp-erreur",
+      "source": "e37-mdp-erreur.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Se connecter"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "oubli",
+          "texte": "oublié"
+        },
+        {
+          "selecteur": ".lien",
+          "vers": "entree",
+          "texte": "Changer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "hors-ligne",
+      "nom": "E37 Pas de connexion",
+      "adresse": "usw.app/hors-ligne",
+      "source": "e37-hors-ligne.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "profil",
+          "texte": "Voir les photos"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Réessayer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "introuvable",
+      "nom": "E37 Contenu introuvable",
+      "adresse": "usw.app/introuvable",
+      "source": "e37-introuvable.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Retour à l'accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "refusee",
+      "nom": "E37 Publication refusée",
+      "adresse": "usw.app/refusee",
+      "source": "e37-refusee.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "regles",
+          "texte": "Lire les règles"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Demander"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "dialogue",
+      "nom": "E37 Fenêtre de confirmation",
+      "adresse": "usw.app/dialogue",
+      "source": "e37-dialogue.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "retour",
+          "texte": "Annuler"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "entree",
+          "texte": "Se déconnecter"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "bulles",
+      "nom": "E37 Bulle d'aide et message",
+      "adresse": "usw.app/bulles",
+      "source": "e37-bulles.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".message-action",
+          "vers": "enregistrer"
+        },
+        {
+          "selecteur": ".bulle-aide",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Commentaires\"]",
+          "vers": "commentaires"
+        },
+        {
+          "selecteur": ".commentaires",
+          "vers": "commentaires"
+        },
+        {
+          "selecteur": "[aria-label=\"Partager\"]",
+          "vers": "partager"
+        },
+        {
+          "selecteur": "[aria-label=\"Télécharger l'original\"]",
+          "vers": "telecharger"
+        },
+        {
+          "selecteur": "[aria-label=\"Enregistrer\"]",
+          "vers": "enregistrer"
+        },
+        {
+          "selecteur": ".photo-grande .badge",
+          "vers": "bulles"
+        },
+        {
+          "selecteur": ".createur-nom, .createur .avatar",
+          "vers": "createur"
+        },
+        {
+          "selecteur": ".mosaique .carte",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "position-refusee",
+      "nom": "E37 Position désactivée",
+      "adresse": "usw.app/position-refusee",
+      "source": "e37-position.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "filtres",
+          "texte": "Choisir une ville"
+        },
+        {
+          "selecteur": ".bouton-verre",
+          "vers": "accueil",
+          "texte": "Autoriser"
+        },
+        {
+          "selecteur": ".flux .m",
+          "vers": "accueil",
+          "texte": "Découverte"
+        },
+        {
+          "selecteur": ".pile-lieu",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".filtres .pastille",
+          "vers": "filtres",
+          "texte": "Filtres"
+        },
+        {
+          "selecteur": ".flux .m",
+          "vers": "position-refusee",
+          "texte": "Près de moi"
+        },
+        {
+          "selecteur": "[aria-label=\"Rechercher\"]",
+          "vers": "recherche"
+        },
+        {
+          "selecteur": "[aria-label=\"Notifications\"]",
+          "vers": "notifications"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    },
+    {
+      "id": "recherche-vide",
+      "nom": "E37 Recherche sans résultat",
+      "adresse": "usw.app/recherche-vide",
+      "source": "e37-recherche-vide.html",
+      "fenetre": true,
+      "liens": [
+        {
+          "selecteur": ".lien-encre",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".idee",
+          "vers": "lieu"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Accueil\"]",
+          "vers": "accueil"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Reels\"]",
+          "vers": "reels"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Créer\"]",
+          "vers": "creer"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Carte\"]",
+          "vers": "carte"
+        },
+        {
+          "selecteur": ".onglet[aria-label=\"Profil\"]",
+          "vers": "profil"
+        },
+        {
+          "selecteur": "[aria-label=\"Retour\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": "[aria-label=\"Fermer\"]",
+          "vers": "retour"
+        },
+        {
+          "selecteur": ".feuille-fond",
+          "vers": "retour"
+        }
+      ]
+    }
+  ],
+  "jetons": [
+    [
+      "--fond",
+      "Fond"
+    ],
+    [
+      "--texte",
+      "Texte"
+    ],
+    [
+      "--discret",
+      "Discret"
+    ],
+    [
+      "--ocean",
+      "Océan"
+    ],
+    [
+      "--limonade",
+      "Limonade"
+    ],
+    [
+      "--erreur",
+      "Erreur"
+    ]
+  ],
+  "stylesTexte": [
+    [
+      ".sigle",
+      "Sigle d'ouverture"
+    ],
+    [
+      ".marque",
+      "Marque"
+    ],
+    [
+      ".lieu-titre",
+      "Nom du lieu"
+    ],
+    [
+      ".photo-titre",
+      "Titre de contenu"
+    ],
+    [
+      ".section-titre",
+      "Titre de section"
+    ],
+    [
+      ".flux",
+      "Onglets de flux"
+    ],
+    [
+      ".carte-lieu",
+      "Lieu d'une carte"
+    ],
+    [
+      ".carte-appareil",
+      "Téléphone d'une carte"
+    ],
+    [
+      ".badge",
+      "Badge de capture"
+    ],
+    [
+      ".bouton-verre",
+      "Bouton"
+    ]
+  ],
+  "calques": {
+    "images": [
+      "photo",
+      "reel-video"
+    ],
+    "composants": [
+      "onglets",
+      "onglet",
+      "carte",
+      "pastille",
+      "badge",
+      "rond-verre",
+      "bouton-verre",
+      "fiche",
+      "createur",
+      "commentaire",
+      "idee",
+      "avatar",
+      "bouton-reel",
+      "barre-etat",
+      "pile-carte",
+      "pile-lieu",
+      "champ-bloc",
+      "puce",
+      "sujet",
+      "question",
+      "article",
+      "interet",
+      "reglage-ligne",
+      "notif",
+      "feuille-ligne",
+      "option-creer",
+      "outil",
+      "segment",
+      "piste",
+      "lu",
+      "modele",
+      "envoi"
+    ],
+    "noms": {
+      "app": "Écran",
+      "barre-etat": "Barre d'état",
+      "etat-icones": "Icônes d'état",
+      "onglets": "Barre d'onglets",
+      "onglet": "Onglet",
+      "ouverture-coeur": "Ouverture",
+      "sigle": "Sigle USW",
+      "mot": "Mot",
+      "initiale": "Initiale",
+      "suite": "Suite du mot",
+      "of": "of",
+      "entete-accueil": "En-tête",
+      "entete-ligne": "Marque et actions",
+      "marque": "Marque",
+      "entete-actions": "Actions",
+      "point-nouveau": "Pastille nouveau",
+      "flux": "Flux",
+      "filtres": "Filtres",
+      "pastille": "Pastille",
+      "mosaique": "Mosaïque",
+      "carte": "Carte",
+      "carte-image": "Image",
+      "photo": "Photo",
+      "duree": "Durée du reel",
+      "son": "Son coupé",
+      "badge": "Badge de capture",
+      "carte-pied": "Légende",
+      "carte-lieu": "Lieu",
+      "carte-appareil": "Téléphone",
+      "rond-verre": "Bouton rond",
+      "photo-grande": "Photo",
+      "commandes": "Commandes",
+      "actions-photo": "Actions",
+      "action": "Action",
+      "bouton-verre": "Bouton",
+      "bouton-verre-texte": "Libellé",
+      "photo-texte": "Titre et légende",
+      "photo-titre": "Titre",
+      "photo-legende": "Légende",
+      "fiche": "Informations de capture",
+      "fiche-tete": "En-tête",
+      "fiche-ligne": "Ligne",
+      "origine": "Origine",
+      "createur": "Créateur",
+      "avatar": "Initiales",
+      "commentaires": "Commentaires",
+      "commentaire": "Commentaire",
+      "saisie-commentaire": "Saisie",
+      "suite-titre": "Titre de suite",
+      "reel-video": "Vidéo",
+      "reels-haut": "En-tête",
+      "reels-flux": "Flux",
+      "reels-cote": "Actions",
+      "bouton-reel": "Action",
+      "profil-reel": "Créateur",
+      "suivre": "S'abonner",
+      "reels-bas": "Légende du reel",
+      "createur-ligne": "Créateur",
+      "infos-capture": "Informations de capture",
+      "info": "Information",
+      "y-aller": "Y aller",
+      "reels-son": "Son",
+      "reels-progres": "Progression",
+      "recherche": "Recherche",
+      "champ-recherche": "Champ de recherche",
+      "recentes": "Recherches récentes",
+      "section-titre": "Titre de section",
+      "idees": "Idées",
+      "idee": "Idée",
+      "ic": "Icône",
+      "pile": "Pile de photos",
+      "pile-carte": "Photo de la pile",
+      "pile-lieu": "Lieu",
+      "entete-lieu": "En-tête",
+      "lieu-titre": "Nom du lieu",
+      "lieu-ligne": "Région et Y aller",
+      "lieu-infos": "Région et photos",
+      "page": "Écran",
+      "page-haut": "Barre du haut",
+      "page-titre": "Titre",
+      "page-texte": "Texte",
+      "formulaire": "Formulaire",
+      "champ-bloc": "Champ",
+      "champ-libelle": "Libellé",
+      "champ": "Saisie",
+      "champ-aide": "Aide du champ",
+      "case-ligne": "Acceptation",
+      "pied-page": "Pied de page",
+      "progression": "Progression",
+      "bienvenue-visuel": "Visuel",
+      "bienvenue-texte": "Texte",
+      "bienvenue-actions": "Actions",
+      "demo-photo": "Photo",
+      "puces": "Informations",
+      "puce": "Information",
+      "code": "Code",
+      "sommaire": "Sommaire",
+      "article": "Article",
+      "sujets": "Sujets",
+      "sujet": "Sujet",
+      "questions": "Questions",
+      "question": "Question",
+      "contact": "Contact",
+      "liens-legaux": "Documents",
+      "entree-mosaique": "Mosaïque",
+      "colonne": "Colonne",
+      "entree-corps": "Entrée",
+      "logo-usw": "Sigle",
+      "separateur": "Séparateur",
+      "legal": "Mentions",
+      "bouton-google": "Continuer avec Google",
+      "retour-compte": "Compte reconnu",
+      "photo-profil": "Photo de profil",
+      "reglage-carte": "Réglage",
+      "interrupteur": "Interrupteur",
+      "interets": "Types de lieux",
+      "interet": "Type de lieu",
+      "completer-bas": "Terminer",
+      "profil-tete": "En-tête du profil",
+      "profil-chiffres": "Chiffres",
+      "profil-actions": "Actions",
+      "feuille": "Feuille",
+      "feuille-ligne": "Option",
+      "compte-carte": "Compte",
+      "groupe": "Groupe",
+      "reglage-ligne": "Réglage",
+      "notifs": "Notifications",
+      "notif": "Notification",
+      "supprimer": "Supprimer le compte",
+      "objectif": "Caméra",
+      "note": "Note",
+      "bas-page": "Actions",
+      "option-creer": "Option",
+      "rappel": "Rappel des règles",
+      "viseur": "Viseur",
+      "camera-haut": "Commandes du haut",
+      "infos-prise": "Informations de prise",
+      "info-prise": "Information",
+      "camera-bas": "Commandes du bas",
+      "modes": "Modes",
+      "durees": "Durées",
+      "declencheur": "Déclencheur",
+      "sequences": "Séquences",
+      "chrono": "Chrono",
+      "apercu-reel": "Aperçu",
+      "outils": "Outils",
+      "outil": "Outil",
+      "frise": "Frise",
+      "segment": "Séquence",
+      "pistes": "Musiques",
+      "piste": "Musique",
+      "melange": "Son d'origine",
+      "fichier-lu": "Fichier",
+      "balayage": "Lecture",
+      "lus": "Informations lues",
+      "lu": "Information",
+      "details-apercu": "Aperçu",
+      "types": "Type de lieu",
+      "manque": "Information manquante",
+      "modeles": "Modèles",
+      "modele": "Modèle",
+      "resultat": "Badge",
+      "plan": "Carte",
+      "lieu-choisi": "Lieu choisi",
+      "toast": "Message",
+      "envoi-pastille": "Envoi en cours",
+      "envois": "Envois",
+      "envoi": "Envoi",
+      "etat-corps": "État",
+      "etat-icone": "Icône",
+      "etat-titre": "Titre",
+      "etat-texte": "Texte",
+      "etat-actions": "Actions",
+      "dialogue": "Fenêtre",
+      "dialogue-actions": "Choix",
+      "bulle-aide": "Bulle d'aide",
+      "message": "Message",
+      "vide": "État vide",
+      "modele-ajout": "Ajouter le modèle",
+      "ce-telephone": "Ce téléphone",
+      "epingle-carte": "Épingle",
+      "feuille-tete": "En-tête",
+      "filtre-groupe": "Filtre",
+      "pastilles": "Choix",
+      "curseur-rayon": "Distance",
+      "filtre-ligne": "Option",
+      "feuille-pied": "Actions",
+      "avis-liste": "Commentaires",
+      "avis": "Commentaire",
+      "reponses": "Réponses",
+      "saisie-bloc": "Saisie",
+      "mentions": "Mentions",
+      "mention-ligne": "Membre",
+      "fichier-ligne": "Fichier",
+      "avertissement": "Avertissement",
+      "feuille-note": "Note",
+      "collections": "Collections",
+      "collection-ligne": "Collection",
+      "nouvelle-collection": "Créer une collection",
+      "partage-apercu": "Aperçu",
+      "membres": "Membres",
+      "applis": "Applications",
+      "appli": "Application",
+      "motifs": "Motifs",
+      "carte-haut": "Recherche et filtres",
+      "repere-contenu": "Contenu",
+      "groupe-reperes": "Groupe",
+      "ma-position-point": "Ma position",
+      "carte-apercu": "Aperçu du reel",
+      "collection-tete": "En-tête de collection",
+      "regles": "Règles",
+      "regle": "Règle",
+      "exemples": "Exemples",
+      "sanctions": "Sanctions",
+      "en-bref": "En bref",
+      "donnees": "Données",
+      "donnee": "Donnée",
+      "droits": "Vos droits",
+      "dossiers": "File",
+      "dossier": "Dossier",
+      "raison": "Raison",
+      "analyse": "Analyse",
+      "compare-ligne": "Comparaison",
+      "decision-actions": "Décision",
+      "reactions-choix": "Réactions",
+      "reaction": "Réaction",
+      "voile-reagir": "Voile",
+      "reacteurs": "Membres",
+      "reacteur": "Membre",
+      "reactions-flux": "Types de réaction",
+      "actions-reel": "Actions du reel",
+      "moment": "Moment du reel"
+    }
+  }
+}

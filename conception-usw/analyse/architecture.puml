@@ -1,0 +1,517 @@
+' USW, United State of World : architecture du backend
+' Les figures de analyse/ARCHITECTURE.md, rendues par outils\diagrammes.cmd.
+' Methode : cours « Projet d'initiation aux frameworks avec Laravel » (IFRI, GL3).
+
+' =================================================================== composants
+@startuml archi-composants
+!include style.iuml
+title Vue d'ensemble : un monolithe modulaire Laravel
+left to right direction
+skinparam component {
+  BackgroundColor #EEF1FE
+  BorderColor #1F3BF7
+}
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #1F3BF7
+}
+
+node "Téléphone ou tablette" {
+  component "Application Flutter" as App
+  component "Appareil photo du téléphone" as Appareil
+  component "Application de cartographie" as Carto
+}
+
+cloud "Google" as Google
+cloud "Firebase Cloud Messaging" as FCM
+
+node "Serveur" {
+  component "Nginx (TLS, limites de taille)" as Nginx
+  package "API Laravel 13 (PHP-FPM 8.5.12)" {
+    component "Compte" as MCompte
+    component "Dépôt" as MDepot
+    component "Envoi" as MEnvoi
+    component "Lieux" as MLieux
+    component "Exploration" as MExplo
+    component "Communauté" as MComm
+    component "Modération" as MModo
+    component "Notifications" as MNotif
+  }
+  component "Workers de file d'attente" as Workers
+  component "Planificateur (schedule:run)" as Planif
+}
+
+database "MySQL 8.4" as MySQL
+database "Redis\ncache, files, limites" as Redis
+database "Disque « medias »\n(S3 compatible)" as Medias
+cloud "CDN\nversions WebP" as CDN
+
+App --> Appareil : ouvre, puis lit le fichier
+App --> Carto : « Y aller » (coordonnées)
+App --> Nginx : HTTPS, JSON, jeton Sanctum
+App --> CDN : images et vidéos
+Nginx --> MCompte
+Nginx --> MExplo
+Nginx --> MEnvoi
+MCompte --> Google : vérifie le jeton d'identité
+MEnvoi --> MDepot
+MDepot --> MLieux
+MComm --> MNotif
+MModo --> MNotif
+MDepot --> MySQL
+MExplo --> Redis
+MEnvoi --> Medias
+Workers --> Redis : lit les jobs
+Workers --> Medias : variantes
+Workers --> FCM : notifications push
+Planif --> Workers
+Medias --> CDN
+@enduml
+
+' =================================================================== deploiement
+@startuml archi-deploiement
+!include style.iuml
+title Production
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #1F3BF7
+}
+
+node "Téléphone (Android, iOS)" as Tel {
+  artifact "USW (Flutter)"
+}
+node "Serveur d'application" as Srv {
+  artifact "Nginx\nTLS, client_max_body_size\n64 Ko JSON, 2 Mo morceaux" as N
+  artifact "PHP-FPM 8.5.12\nupload_progress = 0\nfatal_error_backtraces = 0" as F
+  artifact "Laravel 13\nconfig:cache, route:cache" as L
+  artifact "Supervisor\nqueue:work medias\nqueue:work defaut" as S
+  artifact "cron\nschedule:run chaque minute" as C
+}
+node "Base de données" as BD {
+  artifact "MySQL 8.4\nsauvegarde quotidienne"
+}
+node "Cache" as Ca {
+  artifact "Redis"
+}
+node "Stockage objet" as St {
+  artifact "Bucket S3 « usw-medias »\noriginaux privés\nvariantes publiques"
+}
+node "CDN" as Cdn
+
+Tel --> N : HTTPS
+N --> F : FastCGI
+F --> L
+L --> BD
+L --> Ca
+L --> St
+S --> Ca
+S --> St
+C --> L
+St --> Cdn
+Tel --> Cdn : HTTPS
+@enduml
+
+' =================================================================== requete
+@startuml archi-requete
+!include style.iuml
+title Le trajet d'une requête (Partie 3 du cours)
+start
+:Requête HTTPS de l'application;
+:public/index.php\n(seul fichier PHP public);
+:Middlewares globaux\nTrustProxies, CORS, taille du corps;
+:Routeur : /api/v1/...;
+:Middlewares de route\nthrottle, auth:sanctum, SubstituteBindings;
+if (Jeton valide ?) then (non, route protégée)
+  :401 Non connecté;
+  stop
+else (oui ou route ouverte)
+endif
+:Form Request\nauthorize() : Policy\nrules() : validation;
+if (Autorisé et valide ?) then (non)
+  :403 ou 422\n{ message, erreurs };
+  stop
+else (oui)
+endif
+:Contrôleur fin;
+:Action ou service métier;
+:Modèles Eloquent\nchargement anticipé, pas de N+1;
+fork
+  :Ressource JSON;
+fork again
+  :Événement ou job\nen file d'attente;
+end fork
+:Réponse HTTP;
+stop
+@enduml
+
+' =================================================================== connexion
+@startuml seq-connexion
+!include style.iuml
+title Se connecter : e-mail ou Google
+autonumber
+actor "Membre" as M
+participant "Application" as A
+participant "API Laravel" as API
+participant "Google" as G
+database "MySQL" as DB
+
+alt Continuer avec Google
+  M -> A : « Continuer avec Google »
+  A -> G : connexion Google
+  G --> A : jeton d'identité (JWT)
+  A -> API : POST /auth/google { jeton }
+  API -> G : clés publiques (en cache)
+  API -> API : vérifier signature, émetteur,\naudience, expiration
+  API -> DB : retrouver ou créer le compte (google_sub)
+  API --> A : jeton Sanctum, profil_complet
+else Continuer par e-mail
+  M -> A : saisit son e-mail
+  A -> API : POST /auth/email (limité : 10 par minute)
+  API -> DB : le compte existe ?
+  API --> A : { existe } sans nom ni photo
+  alt Compte existant
+    M -> A : mot de passe
+    A -> API : POST /auth/connexion
+    API -> DB : vérifier le hachage ; compter les essais
+    alt Mot de passe juste
+      API --> A : jeton Sanctum
+    else 5 essais manqués
+      API --> A : 429, pause de 15 min
+    end
+  else Nouveau compte
+    M -> A : crée son mot de passe
+    A -> API : POST /auth/inscription
+    API -> DB : compte non vérifié, code haché (10 min)
+    API ->> M : code à 6 chiffres par e-mail (file d'attente)
+    M -> A : saisit le code
+    A -> API : POST /auth/code
+    API --> A : jeton Sanctum, profil_complet = faux
+  end
+end
+A -> M : « Compléter le profil » si besoin, sinon l'accueil
+@enduml
+
+' =================================================================== publication
+@startuml seq-publication
+!include style.iuml
+title Publier une photo : appareil du téléphone, envoi en deux temps, vérification sans écran
+autonumber
+actor "Membre" as M
+participant "Application" as A
+participant "Appareil photo\ndu téléphone" as P
+participant "API Laravel" as API
+queue "File d'attente" as Q
+participant "Workers" as W
+database "MySQL" as DB
+database "Disque medias" as S
+
+M -> A : « Prendre une photo »
+A -> P : ouvre l'appareil (tous ses modes)
+P --> A : fichier original
+A -> A : lire EXIF : modèle, date, GPS\nfabriquer l'aperçu WebP 2 160 px
+A -> API : POST /contenus { légende, capture, empreintes }
+API -> DB : contenu « brouillon », capture, envois
+API --> A : contenu + 2 envois (aperçu, original)
+A -> M : détails déjà remplis : il publie
+A -> API : envoi de l'aperçu par morceaux (voir seq-envoi)
+API -> S : aperçu assemblé
+API ->> Q : AnalyserCapture(contenu)
+Q -> W : AnalyserCapture
+W -> S : relire les métadonnées du fichier reçu
+W -> W : signes d'IA, cohérence,\ninformations manquantes
+alt Tout est en ordre
+  W -> DB : statut « publié », badge
+  W ->> Q : GenererVariantesImage(aperçu)
+  W ->> Q : événement ContenuPublie
+  Q -> W : notifier les abonnés, mettre à jour le lieu,\nvider le cache du flux
+else Information manquante
+  W -> DB : reste « brouillon »
+  W ->> A : notification « Compléter » (E15)
+else Signes d'IA
+  W -> DB : statut « refusé », motif
+  W ->> A : notification « Publication refusée » (E37)
+else Incohérence
+  W -> DB : statut « en file humaine »
+end
+A -> API : envoi de l'original (Wi-Fi de préférence)
+API -> S : original, privé
+API ->> Q : GenererVariantesImage(original)\n32, 480, 1 080, 2 160 px, WebP, sans métadonnées
+@enduml
+
+' =================================================================== envoi
+@startuml seq-envoi
+!include style.iuml
+title Envoyer par morceaux et reprendre après une coupure
+autonumber
+participant "Application" as A
+participant "API Laravel" as API
+database "MySQL" as DB
+database "Disque medias" as S
+
+A -> API : POST /envois { taille, type, empreinte SHA-256 }
+API -> DB : empreinte déjà connue ?
+alt Fichier déjà reçu
+  API --> A : 200 { déjà reçu }
+else Nouveau fichier
+  API -> DB : envoi « en cours », reçu = 0
+  API --> A : 201 { id, Upload-Offset: 0 }
+  loop Tant que le fichier n'est pas complet
+    A -> API : PATCH /envois/{id}\nUpload-Offset: n\ncorps brut (256 Ko en 3G, 2 Mo en Wi-Fi)
+    alt Décalage attendu
+      API -> S : ajouter le morceau
+      API -> DB : reçu = n + taille du morceau
+      API --> A : 204 { Upload-Offset }
+    else Décalage différent
+      API --> A : 409 Conflit
+      A -> API : HEAD /envois/{id}
+      API --> A : Upload-Offset réellement reçu
+    end
+    ... coupure du réseau, mise en arrière-plan ...
+    A -> API : HEAD /envois/{id} au retour du réseau
+    API --> A : Upload-Offset : on reprend là
+  end
+  A -> API : POST /envois/{id}/terminer
+  API -> S : empreinte du fichier assemblé
+  alt Empreinte juste
+    API -> DB : FichierOriginal, envoi « terminé »
+    API --> A : 200
+  else Empreinte fausse
+    API --> A : 422 : on recommence
+  end
+end
+@enduml
+
+' =================================================================== verification
+@startuml activite-verification
+!include style.iuml
+title AnalyserCapture : la vérification sans écran
+start
+:Relire les métadonnées du fichier reçu\n(le serveur ne croit pas le seul téléphone);
+if (Signes d'IA ?\nlogiciel de génération, provenance\n« trainedAlgorithmicMedia ») then (oui)
+  :Statut « refusé », motif en langage courant;
+  :Notifier l'auteur (E37) ;\nil peut demander une vérification;
+  stop
+else (non)
+endif
+if (Téléphone, date et lieu présents ?) then (non)
+  :Rester en brouillon;
+  :Ouvrir « Compléter » (E15) ;\nseul écran montré au membre;
+  stop
+else (oui)
+endif
+if (Cohérent ?\nmodèle sorti avant la date,\ndate passée, position plausible) then (non)
+  :Statut « en file humaine »\nscore et raisons pour le modérateur;
+  stop
+else (oui)
+endif
+if (Téléphone et lieu lus dans le fichier ?) then (oui)
+  :Badge « Capture vérifiée »;
+else (non, déclarés)
+  :Badge « Informations déclarées »;
+endif
+:Statut « publié » ;\névénement ContenuPublie;
+stop
+@enduml
+
+' =================================================================== flux
+@startuml seq-flux
+!include style.iuml
+title Afficher l'accueil en piles
+autonumber
+participant "Application" as A
+participant "API Laravel" as API
+database "Redis" as R
+database "MySQL" as DB
+participant "CDN" as C
+
+A -> API : GET /flux/decouverte?curseur=…&pays=BJ
+API -> R : page en cache (60 s) ?
+alt Présente
+  R --> API : page
+else Absente
+  API -> DB : lieux classés (curseur)\n+ 4 photos par lieu + variantes\n(chargement anticipé : 3 requêtes, pas de N+1)
+  DB --> API : lignes
+  API -> R : garder 60 s
+end
+API --> A : lieux, photos (adresses CDN 480 ou 1 080 px\nselon l'écran et le réseau), curseur suivant
+A -> C : images de la page
+note over A : les piles défilent ;\nla page suivante se charge\navant d'arriver en bas
+@enduml
+
+' =================================================================== moderation
+@startuml seq-moderation
+!include style.iuml
+title Signaler et modérer
+autonumber
+actor "Membre" as M
+participant "API Laravel" as API
+database "MySQL" as DB
+actor "Modérateur" as Mo
+actor "Auteur" as Au
+
+M -> API : POST /signalements { contenu, motif, précision }
+API -> DB : signalement (auteur caché à l'auteur du contenu)
+API -> DB : le contenu remonte dans la file
+API --> M : « Merci, réponse sous 24 h »
+Mo -> API : GET /moderation/file (role:moderateur)
+API --> Mo : dossiers classés par urgence
+Mo -> API : GET le dossier : score d'IA, raisons,\nfichier comparé à la déclaration
+Mo -> API : POST /moderation/{contenu}/decision { publier | refuser, motif }
+API -> DB : DecisionModeration, statut du contenu
+alt Refusé
+  API ->> Au : notification « Publication refusée », motif
+else Publié
+  API ->> Au : notification « Votre publication est en ligne »
+end
+API ->> M : notification « Votre signalement a été traité »
+@enduml
+
+' =================================================================== donnees
+@startuml donnees
+!include style.iuml
+title Modèle physique : les tables principales (MySQL)
+hide circle
+hide methods
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #1F3BF7
+  StereotypeFontColor #6B7488
+}
+hide stereotype
+
+class utilisateurs <<table>> {
+  * id : bigint <<PK>>
+  * ulid : char(26) <<unique>>
+  * email : varchar <<unique>>
+  mot_de_passe : varchar <<nul possible>>
+  * fournisseur : enum(email, google)
+  google_sub : varchar <<unique>>
+  * nom_affiche, nom_utilisateur <<unique>>
+  * role : enum(membre, moderateur)
+  ville_id <<FK>>
+  * profil_complet : bool
+}
+class contenus <<table>> {
+  * id <<PK>>
+  * ulid <<unique>>
+  * utilisateur_id <<FK>>
+  * type : enum(photo, reel)
+  * statut : enum
+  badge : enum
+  lieu_id <<FK>>
+  legende : text
+  publie_le : datetime
+  --
+  index (statut, publie_le)
+  index (utilisateur_id, publie_le)
+}
+class captures <<table>> {
+  * contenu_id <<PK, FK>>
+  * source : enum
+  modele_telephone_id <<FK>>
+  date_capture : datetime
+  position : POINT SRID 4326 <<index spatial>>
+  * origine_modele, origine_date,
+    origine_position : enum
+  score_ia : decimal
+}
+class modeles_telephone <<table>> {
+  * id <<PK>>
+  * marque, nom <<unique ensemble>>
+  ajoute_par <<FK>>
+  * nombre_contenus : int
+}
+class fichiers_originaux <<table>> {
+  * id <<PK>>
+  * contenu_id <<FK>>
+  * empreinte_sha256 <<unique>>
+  * format, largeur, hauteur, poids
+  * chemin : privé
+}
+class variantes <<table>> {
+  * id <<PK>>
+  * contenu_id <<FK>>
+  * usage : enum(flou, 480, 1080, 2160,\nvideo_480, video_hd, affiche)
+  * chemin : public, largeur, hauteur
+}
+class envois <<table>> {
+  * id <<PK>>
+  * ulid <<unique>>
+  * utilisateur_id <<FK>>
+  contenu_id <<FK>>
+  * nature : enum(apercu, original)
+  * taille, recu : bigint
+  * empreinte_sha256, statut
+  * derniere_activite : datetime
+}
+class lieux <<table>> {
+  * id <<PK>>
+  * ulid <<unique>>
+  * nom, type
+  * ville_id <<FK>>
+  * position : POINT <<index spatial>>
+  * nombre_contenus : int
+}
+class villes <<table>> {
+  * id <<PK>>
+  * nom
+  * pays_code <<FK>>
+}
+class pays <<table>> {
+  * code : char(2) <<PK>>
+  * nom
+}
+class reactions <<table>> {
+  * utilisateur_id, contenu_id <<PK>>
+  * type : enum(j_aime, waou,\nenvie_d_y_aller, merci)
+}
+class commentaires <<table>> {
+  * id <<PK>>
+  * contenu_id, utilisateur_id <<FK>>
+  parent_id <<FK>>
+  * texte
+  * epingle, masque : bool
+}
+class collections <<table>> {
+  * id <<PK>>
+  * utilisateur_id <<FK>>
+  * nom, secrete : bool
+}
+class enregistrements <<table>> {
+  * collection_id, contenu_id <<PK>>
+}
+class abonnements <<table>> {
+  * abonne_id, createur_id <<PK>>
+}
+class signalements <<table>> {
+  * id <<PK>>
+  * contenu_id, utilisateur_id <<FK>>
+  * motif : enum, precision
+  * statut : enum
+}
+class decisions_moderation <<table>> {
+  * id <<PK>>
+  * contenu_id, moderateur_id <<FK>>
+  * decision, motif
+}
+
+utilisateurs ||--o{ contenus
+contenus ||--|| captures
+captures }o--|| modeles_telephone
+contenus ||--o{ fichiers_originaux
+contenus ||--o{ variantes
+utilisateurs ||--o{ envois
+contenus }o--|| lieux
+lieux }o--|| villes
+villes }o--|| pays
+utilisateurs ||--o{ reactions
+contenus ||--o{ reactions
+contenus ||--o{ commentaires
+commentaires ||--o{ commentaires
+utilisateurs ||--o{ collections
+collections ||--o{ enregistrements
+contenus ||--o{ enregistrements
+utilisateurs ||--o{ abonnements
+contenus ||--o{ signalements
+contenus ||--o{ decisions_moderation
+@enduml

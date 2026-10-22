@@ -1,0 +1,384 @@
+@startuml classes
+' USW, United State of World : diagramme de classes (domaine)
+' Source : Cahier_De_Charges_Groupe4.pdf (sections 3, 4 et 5)
+' Chaque classe est reliee aux cas d'utilisation dans analyse/ANALYSE.md
+
+!include style.iuml
+skinparam defaultFontSize 12
+hide empty methods
+
+package "Compte" {
+  enum Role {
+    MEMBRE
+    MODERATEUR
+  }
+
+  enum FournisseurConnexion {
+    EMAIL
+    GOOGLE
+  }
+
+  class Utilisateur {
+    - id : Long
+    - nomUtilisateur : String
+    - nomAffiche : String
+    - email : String
+    - fournisseur : FournisseurConnexion
+    - motDePasseHache : String [0..1]
+    - emailVerifie : Boolean
+    - photoProfil : String
+    - bio : String
+    - pays : String
+    - ville : String
+    - interets : TypeLieu [0..*]
+    - positionAutorisee : Boolean
+    - profilComplete : Boolean
+    - role : Role
+    - dateInscription : DateTime
+  }
+
+  class Abonnement {
+    - date : DateTime
+  }
+
+  class Blocage {
+    - date : DateTime
+  }
+}
+
+package "Dépôt" {
+  enum StatutContenu {
+    EN_ENVOI
+    EN_ANALYSE
+    PUBLIE
+    EN_FILE_HUMAINE
+    REJETE
+    RETIRE
+  }
+
+  abstract class Contenu {
+    - id : Long
+    - legende : String
+    - statut : StatutContenu
+    - datePublication : DateTime
+    - nbVues : Integer
+    - nbTelechargements : Integer
+    + estPublie() : Boolean
+    + lienPartage() : String
+  }
+
+  class Photo {
+    - couleurDominante : String
+  }
+
+  class Reel {
+    - dureeSecondes : Integer {15..60}
+    - lectureMuette : Boolean = vrai
+    - sonOrigine : Boolean
+    - texteIncruste : String [0..1]
+  }
+
+  class PisteAudio {
+    - titre : String
+    - artiste : String
+    - dureeSecondes : Integer
+    - licence : String
+  }
+
+  enum SourceCapture {
+    APPAREIL_PHOTO_DU_TELEPHONE
+    CAMERA_USW_REEL
+    GALERIE
+  }
+
+  enum OrigineInformation {
+    METADONNEES_DU_FICHIER
+    CAMERA_USW
+    DECLAREE_PAR_L_AUTEUR
+  }
+
+  class Capture <<informations de capture>> {
+    - source : SourceCapture
+    - origineModele : OrigineInformation
+    - dateCapture : DateTime
+    - origineDate : OrigineInformation
+    - latitude : Double
+    - longitude : Double
+    - originePosition : OrigineInformation
+    + estVerifiee() : Boolean
+    + estCoherente() : Boolean
+    + porteDesSignesDIA() : Boolean
+  }
+
+  class ModeleTelephone <<liste tenue par les membres>> {
+    - marque : String
+    - nom : String
+    - ajouteLe : DateTime
+    - nombreContenus : Integer
+    + rechercher(texte : String) : ModeleTelephone [*]
+  }
+
+  class FichierOriginal {
+    - format : String
+    - typeMime : String
+    - largeur : Integer
+    - hauteur : Integer
+    - poidsOctets : Long
+    - empreinteSha256 : String
+    - url : String
+    + lienTelechargement() : String
+  }
+
+  enum UsageVariante {
+    APERCU_FLOU
+    MINIATURE_480
+    FLUX_1080
+    PLEIN_ECRAN_2160
+    VIDEO_LEGERE
+    VIDEO_HD
+    AFFICHE
+  }
+
+  class Variante {
+    - usage : UsageVariante
+    - format : String
+    - largeur : Integer
+    - hauteur : Integer
+    - poidsOctets : Long
+    - url : String
+  }
+
+  enum StatutEnvoi {
+    PREPARATION
+    EN_COURS
+    EN_PAUSE
+    TERMINE
+    ECHEC
+  }
+
+  class Envoi {
+    - id : String
+    - octetsTotal : Long
+    - octetsRecus : Long
+    - tailleMorceau : Integer
+    - statut : StatutEnvoi
+    - debut : DateTime
+    - derniereActivite : DateTime
+    + morceauSuivant() : Long
+    + reprendre() : void
+    + progression() : Double
+  }
+}
+
+package "Lieux" {
+  enum TypeLieu {
+    NATURE
+    PLAGE
+    PATRIMOINE
+    VILLE
+    MARCHE
+    LIEU_DE_CULTE
+    LOISIRS
+  }
+
+  class Pays {
+    - code : String
+    - nom : String
+  }
+
+  class Ville {
+    - nom : String
+  }
+
+  class Lieu {
+    - id : Long
+    - nom : String
+    - type : TypeLieu
+    - latitude : Double
+    - longitude : Double
+    + distanceDepuis(lat : Double, lng : Double) : Double
+  }
+}
+
+package "Exploration et itinéraire" {
+  enum TypeFlux {
+    DECOUVERTE
+    ABONNEMENTS
+    PRES_DE_MOI
+  }
+
+  class FiltreFlux {
+    - type : TypeFlux
+    - pays : Pays [0..1]
+    - ville : Ville [0..1]
+    - typeLieu : TypeLieu [0..1]
+    - rayonKm : Integer [0..1]
+  }
+
+  class Recherche {
+    - texte : String
+    - date : DateTime
+    + lieux() : Lieu[*]
+    + contenus() : Contenu[*]
+    + createurs() : Utilisateur[*]
+  }
+
+  class Itineraire {
+    - destinationLat : Double
+    - destinationLng : Double
+    - nomDestination : String
+    + lienCartographie() : String
+    + ouvrirDansMaps() : void
+  }
+}
+
+package "Communauté" {
+  enum TypeReaction {
+    J_AIME
+    WAOU
+    ENVIE_D_Y_ALLER
+    MERCI
+  }
+
+  class Reaction {
+    - type : TypeReaction
+    - date : DateTime
+  }
+
+  class Commentaire {
+    - id : Long
+    - texte : String
+    - date : DateTime
+    - epingle : Boolean
+    - masque : Boolean
+  }
+
+  class Collection {
+    - id : Long
+    - nom : String
+    - secrete : Boolean
+  }
+
+  class Enregistrement {
+    - date : DateTime
+  }
+
+  enum TypeNotification {
+    REACTION
+    COMMENTAIRE
+    REPONSE
+    MENTION
+    ABONNEMENT
+    CONTENU_PUBLIE
+    CONTENU_REJETE
+  }
+
+  class Notification {
+    - type : TypeNotification
+    - date : DateTime
+    - lue : Boolean
+  }
+}
+
+package "Modération" {
+  enum MotifSignalement {
+    IMAGE_GENEREE_PAR_IA
+    PAS_PRIS_A_CET_ENDROIT
+    PAS_SON_AUTEUR
+    CONTENU_CHOQUANT
+    HARCELEMENT
+    SPAM
+  }
+
+  enum StatutSignalement {
+    OUVERT
+    RETENU
+    ECARTE
+  }
+
+  class Signalement {
+    - motif : MotifSignalement
+    - precision : String
+    - date : DateTime
+    - statut : StatutSignalement
+  }
+
+  class DecisionModeration {
+    - decision : StatutContenu
+    - motif : String
+    - date : DateTime
+  }
+
+  class RegleCommunautaire {
+    - ordre : Integer
+    - titre : String
+    - texte : String
+  }
+}
+
+' ---------------------------------------------------- Compte
+Utilisateur "1" -- "*" Abonnement : abonné >
+Abonnement "*" -- "1" Utilisateur : créateur suivi >
+Utilisateur "1" -- "*" Blocage : bloqueur >
+Blocage "*" -- "1" Utilisateur : bloqué >
+Utilisateur ..> Role
+
+' ---------------------------------------------------- Dépôt
+Contenu <|-- Photo
+Contenu <|-- Reel
+Utilisateur "1" -- "*" Contenu : publie >
+Contenu "1" *-- "1" Capture : porte >
+Contenu "1" *-- "1" FichierOriginal : garde >
+Contenu "1" *-- "1..*" Variante : s'affiche en >
+Utilisateur "1" -- "*" Envoi : lance >
+Envoi "1" -- "1" FichierOriginal : transporte >
+Reel "*" -- "0..1" PisteAudio : musique >
+Capture "*" --> "1" ModeleTelephone : pris avec >
+Utilisateur "1" -- "*" ModeleTelephone : ajoute >
+Capture ..> SourceCapture
+Capture ..> OrigineInformation
+Contenu ..> StatutContenu
+Variante ..> UsageVariante
+Envoi ..> StatutEnvoi
+
+' ---------------------------------------------------- Lieux
+Pays "1" *-- "*" Ville
+Ville "1" *-- "*" Lieu
+Contenu "*" -- "1" Lieu : pris à >
+Lieu ..> TypeLieu
+Utilisateur ..> FournisseurConnexion
+Utilisateur ..> TypeLieu : intérêts
+
+' ---------------------------------------------------- Exploration et itinéraire
+FiltreFlux ..> TypeFlux
+FiltreFlux ..> Contenu : sélectionne
+Utilisateur "1" -- "*" Recherche : recherches récentes >
+Recherche ..> FiltreFlux : peut affiner
+Itineraire "*" --> "1" Capture : vers le point\nde prise de vue >
+
+' ---------------------------------------------------- Communauté
+Utilisateur "1" -- "*" Reaction : réagit >
+Reaction "*" -- "1" Contenu
+Reaction ..> TypeReaction
+Utilisateur "1" -- "*" Commentaire : écrit >
+Commentaire "*" -- "1" Contenu : sur >
+Commentaire "0..1" -- "*" Commentaire : réponses >
+Commentaire "*" -- "*" Utilisateur : mentionne >
+Utilisateur "1" *-- "*" Collection : possède >
+Collection "1" -- "*" Enregistrement
+Enregistrement "*" -- "1" Contenu
+Notification "*" -- "1" Utilisateur : destinataire >
+Notification "*" -- "0..1" Contenu : à propos de >
+Notification ..> TypeNotification
+
+' ---------------------------------------------------- Modération
+Utilisateur "1" -- "*" Signalement : signale >
+Signalement "*" -- "0..1" Contenu : vise >
+Signalement "*" -- "0..1" Commentaire : vise >
+Signalement ..> MotifSignalement
+Signalement ..> StatutSignalement
+DecisionModeration "*" -- "1" Contenu : statue sur >
+DecisionModeration "*" -- "1" Utilisateur : modérateur >
+DecisionModeration "*" -- "0..1" Signalement : répond à >
+
+@enduml

@@ -1,0 +1,33 @@
+/* Le bouton : un rectangle arrondi, pas une pilule, fait de verre liquide. */
+.bouton-verre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.1rem;
+  padding: 0 1.25rem;
+  border: none;
+  border-radius: 14px;
+  color: var(--texte);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bouton-verre-texte {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.bouton-verre-texte svg { width: 1.1rem; height: 1.1rem; }
+
+.bouton-verre .fleche { display: inline-flex; transition: transform 0.35s var(--ressort); }
+.bouton-verre:focus-visible { outline: 2px solid var(--ocean); outline-offset: 3px; }
+.bouton-verre:disabled { opacity: 0.38; cursor: not-allowed; }
+
+@media (hover: hover) {
+  .bouton-verre:hover:not(:disabled) .fleche { transform: translateX(3px); }
+  .bouton-verre.plein:hover:not(:disabled) { filter: saturate(1.15) brightness(1.04); }
+}

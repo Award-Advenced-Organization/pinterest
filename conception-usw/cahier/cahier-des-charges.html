@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>USW · Cahier des charges fonctionnel</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm;
+    @bottom-center { content: counter(page); font: 9pt "Segoe UI", Arial, sans-serif; color: #555; }
+  }
+  @page couverture { margin: 0; @bottom-center { content: none; } }
+  @page paysage { size: A4 landscape; margin: 14mm 14mm 18mm; }
+  @page grand { size: A3 landscape; margin: 12mm 12mm 16mm; }
+
+  :root {
+    --encre: #1b1b1b;
+    --discret: #5b6170;
+    --olive: #7d8c2a;
+    --lime: #c9d47a;
+    --lime-clair: #dde5a8;
+    --creme: #fafde9;
+    --bord: #d4d4d4;
+  }
+  * { box-sizing: border-box; }
+  html { font-family: "Segoe UI", "Segoe UI Variable", Arial, sans-serif; color: var(--encre); font-size: 10.5pt; line-height: 1.5; }
+  body { margin: 0; }
+  h1, h2, h3 { font-family: "Segoe UI Semibold", "Segoe UI", Arial, sans-serif; letter-spacing: -0.01em; }
+
+  .page { break-after: page; }
+  .surtitre { font-size: 8pt; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--olive); margin: 0 0 4pt; }
+  h1.titre { font-size: 22pt; font-weight: 700; margin: 0 0 6pt; padding-bottom: 8pt; border-bottom: 1.5px solid var(--lime); }
+  .chapeau { color: var(--discret); margin: 0 0 14pt; }
+  h2 { font-size: 13pt; margin: 18pt 0 6pt; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 12pt 0 4pt; break-after: avoid; }
+  p { margin: 0 0 8pt; }
+  ul, ol { margin: 0 0 8pt; padding-left: 16pt; }
+  li { margin-bottom: 3pt; }
+  strong { font-weight: 700; }
+
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0 12pt; font-size: 9.5pt; break-inside: auto; }
+  tr { break-inside: avoid; }
+  th, td { border: 1px solid var(--bord); padding: 5pt 7pt; vertical-align: top; text-align: left; }
+  thead th { background: var(--lime-clair); font-weight: 700; }
+  td.cle { font-weight: 700; width: 26%; }
+  td.num { white-space: nowrap; font-weight: 700; color: var(--olive); }
+
+  .encart { background: var(--creme); border-left: 3px solid var(--lime); padding: 9pt 12pt; margin: 8pt 0 12pt; break-inside: avoid; }
+  .encart .surtitre { margin-bottom: 3pt; }
+  .encart p:last-child { margin-bottom: 0; }
+
+  .etapes { list-style: none; padding: 0; counter-reset: etape; }
+  .etapes li { counter-increment: etape; position: relative; padding-left: 26pt; margin-bottom: 5pt; }
+  .etapes li::before {
+    content: counter(etape); position: absolute; left: 0; top: 0;
+    width: 17pt; height: 17pt; border-radius: 50%; border: 1.2px solid var(--lime);
+    background: var(--creme); color: var(--olive); font-size: 8pt; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .parcours { border-top: 1px solid var(--bord); padding-top: 6pt; margin-top: 10pt; break-inside: avoid; }
+
+  .diagramme { page: paysage; break-before: page; break-after: page; }
+  .diagramme figure { margin: 0; text-align: center; }
+  .diagramme img { max-width: 100%; max-height: 165mm; }
+  .diagramme figcaption { font-size: 9pt; color: var(--discret); margin-top: 4pt; }
+  .diagramme.grand { page: grand; }
+  .diagramme.grand img { max-height: 255mm; }
+
+  /* Couverture : la mise en page du dossier d'origine */
+  .couverture { page: couverture; height: 297mm; position: relative; padding: 14mm 18mm 0; break-after: page; }
+  .entete-officiel { display: grid; grid-template-columns: 30mm 1fr 30mm; align-items: start; text-align: center; }
+  .entete-officiel img { width: 26mm; }
+  .entete-officiel .droite { justify-self: end; width: 30mm; }
+  .officiel { font-size: 11pt; line-height: 1.6; }
+  .officiel b { font-size: 11pt; letter-spacing: 0.02em; }
+  .etoiles { letter-spacing: 1.2em; font-size: 8pt; }
+  .niveau { text-align: center; font-size: 12pt; margin: 14mm 0 16mm; }
+  .bandeau { margin: 0 15mm; background: var(--creme); border-top: 1.5px solid var(--lime); border-bottom: 1.5px solid var(--lime); text-align: center; padding: 14mm 10mm; }
+  .bandeau .surtitre { color: #555; }
+  .bandeau h1 { font-size: 25pt; margin: 6pt 0 2pt; }
+  .bandeau .sigle { font-size: 14pt; font-weight: 700; letter-spacing: 0.08em; margin: 8pt 0 2pt; }
+  .bandeau .sous { color: var(--discret); }
+  .pied-couverture { position: absolute; left: 18mm; right: 18mm; bottom: 24mm; }
+  .equipe { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; }
+  .equipe h4 { font-size: 9pt; margin: 0 0 4pt; padding-bottom: 4pt; border-bottom: 1.5px solid var(--lime); }
+  .equipe p { margin: 0 0 2pt; font-size: 10pt; }
+  .annee { text-align: center; font-weight: 700; margin-top: 12mm; }
+  .degrade { position: absolute; left: 0; right: 0; bottom: 0; height: 9mm; background: linear-gradient(90deg, #dfe5a6, #c9dfe0); }
+
+  .sommaire td { border: 0; border-bottom: 1px dashed var(--bord); padding: 7pt 4pt; }
+  .sommaire td:first-child { width: 12mm; color: var(--discret); font-weight: 700; }
+  .version { font-size: 9pt; color: var(--discret); margin-top: 14pt; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ Couverture -->
+<section class="couverture">
+  <div class="entete-officiel">
+    <img src="images/logo-0.jpeg" alt="Université d'Abomey-Calavi">
+    <div class="officiel">
+      <b>RÉPUBLIQUE DU BÉNIN</b><br>
+      <span class="etoiles">★★★</span><br>
+      Université d'Abomey-Calavi (UAC)<br>
+      <span class="etoiles">★★★</span><br>
+      Institut de Formation et de Recherche en Informatique<br>(IFRI)
+    </div>
+    <img class="droite" src="images/logo-1.jpeg" alt="IFRI">
+  </div>
+  <div class="niveau">Licence 3</div>
+  <div class="bandeau">
+    <p class="surtitre">Thème</p>
+    <h1>Cahier des charges fonctionnel</h1>
+    <p class="sigle">USW · United State of World</p>
+    <p class="sous">Cours de Développement d'applications mobiles</p>
+  </div>
+  <div class="pied-couverture">
+    <div class="equipe">
+      <div>
+        <h4>Membres du groupe · Groupe 4</h4>
+        <p>DAHO Boiry</p>
+        <p>CODJA Gédéon</p>
+        <p>MAAMOUSSOU Siméon Céphas</p>
+        <p>ALIDOU MADOUGOU Jamal</p>
+      </div>
+      <div>
+        <h4>Chargée de cours</h4>
+        <p>Mme Limuse A. TIKPON</p>
+      </div>
+    </div>
+    <p class="annee">Année académique 2026-2027</p>
+  </div>
+  <div class="degrade"></div>
+</section>
+
+<!-- ============================================================ Sommaire -->
+<section class="page">
+  <p class="surtitre">Sommaire</p>
+  <h1 class="titre">Contenu du dossier</h1>
+  <table class="sommaire">
+    <tr><td>1</td><td>Résumé exécutif et vision du projet</td></tr>
+    <tr><td>2</td><td>Problèmes résolus</td></tr>
+    <tr><td>3</td><td>Fonctionnalités clés et spécifications</td></tr>
+    <tr><td>4</td><td>Exigences non fonctionnelles</td></tr>
+    <tr><td>5</td><td>Spécifications techniques</td></tr>
+    <tr><td>6</td><td>Parcours utilisateurs</td></tr>
+    <tr><td>7</td><td>Acteurs et cas d'utilisation</td></tr>
+    <tr><td>8</td><td>Modèle des données : diagramme de classes</td></tr>
+    <tr><td>9</td><td>Écrans de l'application</td></tr>
+    <tr><td>10</td><td>Points à valider</td></tr>
+    <tr><td>11</td><td>Architecture du backend</td></tr>
+  </table>
+  <p class="version">Version 2. Elle reprend la première version du dossier et la complète :
+  création de reels dans l'application, envoi des médias adapté aux connexions lentes,
+  qualité des images, itinéraire confié à l'application de cartographie, cas
+  d'utilisation, modèle des données et liste des écrans. Mise à jour du 22 octobre 2026 :
+  connexion par e-mail ou Google, photo prise avec l'appareil du téléphone, vérification
+  sans écran, envoi en deux temps, modèles de téléphone saisis par les membres, maquette
+  cliquable de 61 écrans, architecture du backend (section 11).</p>
+</section>
+
+<!-- ============================================================ 1 -->
+<section class="page">
+  <p class="surtitre">Cahier des charges · 1</p>
+  <h1 class="titre">Résumé exécutif et vision du projet</h1>
+
+  <h2>Le projet</h2>
+  <p><strong>USW</strong>, pour <strong>United State of World</strong>, est une plateforme
+  internationale participative qui fait office de banque de données photographique et
+  touristique. Sa mission : mettre en valeur des paysages authentiques, notamment ceux de pays
+  sous-représentés comme le <strong>Bénin</strong>, à travers les yeux de ses habitants et des
+  voyageurs.</p>
+  <p>Le produit repose sur un contrat de confiance strict : <strong>l'interdiction absolue des
+  photos et vidéos générées par intelligence artificielle</strong>, au profit de clichés et de
+  reels réels pris au smartphone. L'application transforme une simple inspiration visuelle en
+  une action concrète : d'une photo ou d'un reel, on passe en un geste à l'itinéraire qui mène au
+  lieu exact de la prise de vue.</p>
+
+  <div class="encart">
+    <p class="surtitre">La promesse produit</p>
+    <p>Chaque image devient un point de départ : le voyageur voit un lieu réel, vérifie comment
+    il a été capturé, puis lance la navigation vers l'endroit exact de la prise de vue.</p>
+  </div>
+
+  <h2>Un contrat de confiance strict</h2>
+  <p>L'authenticité n'est pas une option de modération : elle est au cœur du produit. Chaque
+  photo et chaque reel publié porte trois informations de capture : <strong>le téléphone</strong>
+  qui l'a pris, <strong>la date</strong> et <strong>le lieu</strong>. Elles viennent de la
+  caméra USW, des métadonnées du fichier, ou de l'auteur quand le fichier ne les contient pas,
+  et l'application dit toujours d'où elles viennent. Un fichier qui porte des signes de
+  génération par IA est refusé. Ce principe différencie la plateforme des catalogues
+  d'inspiration qui mélangent images réelles et images générées.</p>
+
+  <h2>Le nom</h2>
+  <p>USW, United State of World : le monde comme un seul territoire, raconté par ceux qui le
+  parcourent. À l'ouverture de l'application, le sigle <strong>USW</strong> s'écrit, puis chaque
+  lettre s'élargit en son mot pour former <strong>United State of World</strong>.</p>
+
+  <h2>Ce qui change dans cette version</h2>
+  <ul>
+    <li><strong>Les reels se créent dans l'application</strong>, à la manière de TikTok et
+    d'Instagram : on filme par séquences, on monte, on publie ; on aime, on commente, on suit
+    les créateurs.</li>
+    <li><strong>L'envoi des médias est pensé pour les connexions lentes</strong> (3G) : envoi
+    par morceaux, reprise automatique après une coupure, envoi en arrière-plan.</li>
+    <li><strong>La plateforme garde la meilleure qualité</strong> : les images s'affichent en
+    WebP haute résolution, et l'original reste téléchargeable dans son format d'origine.</li>
+    <li><strong>L'itinéraire s'ouvre dans l'application de cartographie</strong> du téléphone
+    (Google Maps, Maps, Waze) : USW n'affiche ni trajet ni guidage.</li>
+    <li><strong>On publie aussi des photos anciennes</strong> de la galerie : ce que le
+    fichier contient remplit le formulaire tout seul, l'auteur complète le reste (téléphone,
+    date, lieu).</li>
+    <li><strong>La photo se prend avec l'appareil photo du téléphone</strong>, avec tous ses
+    modes (portrait, nuit, Pro) et toute sa résolution : USW l'ouvre, puis lit le fichier
+    obtenu. La caméra USW ne sert qu'à tourner les reels.</li>
+    <li><strong>La vérification se fait sans écran</strong> : lecture du fichier, recherche
+    des signes d'IA et reprise des envois tournent en arrière-plan. Le membre ne voit quelque
+    chose que s'il manque une information ou si la publication est refusée.</li>
+    <li><strong>On se connecte par e-mail ou avec Google</strong>, comme sur Pinterest ; à la
+    première connexion, le membre complète son profil en trois étapes.</li>
+    <li><strong>Le téléphone se choisit dans une liste tenue par les membres</strong> : si un
+    modèle n'y est pas encore, le membre l'ajoute, et il sert aux suivants.</li>
+    <li><strong>Une recherche libre</strong> trouve lieux, contenus et créateurs.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="page">
+  <p class="surtitre">Cahier des charges · 2</p>
+  <h1 class="titre">Problèmes résolus</h1>
+  <p class="chapeau">La plateforme répond à quatre frustrations identifiées dans l'expérience
+  touristique actuelle.</p>
+  <table>
+    <thead><tr><th style="width:24%">Problème</th><th style="width:38%">Conséquence</th><th>Réponse apportée</th></tr></thead>
+    <tbody>
+      <tr><td class="cle">Le manque de visibilité touristique</td>
+        <td>Des paysages magnifiques, comme ceux du Bénin, sont absents ou mal répertoriés sur les grands catalogues d'inspiration mondiaux.</td>
+        <td>Une banque de photos et de reels organisée par lieu, avec un flux de découverte, un fil de reels, une recherche libre et des filtres par pays, ville, type de lieu et proximité.</td></tr>
+      <tr><td class="cle">La perte de confiance liée à l'IA</td>
+        <td>La prolifération d'images générées par IA fausse la perception du réel et induit les voyageurs en erreur.</td>
+        <td>Des informations de capture (téléphone, date, lieu) sur chaque contenu, lues dans le fichier ou inscrites par la caméra USW, le refus des fichiers qui portent des signes d'IA, et le badge « Capture vérifiée ».</td></tr>
+      <tr><td class="cle">La frustration de l'itinéraire inconnu</td>
+        <td>Il est souvent impossible de savoir où et comment se rendre précisément sur le lieu d'une photo trouvée en ligne.</td>
+        <td>Un bouton « Y aller » qui ouvre l'application de cartographie du téléphone sur les coordonnées GPS exactes de la prise de vue.</td></tr>
+      <tr><td class="cle">Publier avec une connexion faible</td>
+        <td>En 3G, un envoi de photo ou de vidéo est lent, coupe souvent et doit être recommencé : beaucoup renoncent à partager.</td>
+        <td>Un contrôle d'authenticité fait sur le téléphone avant tout envoi, puis un envoi par morceaux, reprenable et en arrière-plan.</td></tr>
+    </tbody>
+  </table>
+  <div class="encart">
+    <p class="surtitre">Positionnement</p>
+    <p><strong>100 % réel.</strong> Aucune image ni vidéo générée par IA. Chaque contenu est
+    rattaché à un appareil, un lieu et une date, puis rendu vérifiable par l'utilisateur.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 3 -->
+<section>
+  <p class="surtitre">Cahier des charges · 3</p>
+  <h1 class="titre">Fonctionnalités clés et spécifications</h1>
+  <p class="chapeau">Les fonctionnalités couvrent la chaîne complète : capturer, vérifier,
+  envoyer, explorer, se rendre sur place et interagir. Les numéros UC renvoient aux cas
+  d'utilisation de la section 7.</p>
+
+  <h2>3.1 Dépôt participatif de photos</h2>
+  <p>Chaque contenu publié porte trois <strong>informations de capture</strong> : le téléphone
+  qui l'a pris, la date et le lieu. Elles ont trois origines possibles, et l'application dit
+  toujours laquelle.</p>
+  <table>
+    <thead><tr><th style="width:22%">Origine</th><th style="width:30%">Quand</th><th>Ce qui se passe</th></tr></thead>
+    <tbody>
+      <tr><td class="cle">L'appareil photo du téléphone</td><td>Le membre touche « Prendre une photo » (UC11) : USW ouvre l'<strong>appareil photo du téléphone</strong>, avec tous ses modes (portrait, nuit, Pro) et sa pleine résolution.</td><td>Une seule fois, il <strong>autorise</strong> la position et la lecture du modèle du téléphone. Au retour, USW lit le fichier (modèle, date, GPS), vérifie que la prise vient d'avoir lieu et que le modèle est bien celui du téléphone, et ajoute la position si le fichier ne la porte pas. Rien n'est demandé au membre.</td></tr>
+      <tr><td class="cle">Les métadonnées du fichier</td><td>Le membre importe une photo de sa galerie (UC12), <strong>même ancienne</strong>.</td><td>USW lit sur le téléphone, sans rien envoyer, ce que le fichier contient : le <strong>modèle exact du téléphone</strong> (ex. : iPhone 14 Pro, Tecno Camon 20), les <strong>coordonnées GPS</strong> et la <strong>date de capture</strong> (UC13), et <strong>remplit le formulaire tout seul</strong>.</td></tr>
+      <tr><td class="cle">L'auteur</td><td>Le fichier importé ne contient pas l'une de ces informations.</td><td>Le membre la <strong>complète</strong> (UC27) : il tape le modèle de son téléphone et le choisit parmi les modèles déjà vus sur USW ; s'il n'y est pas, il l'<strong>ajoute</strong>, et le modèle rejoint la liste pour les suivants (celui qu'il tient en main reste proposé d'un appui). Il donne la date et indique le lieu en le cherchant ou en posant une épingle sur une carte.</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <tr><td class="cle">Badge « Capture vérifiée »</td><td>Le téléphone et le lieu viennent des métadonnées du fichier (photo de l'appareil du téléphone ou de la galerie) ou de la caméra USW (reels).</td></tr>
+    <tr><td class="cle">Badge « Informations déclarées »</td><td>Au moins l'un des deux a été complété par l'auteur. Le contenu est publié, mais le badge le dit, et le lieu porte la mention « indiqué par l'auteur ».</td></tr>
+    <tr><td class="cle">Garantie non-IA</td><td>Rien n'est refusé parce qu'une information manque. Est refusé un fichier qui <strong>porte des signes de génération par IA</strong> : un logiciel de génération inscrit dans ses métadonnées, une marque de provenance qui le déclare généré (UC14). Le refus est immédiat, expliqué en langage courant, et ne coûte aucune donnée mobile ; le membre peut demander une vérification par l'équipe.</td></tr>
+    <tr><td class="cle">Sans écran de vérification</td><td>La lecture du fichier et la recherche des signes d'IA se font en arrière-plan : le membre passe directement aux détails de la publication, les informations déjà rangées. Un écran n'apparaît que s'il y a un problème : une information manque (compléter) ou la publication est refusée.</td></tr>
+    <tr><td class="cle">Cohérence</td><td>Des informations incohérentes (un modèle de téléphone qui n'existait pas à la date annoncée, par exemple) envoient le contenu à la file de validation humaine. Le serveur relit aussi les métadonnées du fichier reçu.</td></tr>
+    <tr><td class="cle">Lieu</td><td>Les coordonnées sont rapprochées d'un lieu (nom, ville, pays, type de lieu) que le membre peut renommer s'il est mal nommé. Des coordonnées venues du fichier ne se modifient pas.</td></tr>
+    <tr><td class="cle">Critère d'acceptation</td><td>Un contenu est publié quand il a un téléphone, une date et un point précis, et qu'il ne porte aucun signe d'IA. « Y aller » fonctionne donc toujours.</td></tr>
+  </table>
+
+  <h2>3.2 Création de reels, à la manière de TikTok et d'Instagram</h2>
+  <table>
+    <tr><td class="cle">Format</td><td>Vidéo courte verticale (9:16), de 15 à 60 secondes, lue automatiquement en mode muet dans les fils.</td></tr>
+    <tr><td class="cle">Tournage par séquences</td><td>Caméra USW plein écran, réglages par défaut, sans filtre (UC18) : on choisit la durée (15, 30 ou 60 s), on appuie pour filmer une séquence, on relâche pour s'arrêter, on recommence. Une barre montre les séquences déjà filmées et le temps restant. Minuterie, retournement de la caméra, flash.</td></tr>
+    <tr><td class="cle">Montage</td><td>Une frise des séquences (UC19) : couper le début ou la fin, réordonner, supprimer une séquence, ajouter un texte, garder le son d'origine, enregistrer une voix off ou choisir une musique libre de droits.</td></tr>
+    <tr><td class="cle">Import</td><td>Une vidéo de la galerie, même ancienne, peut aussi être montée et publiée (UC12, UC19).</td></tr>
+    <tr><td class="cle">Fidèle au réel</td><td>Pas de filtre beauté, pas d'effet ni de décor générés par IA, pas de changement de voix. Le montage arrange l'ordre et la durée, il ne transforme pas l'image.</td></tr>
+    <tr><td class="cle">Informations de capture</td><td>Un reel tourné avec la caméra USW reçoit au moment même du tournage le modèle du téléphone, les coordonnées GPS et la date : c'est la source la plus sûre. Une vidéo importée est lue sur ses métadonnées (fabricant, modèle, lieu, date de création) ; ce qui manque est complété par l'auteur, comme pour les photos (3.1).</td></tr>
+    <tr><td class="cle">Badge de capture</td><td>Chaque reel affiche le modèle du téléphone et le lieu de tournage, sous le badge « Capture vérifiée » ou « Informations déclarées ».</td></tr>
+  </table>
+
+  <h2>3.3 Envoi des médias et qualité des images</h2>
+  <p>Deux exigences guident l'envoi : publier doit être <strong>facile, rapide et fluide même
+  en 3G</strong>, et la plateforme doit offrir <strong>la meilleure qualité d'image</strong>.</p>
+  <table>
+    <tr><td class="cle">Contrôle avant envoi</td><td>Les informations de capture sont lues et complétées sur le téléphone (3.1), sans écran : un fichier qui porte des signes d'IA n'est jamais envoyé.</td></tr>
+    <tr><td class="cle">Envoi en deux temps</td><td>En 3G, le téléphone envoie d'abord une version légère de la photo (WebP de 2 160 px, environ 400 Ko, sans les informations du fichier) : le contenu peut paraître vite. L'original suit, par morceaux, de préférence en Wi-Fi ; le membre peut aussi l'envoyer tout de suite.</td></tr>
+    <tr><td class="cle">Envoi par morceaux</td><td>Le fichier part en morceaux de 256 Ko en 3G à 2 Mo en Wi-Fi, réglés selon le débit mesuré (UC15). Chaque morceau reçu est acquis.</td></tr>
+    <tr><td class="cle">Reprise automatique</td><td>Une coupure de réseau, la mise en arrière-plan ou le redémarrage du téléphone ne fait rien perdre : l'envoi repart du dernier morceau reçu dès que le réseau revient.</td></tr>
+    <tr><td class="cle">Déjà reçu</td><td>Une empreinte du fichier (SHA-256) permet au serveur de reconnaître un fichier déjà reçu, ou en partie reçu, et de ne pas le redemander.</td></tr>
+    <tr><td class="cle">En arrière-plan</td><td>Le membre continue à naviguer pendant l'envoi. Une pastille montre la progression ; l'écran « Mes envois » permet de mettre en pause, reprendre ou annuler (UC17).</td></tr>
+    <tr><td class="cle">Original intact</td><td>Le fichier n'est pas recompressé sur le téléphone : c'est l'original qui part, pour que la plateforme garde toute sa qualité.</td></tr>
+    <tr><td class="cle">Versions WebP</td><td>À l'arrivée, le serveur garde l'original tel quel et fabrique les versions d'affichage (UC16) : aperçu flou de 32 px, miniature de 480 px, version de flux de 1 080 px et version plein écran de 2 160 px, en <strong>WebP</strong> de qualité haute, en sRGB et <strong>sans les informations du fichier</strong>. Pour un reel : une affiche WebP, une vidéo légère en 480p et une vidéo HD en 720p ou 1080p.</td></tr>
+    <tr><td class="cle">Affichage adapté</td><td>L'application choisit la version selon la taille de l'écran et le réseau : version de flux en 3G, plein écran en Wi-Fi. Pendant le chargement : la couleur dominante, puis l'aperçu flou, puis l'image nette ; jamais de case vide.</td></tr>
+    <tr><td class="cle">Téléchargement de l'original</td><td>« Télécharger l'original » donne le fichier d'origine, dans son format (JPEG, HEIC, PNG, MP4, MOV) et sa résolution d'origine (UC24). Le format, la résolution et le poids sont annoncés avant de lancer ; en 3G, la durée est estimée et le membre peut attendre le Wi-Fi. Une « taille écran » légère est aussi proposée.</td></tr>
+    <tr><td class="cle">Mise en ligne</td><td>Le contenu passe en ligne quand sa version légère est reçue et vérifiée ; l'original le complète dès qu'il arrive. Le membre est prévenu par une notification.</td></tr>
+  </table>
+
+  <h2>3.4 Découverte et exploration</h2>
+  <table>
+    <tr><td class="cle">Accueil en mosaïque</td><td>À l'ouverture, une mosaïque de <strong>piles de photos</strong> : une pile par lieu, dont les photos défilent l'une après l'autre (UC20). Toucher une pile ouvre la page du lieu, avec toutes ses photos et ses reels. La découverte se fait par le contenu, et non par une liste de pays.</td></tr>
+    <tr><td class="cle">Fil de reels</td><td>Un fil vertical plein écran, comme TikTok : on glisse vers le haut pour passer au reel suivant (UC25).</td></tr>
+    <tr><td class="cle">Trois flux</td><td><strong>Découverte</strong> (tout USW), <strong>Abonnements</strong> (les créateurs suivis) et <strong>Près de moi</strong> (autour de la position du téléphone, UC31).</td></tr>
+    <tr><td class="cle">Recherche libre</td><td>Une loupe en haut de l'Accueil ouvre un champ unique (UC26) : il cherche dans les <strong>lieux</strong> (nom, ville, pays), les <strong>contenus</strong> (légendes, mots-clés) et les <strong>créateurs</strong>. Les résultats se rangent en trois onglets ; les recherches récentes sont proposées ; les filtres de lieu s'appliquent aussi aux résultats.</td></tr>
+    <tr><td class="cle">Filtres de lieu</td><td>Pays, ville, type de lieu (nature, plage, patrimoine, ville, marché, lieu de culte, loisirs) et rayon de proximité s'appliquent aux flux et à la recherche (UC21). « Par pays » n'est pas une classification d'accueil.</td></tr>
+    <tr><td class="cle">Lieu de capture</td><td>Chaque contenu affiche le lieu exact de la prise de vue : nom du lieu, ville, coordonnées, et leur origine, GPS du fichier ou indiqué par l'auteur (UC22).</td></tr>
+    <tr><td class="cle">Affichage transparent</td><td>Chaque contenu affiche le modèle du téléphone qui l'a capturé et la date, renforçant le positionnement « 100 % réel ».</td></tr>
+    <tr><td class="cle">Carte des reels</td><td>Une carte interactive pose chaque contenu sur son lieu, en vignette ; les contenus proches se regroupent en un chiffre (UC23). C'est une carte de découverte, pas un itinéraire : son bouton « Y aller » ouvre l'application de cartographie (3.5).</td></tr>
+  </table>
+
+  <h2>3.5 Itinéraire : confié à l'application de cartographie</h2>
+  <table>
+    <tr><td class="cle">Bouton « Y aller »</td><td>Présent sur chaque photo, chaque reel, chaque pastille de la carte et chaque lieu trouvé par la recherche (UC30).</td></tr>
+    <tr><td class="cle">Navigation externe</td><td>USW n'affiche ni trajet ni guidage. Le bouton envoie les coordonnées du point de prise de vue et le nom du lieu à l'application de cartographie installée (Google Maps, Maps, Waze), qui calcule l'itinéraire depuis la position du voyageur et le guide jusqu'au point exact.</td></tr>
+    <tr><td class="cle">Plusieurs applications</td><td>Si plusieurs applications de cartographie sont installées, c'est le sélecteur du système qui propose le choix.</td></tr>
+    <tr><td class="cle">Sans position</td><td>USW n'a pas besoin de la position du voyageur pour l'itinéraire : l'application de cartographie la prend elle-même.</td></tr>
+  </table>
+
+  <h2>3.6 Interactions communautaires</h2>
+  <table>
+    <tr><td class="cle">J'aime et réactions</td><td>Un double appui sur un contenu l'aime ; un appui long sur le cœur propose quatre réactions rapides : J'aime, Waou, Envie d'y aller, Merci (UC40). Le compteur ouvre la liste de ceux qui ont réagi, par type de réaction.</td></tr>
+    <tr><td class="cle">Commentaires</td><td>Chaque contenu a son espace de commentaires : réponses imbriquées, mentions d'utilisateurs avec @ (UC41). Le créateur peut épingler un commentaire (UC47), en masquer ou en supprimer sur ses contenus (UC48).</td></tr>
+    <tr><td class="cle">Suivre</td><td>On s'abonne à un créateur depuis son profil ou directement depuis un reel (UC45) ; ses publications alimentent le flux Abonnements.</td></tr>
+    <tr><td class="cle">Partage</td><td>Envoi direct à un membre, partage par WhatsApp, par message, par e-mail, par la feuille de partage du téléphone ou par un lien court copié, qui ouvre le contenu même sans l'application (UC42). Pour un reel, la même feuille propose aussi Télécharger, Enregistrer, Pas intéressé et Signaler.</td></tr>
+    <tr><td class="cle">Collections</td><td>Enregistrer un contenu dans une collection personnelle, publique ou secrète ; créer, renommer, supprimer ses collections (UC43, UC44).</td></tr>
+    <tr><td class="cle">Notifications</td><td>Réactions, commentaires, réponses, mentions, nouveaux abonnés, contenu mis en ligne ou refusé (UC46).</td></tr>
+  </table>
+
+  <h2>3.7 Modération</h2>
+  <table>
+    <tr><td class="cle">Signalement</td><td>Un contenu ou un commentaire se signale avec un motif : image générée par IA, pas pris à cet endroit, pas son auteur, contenu choquant, harcèlement, spam (UC50). Le signalement est anonyme ; la réponse arrive sous 24 h.</td></tr>
+    <tr><td class="cle">Blocage</td><td>Un membre peut bloquer un utilisateur : ils ne se voient plus (UC51).</td></tr>
+    <tr><td class="cle">Règles communautaires</td><td>Consultables par tous, y compris sans compte (UC52).</td></tr>
+    <tr><td class="cle">File de validation humaine</td><td>Les contenus douteux, les signalements et les demandes de vérification arrivent dans une file, les plus urgents d'abord ; le reste est publié sans attendre. Le modérateur voit le score de signes d'IA, ses raisons et le fichier comparé à ce que l'auteur a déclaré, puis publie ou refuse avec un motif (UC53, UC54).</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ 4 -->
+<section class="page" style="break-before: page;">
+  <p class="surtitre">Cahier des charges · 4</p>
+  <h1 class="titre">Exigences non fonctionnelles</h1>
+  <table>
+    <thead><tr><th style="width:24%">Exigence</th><th>Attendu</th></tr></thead>
+    <tbody>
+      <tr><td class="cle">Connexions lentes</td><td>L'application reste utilisable en 3G : premier écran affiché en moins de 3 secondes, images de flux légères, envoi reprenable, aucune action perdue à cause d'une coupure.</td></tr>
+      <tr><td class="cle">Qualité d'image</td><td>Les versions plein écran sont en WebP de qualité haute, jusqu'à 2048 px ; l'original est conservé sans perte.</td></tr>
+      <tr><td class="cle">Fluidité</td><td>Défilement et animations à 60 images par seconde sur un téléphone de milieu de gamme. Les animations suivent une charte de mouvement commune (entrées de texte, transitions entre écrans, réponse au toucher) et s'effacent quand le réglage « réduire les animations » est activé.</td></tr>
+      <tr><td class="cle">Formats d'écran</td><td>Téléphone et tablette, en portrait ; Android et iOS.</td></tr>
+      <tr><td class="cle">Ergonomie</td><td>Une action principale par écran, des messages d'erreur en langage courant, toute action réversible (annuler, retirer), zones tactiles d'au moins 44 points.</td></tr>
+      <tr><td class="cle">Accessibilité</td><td>Contrastes suffisants, textes agrandissables, libellés lus par les lecteurs d'écran.</td></tr>
+      <tr><td class="cle">Confidentialité</td><td>La lecture des métadonnées se fait sur le téléphone. Les coordonnées publiées sont celles de la prise de vue, jamais la position en direct du membre. Les versions d'affichage ne contiennent aucune information du fichier ; seul l'original les garde. Mots de passe chiffrés, échanges en HTTPS. La page du mot de passe ne montre ni le nom ni la photo du compte, pour ne pas révéler qui est inscrit.</td></tr>
+      <tr><td class="cle">Langue</td><td>Français d'abord ; textes de l'interface regroupés pour être traduits.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============================================================ 5 -->
+<section class="page">
+  <p class="surtitre">Cahier des charges · 5</p>
+  <h1 class="titre">Spécifications techniques</h1>
+  <p class="chapeau">L'interface mobile est développée avec le framework <strong>Flutter</strong>
+  (langage Dart). Le backend repose sur <strong>Laravel</strong>, qui expose les services
+  consommés par l'application.</p>
+  <table>
+    <thead><tr><th style="width:22%">Composant</th><th style="width:26%">Choix technique</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td class="cle">Backend / API</td><td>Laravel (PHP)</td><td>API REST, authentification, contenus, interactions, modération.</td></tr>
+      <tr><td class="cle">Interface mobile</td><td>Flutter / Dart</td><td>Base commune pour Android et iOS, téléphone et tablette.</td></tr>
+      <tr><td class="cle">Architecture</td><td>Modulaire par fonctionnalités</td><td>Isoler chaque domaine : dépôt, reels, envoi, exploration, itinéraire, communauté, modération.</td></tr>
+      <tr><td class="cle">Gestion d'état</td><td>Riverpod ou BLoC</td><td>Séparer strictement la logique métier des écrans.</td></tr>
+      <tr><td class="cle">Connexion</td><td>google_sign_in, Laravel Sanctum</td><td>Connexion par e-mail et mot de passe, ou avec un compte Google : l'API vérifie le jeton d'identité Google, puis remet un jeton Sanctum.</td></tr>
+      <tr><td class="cle">Accès aux médias</td><td>image_picker, camera</td><td>Ouvrir l'appareil photo du téléphone (sans réduire la taille ni la qualité, pour garder l'original et ses métadonnées) et la galerie ; caméra plein écran pour tourner les reels par séquences.</td></tr>
+      <tr><td class="cle">Extraction de données</td><td>native_exif</td><td>Lire les métadonnées EXIF localement sur le téléphone et pré-remplir le formulaire.</td></tr>
+      <tr><td class="cle">Modèle du téléphone</td><td>device_info_plus</td><td>Lire, avec l'autorisation du membre, le modèle du téléphone : le comparer à celui du fichier, et le proposer d'un appui quand le fichier ne le dit pas.</td></tr>
+      <tr><td class="cle">Position</td><td>geolocator</td><td>Position du téléphone pour Près de moi et le filtre de proximité ; coordonnées inscrites au tournage d'un reel.</td></tr>
+      <tr><td class="cle">Envoi reprenable</td><td>Protocole d'envoi par morceaux de type tus</td><td>Envoi par morceaux, reprise après coupure, envoi en arrière-plan.</td></tr>
+      <tr><td class="cle">Traitement des images</td><td>File de tâches Laravel, libvips ou Imagick</td><td>Fabriquer les versions WebP (480, 1 080 et 2 160 px) ; relire les métadonnées côté serveur.</td></tr>
+      <tr><td class="cle">Traitement des vidéos</td><td>FFmpeg</td><td>Assembler les séquences, fabriquer les versions 480p et HD et l'affiche.</td></tr>
+      <tr><td class="cle">Lecture vidéo</td><td>video_player</td><td>Lecture muette automatique dans les fils.</td></tr>
+      <tr><td class="cle">Partage</td><td>share_plus</td><td>WhatsApp et feuille de partage du téléphone.</td></tr>
+      <tr><td class="cle">Lancement de la navigation</td><td>url_launcher</td><td>Ouvrir l'application de cartographie sur les coordonnées de la prise de vue.</td></tr>
+    </tbody>
+  </table>
+  <div class="encart">
+    <p class="surtitre">Principe d'architecture</p>
+    <p>L'interface Flutter s'appuie sur le backend Laravel pour les comptes, les publications et
+    les données partagées. La lecture des métadonnées reste locale au téléphone, l'envoi des
+    médias se fait par morceaux reprenables, les versions d'affichage sont fabriquées sur le
+    serveur, et la navigation est déléguée aux applications de cartographie installées par
+    l'utilisateur.</p>
+  </div>
+  <p>Cette organisation permet de faire évoluer séparément l'interface, le backend, le dépôt de
+  contenus, la création de reels, le moteur d'envoi, l'itinéraire et les fonctionnalités
+  communautaires, sans remettre en cause l'ensemble de l'application.</p>
+</section>
+
+<!-- ============================================================ 6 -->
+<section class="page">
+  <p class="surtitre">Cahier des charges · 6</p>
+  <h1 class="titre">Parcours utilisateurs</h1>
+  <p class="chapeau">Cinq parcours structurent l'expérience : contribuer, créer un reel,
+  voyager, interagir et modérer.</p>
+
+  <div class="parcours">
+    <h3>Parcours A · Le contributeur photo</h3>
+    <ol class="etapes">
+      <li>Il ouvre « Créer » et touche « Prendre une photo » : l'appareil photo de son téléphone s'ouvre, avec tous ses modes. Ou il choisit une photo de sa galerie, même ancienne.</li>
+      <li>USW lit le fichier sans rien lui montrer : le téléphone, la date et le lieu sont déjà rangés dans les détails.</li>
+      <li>S'il manque une information (une photo ancienne sans GPS, par exemple), et seulement dans ce cas, il la complète.</li>
+      <li>Il ajoute une légende et vérifie le lieu trouvé, puis publie.</li>
+      <li>L'envoi part en arrière-plan : la version légère d'abord, l'original ensuite ; une coupure de réseau ne lui fait rien perdre.</li>
+      <li>Le contenu est vérifié, reçoit son badge (« Capture vérifiée » ou « Informations déclarées ») et paraît dans les flux ; il en est prévenu.</li>
+    </ol>
+  </div>
+
+  <div class="parcours">
+    <h3>Parcours B · Le créateur de reel</h3>
+    <ol class="etapes">
+      <li>Sur place, il ouvre « Créer », puis « Reel », et choisit la durée.</li>
+      <li>Il filme plusieurs séquences en appuyant et relâchant ; USW inscrit l'appareil, le GPS et la date.</li>
+      <li>Il monte : coupe, réordonne, ajoute un texte et choisit le son.</li>
+      <li>Il publie ; l'envoi se fait comme pour une photo.</li>
+      <li>Le reel paraît dans le fil, sur la carte des reels et dans le flux Abonnements de ceux qui le suivent.</li>
+    </ol>
+  </div>
+
+  <div class="parcours">
+    <h3>Parcours C · Le voyageur</h3>
+    <ol class="etapes">
+      <li>Il ouvre l'application et parcourt la mosaïque ou le fil de reels, comme un fil de découverte.</li>
+      <li>Il découvre un paysage authentique qui lui donne envie de voyager.</li>
+      <li>Il filtre par pays, ville, type de lieu ou proximité.</li>
+      <li>Il consulte les informations de capture : modèle du téléphone, lieu exact et date.</li>
+      <li>Il touche « Y aller ».</li>
+      <li>Son application de cartographie s'ouvre et le guide jusqu'au point exact de la prise de vue.</li>
+    </ol>
+  </div>
+
+  <div class="parcours">
+    <h3>Parcours D · L'interaction communautaire</h3>
+    <ol class="etapes">
+      <li>Il regarde un reel dans Découverte, Abonnements ou Près de moi.</li>
+      <li>Il l'aime d'un double appui, ou garde le doigt sur le cœur pour choisir Waou, Envie d'y aller ou Merci, et s'abonne au créateur.</li>
+      <li>Il commente, répond à un commentaire ou mentionne quelqu'un.</li>
+      <li>Il partage le reel par WhatsApp, l'enregistre dans une collection ou le télécharge (en Wi-Fi s'il est lourd).</li>
+      <li>Le créateur reçoit les notifications et peut épingler ou modérer les commentaires.</li>
+      <li>Tout contenu inapproprié peut être signalé et part dans la file de validation humaine.</li>
+    </ol>
+  </div>
+
+  <div class="parcours">
+    <h3>Parcours E · Le modérateur</h3>
+    <ol class="etapes">
+      <li>Il ouvre la file de modération : contenus en attente et signalements ouverts.</li>
+      <li>Il examine un contenu avec ses métadonnées de capture.</li>
+      <li>Il valide ou rejette avec un motif ; l'auteur en est prévenu.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ 7 -->
+<section>
+  <p class="surtitre">Cahier des charges · 7</p>
+  <h1 class="titre">Acteurs et cas d'utilisation</h1>
+
+  <h2>Les acteurs</h2>
+  <table>
+    <thead><tr><th style="width:22%">Acteur</th><th>Rôle</th><th style="width:16%">Hérite de</th></tr></thead>
+    <tbody>
+      <tr><td class="cle">Visiteur</td><td>Ouvre l'application sans compte : regarde la mosaïque, les reels et la carte, peut lancer « Y aller ».</td><td></td></tr>
+      <tr><td class="cle">Membre</td><td>A un compte : publie, crée des reels, réagit, commente, suit, enregistre, télécharge, signale.</td><td>Visiteur</td></tr>
+      <tr><td class="cle">Créateur</td><td>Le membre auteur d'un contenu : épingle et modère les commentaires de ce contenu.</td><td>Membre</td></tr>
+      <tr><td class="cle">Modérateur</td><td>Traite la file de validation humaine et les signalements.</td><td>Membre</td></tr>
+      <tr><td class="cle">Application de cartographie</td><td>Reçoit la destination, calcule et guide l'itinéraire.</td><td>système</td></tr>
+      <tr><td class="cle">GPS du téléphone</td><td>Donne la position pour Près de moi et le filtre de proximité.</td><td>système</td></tr>
+      <tr><td class="cle">Messagerie</td><td>WhatsApp et la feuille de partage du téléphone.</td><td>système</td></tr>
+    </tbody>
+  </table>
+  <p>Le contributeur et le voyageur des parcours ne sont pas deux acteurs : c'est le même
+  membre, dans deux rôles.</p>
+
+  <h2>Les cas d'utilisation</h2>
+  <table>
+    <thead><tr><th style="width:9%">N°</th><th>Cas d'utilisation</th><th style="width:16%">Acteur</th><th style="width:14%">Section</th></tr></thead>
+    <tbody>
+      <tr><td class="num">UC01</td><td>S'inscrire</td><td>Visiteur</td><td>5</td></tr>
+      <tr><td class="num">UC02</td><td>Se connecter</td><td>Visiteur</td><td>5</td></tr>
+      <tr><td class="num">UC03</td><td>Gérer son profil</td><td>Membre</td><td></td></tr>
+      <tr><td class="num">UC10</td><td>Publier un contenu (photo ou reel)</td><td>Membre</td><td>3.1, 3.2</td></tr>
+      <tr><td class="num">UC11</td><td>Prendre une photo avec l'appareil du téléphone</td><td>Membre</td><td>3.1</td></tr>
+      <tr><td class="num">UC12</td><td>Importer depuis la galerie</td><td>Membre</td><td>3.1, 3.2</td></tr>
+      <tr><td class="num">UC13</td><td>Extraire les métadonnées sur le téléphone et pré-remplir</td><td>système</td><td>3.1</td></tr>
+      <tr><td class="num">UC14</td><td>Vérifier l'authenticité : signes d'IA, cohérence, badge</td><td>système</td><td>3.1</td></tr>
+      <tr><td class="num">UC27</td><td>Compléter les informations manquantes : téléphone, date, lieu</td><td>Membre</td><td>3.1</td></tr>
+      <tr><td class="num">UC15</td><td>Envoyer le média par morceaux, avec reprise</td><td>système</td><td>3.3</td></tr>
+      <tr><td class="num">UC16</td><td>Préparer les versions WebP</td><td>système</td><td>3.3</td></tr>
+      <tr><td class="num">UC17</td><td>Suivre ses envois : pause, reprise, annulation</td><td>Membre</td><td>3.3</td></tr>
+      <tr><td class="num">UC18</td><td>Tourner un reel par séquences</td><td>Membre</td><td>3.2</td></tr>
+      <tr><td class="num">UC19</td><td>Monter le reel : couper, ordonner, texte, son</td><td>Membre</td><td>3.2</td></tr>
+      <tr><td class="num">UC20</td><td>Parcourir la mosaïque : Découverte, Abonnements, Près de moi</td><td>Visiteur</td><td>3.4</td></tr>
+      <tr><td class="num">UC21</td><td>Filtrer : pays, ville, type de lieu, proximité</td><td>Visiteur</td><td>3.4</td></tr>
+      <tr><td class="num">UC22</td><td>Consulter un contenu : lieu, appareil, date, badge</td><td>Visiteur</td><td>3.4</td></tr>
+      <tr><td class="num">UC23</td><td>Explorer la carte des reels</td><td>Visiteur</td><td>3.4</td></tr>
+      <tr><td class="num">UC24</td><td>Télécharger l'original</td><td>Membre</td><td>3.3</td></tr>
+      <tr><td class="num">UC25</td><td>Regarder les reels en fil vertical</td><td>Visiteur</td><td>3.4</td></tr>
+      <tr><td class="num">UC26</td><td>Rechercher : lieux, contenus, créateurs</td><td>Visiteur</td><td>3.4</td></tr>
+      <tr><td class="num">UC30</td><td>Lancer l'itinéraire « Y aller »</td><td>Visiteur</td><td>3.5</td></tr>
+      <tr><td class="num">UC31</td><td>Obtenir la position actuelle</td><td>système</td><td>3.4</td></tr>
+      <tr><td class="num">UC40</td><td>Aimer, réagir</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC41</td><td>Commenter, répondre, mentionner</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC42</td><td>Partager</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC43</td><td>Enregistrer dans une collection</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC44</td><td>Gérer ses collections</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC45</td><td>S'abonner à un créateur</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC46</td><td>Consulter ses notifications</td><td>Membre</td><td>3.6</td></tr>
+      <tr><td class="num">UC47</td><td>Épingler un commentaire</td><td>Créateur</td><td>3.6</td></tr>
+      <tr><td class="num">UC48</td><td>Modérer les commentaires de ses contenus</td><td>Créateur</td><td>3.6</td></tr>
+      <tr><td class="num">UC50</td><td>Signaler un contenu ou un commentaire</td><td>Membre</td><td>3.7</td></tr>
+      <tr><td class="num">UC51</td><td>Bloquer un utilisateur</td><td>Membre</td><td>3.7</td></tr>
+      <tr><td class="num">UC52</td><td>Consulter les règles communautaires</td><td>Visiteur</td><td>3.7</td></tr>
+      <tr><td class="num">UC53</td><td>Traiter la file de validation</td><td>Modérateur</td><td>3.7</td></tr>
+      <tr><td class="num">UC54</td><td>Traiter les signalements</td><td>Modérateur</td><td>3.7</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Les relations entre cas</h2>
+  <ul>
+    <li><strong>Publier</strong> (UC10) inclut l'extraction des métadonnées (UC13), la vérification d'authenticité (UC14) et l'envoi par morceaux (UC15), qui inclut la préparation des versions WebP (UC16).</li>
+    <li>Prendre une photo (UC11), importer (UC12) et tourner un reel (UC18) étendent Publier ; le montage (UC19) étend le tournage et l'import d'une vidéo ; compléter les informations (UC27) étend Publier quand le fichier ne les contient pas.</li>
+    <li>Filtrer (UC21) étend la mosaïque (UC20), le fil de reels (UC25) et la recherche (UC26) ; la mosaïque et le fil incluent la position (UC31) pour Près de moi.</li>
+    <li>« Y aller » (UC30) étend la consultation d'un contenu (UC22), la carte (UC23), le fil de reels (UC25) et la recherche (UC26).</li>
+    <li>Enregistrer dans une collection (UC43) inclut la gestion des collections (UC44).</li>
+  </ul>
+  <p>Les figures 1 à 5 présentent d'abord l'ensemble des acteurs et des modules, puis un
+  diagramme par module, pour rester lisibles.</p>
+</section>
+
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/cas-utilisation-1-ensemble.svg" alt="Vue d'ensemble des cas d'utilisation">
+    <figcaption>Figure 1 · Vue d'ensemble : acteurs et modules</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/cas-utilisation-2-depot.svg" alt="Cas d'utilisation du dépôt">
+    <figcaption>Figure 2 · Dépôt : publier une photo ou un reel</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/cas-utilisation-3-exploration.svg" alt="Cas d'utilisation de l'exploration et de l'itinéraire">
+    <figcaption>Figure 3 · Exploration et itinéraire</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/cas-utilisation-4-communaute.svg" alt="Cas d'utilisation de la communauté">
+    <figcaption>Figure 4 · Communauté</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/cas-utilisation-5-compte-moderation.svg" alt="Cas d'utilisation du compte et de la modération">
+    <figcaption>Figure 5 · Compte et modération</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ 8 -->
+<section>
+  <p class="surtitre">Cahier des charges · 8</p>
+  <h1 class="titre">Modèle des données : diagramme de classes</h1>
+  <p class="chapeau">Les classes du domaine, regroupées comme les modules de l'application. Le
+  diagramme complet est en figure 6.</p>
+  <table>
+    <thead><tr><th style="width:18%">Module</th><th style="width:24%">Classe</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3" class="cle">Compte</td><td>Utilisateur</td><td>Le compte : identité, profil, rôle (membre ou modérateur).</td></tr>
+      <tr><td>Abonnement</td><td>Un membre suit un créateur.</td></tr>
+      <tr><td>Blocage</td><td>Un membre en bloque un autre.</td></tr>
+      <tr><td rowspan="10" class="cle">Dépôt</td><td>Contenu (abstraite)</td><td>Ce qui est publié : légende, statut, date, vues, téléchargements.</td></tr>
+      <tr><td>Photo, Reel</td><td>Les deux sortes de contenu ; un reel dure de 15 à 60 s, a son d'origine ou une musique, un texte incrusté.</td></tr>
+      <tr><td>Capture</td><td>Les informations de capture : source (appareil photo du téléphone, caméra USW pour un reel, ou galerie), modèle du téléphone, date, latitude, longitude, et pour chacune son origine. Elle dit si la capture est vérifiée et si le fichier porte des signes d'IA.</td></tr>
+      <tr><td>OrigineInformation</td><td>D'où vient une information : métadonnées du fichier, caméra USW ou déclarée par l'auteur.</td></tr>
+      <tr><td>ModeleTelephone</td><td>La liste des modèles de téléphone, tenue par les membres : un modèle absent est ajouté par le premier qui l'utilise.</td></tr>
+      <tr><td>FichierOriginal</td><td>Le fichier reçu, gardé tel quel : format, dimensions, poids, empreinte SHA-256.</td></tr>
+      <tr><td>Variante</td><td>Une version d'affichage : aperçu flou, miniature de 480 px, flux de 1 080 px, plein écran de 2 160 px (WebP) ; vidéo légère, vidéo HD, affiche.</td></tr>
+      <tr><td>Envoi</td><td>Un envoi par morceaux : octets reçus, taille des morceaux, statut, reprise.</td></tr>
+      <tr><td>PisteAudio</td><td>Une musique libre de droits de la bibliothèque.</td></tr>
+      <tr><td>StatutContenu</td><td>En envoi, en analyse, publié, en file humaine, rejeté, retiré.</td></tr>
+      <tr><td rowspan="2" class="cle">Lieux</td><td>Pays, Ville, Lieu</td><td>Où le contenu a été pris : nom, type, coordonnées.</td></tr>
+      <tr><td>TypeLieu</td><td>Nature, plage, patrimoine, ville, marché, lieu de culte, loisirs.</td></tr>
+      <tr><td rowspan="3" class="cle">Exploration et itinéraire</td><td>FiltreFlux</td><td>Le flux choisi (Découverte, Abonnements, Près de moi) et ses filtres.</td></tr>
+      <tr><td>Recherche</td><td>Un texte cherché librement ; ses résultats en lieux, contenus et créateurs ; les recherches récentes du membre.</td></tr>
+      <tr><td>Itineraire</td><td>La destination (coordonnées et nom du lieu) et le lien qui ouvre l'application de cartographie.</td></tr>
+      <tr><td rowspan="5" class="cle">Communauté</td><td>Reaction</td><td>J'aime, Waou, Envie d'y aller, Merci.</td></tr>
+      <tr><td>Commentaire</td><td>Texte, réponses imbriquées, mentions, épinglé, masqué.</td></tr>
+      <tr><td>Collection, Enregistrement</td><td>Les collections d'un membre et les contenus qu'il y range.</td></tr>
+      <tr><td>Notification</td><td>Ce qui est arrivé, pour qui, à propos de quel contenu, lue ou non.</td></tr>
+      <tr><td>TypeNotification</td><td>Réaction, commentaire, réponse, mention, abonnement, contenu publié, contenu rejeté.</td></tr>
+      <tr><td rowspan="3" class="cle">Modération</td><td>Signalement</td><td>Un contenu ou un commentaire signalé, son motif et son statut.</td></tr>
+      <tr><td>DecisionModeration</td><td>La décision d'un modérateur sur un contenu, et son motif.</td></tr>
+      <tr><td>RegleCommunautaire</td><td>Les règles affichées à tous.</td></tr>
+    </tbody>
+  </table>
+  <div class="encart">
+    <p class="surtitre">Ce que le modèle garantit</p>
+    <p>Un contenu porte toujours une capture (composition 1 à 1) : pas de publication sans
+    téléphone, date et lieu, et l'origine de chacun reste connue. Il garde toujours son fichier original et au moins une variante : la qualité
+    d'origine reste téléchargeable, l'affichage reste léger. L'itinéraire ne connaît que la
+    destination : le trajet appartient à l'application de cartographie.</p>
+  </div>
+</section>
+
+<section class="diagramme grand">
+  <figure>
+    <img src="../analyse/rendus/classes.svg" alt="Diagramme de classes de USW">
+    <figcaption>Figure 6 · Diagramme de classes de USW</figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ 9 -->
+<section>
+  <p class="surtitre">Cahier des charges · 9</p>
+  <h1 class="titre">Écrans de l'application</h1>
+  <p class="chapeau">Chaque écran existe en version téléphone et en version tablette. La barre
+  d'onglets, à la manière d'Instagram, compte cinq entrées : <strong>Accueil</strong>,
+  <strong>Reels</strong>, <strong>Créer</strong>, <strong>Carte</strong> et
+  <strong>Profil</strong> ; en haut de l'Accueil, la loupe ouvre la recherche et la cloche les
+  notifications.</p>
+  <table>
+    <thead><tr><th style="width:8%">N°</th><th>Écran</th><th style="width:22%">Cas</th></tr></thead>
+    <tbody>
+      <tr><td class="num">E00</td><td>Ouverture : « USW » s'écrit, puis chaque lettre s'élargit en son mot, l'un après l'autre</td><td>identité</td></tr>
+      <tr><td class="num">E01</td><td>Bienvenue, en trois pages : la promesse « 100 % réel », commencer ou explorer sans compte</td><td>UC01, UC02, UC52</td></tr>
+      <tr><td class="num">E02</td><td>Entrée, comme Pinterest : continuer avec Google ou par e-mail ; mot de passe (sans nom ni photo du compte), créer le mot de passe, code reçu par e-mail, mot de passe oublié</td><td>UC01, UC02</td></tr>
+      <tr><td class="num">E03</td><td>Accueil : piles de photos par lieu qui défilent ; Découverte, Abonnements, Près de moi ; l'en-tête se range quand on descend</td><td>UC20, UC31</td></tr>
+      <tr><td class="num">E04</td><td>Filtres (feuille) : pays, ville, types de lieu, distance, captures vérifiées seulement</td><td>UC21</td></tr>
+      <tr><td class="num">E05</td><td>Photo : badge, lieu, téléphone, date, Y aller, réactions, enregistrer, partager, télécharger</td><td>UC22, UC24, UC30, UC40, UC42, UC43</td></tr>
+      <tr><td class="num">E06</td><td>Reels : fil vertical plein écran ; réagir (appui long sur le cœur), la liste des réactions</td><td>UC25, UC22, UC30, UC40, UC45</td></tr>
+      <tr><td class="num">E07</td><td>Commentaires d'une photo ou d'un reel : épinglé par l'auteur, réponses, @mentions, moment cité</td><td>UC41, UC47, UC48</td></tr>
+      <tr><td class="num">E08</td><td>Télécharger l'original, photo ou reel : résolution, poids, durée en 3G, attendre le Wi-Fi</td><td>UC24</td></tr>
+      <tr><td class="num">E09</td><td>Enregistrer, photo ou reel : collections, secrètes marquées, en créer une</td><td>UC43, UC44</td></tr>
+      <tr><td class="num">E10</td><td>Partager, photo ou reel : un membre, WhatsApp, lien court ; pour un reel, télécharger et signaler</td><td>UC42</td></tr>
+      <tr><td class="num">E11</td><td>Carte des reels : vignettes posées sur leur lieu, groupes, aperçu, Y aller</td><td>UC23, UC30</td></tr>
+      <tr><td class="num">E12</td><td>Créer : prendre une photo (appareil du téléphone), tourner un reel, importer ; rappel « pas d'IA »</td><td>UC10, UC11, UC12, UC18</td></tr>
+      <tr><td class="num">E13</td><td>Lecture du fichier : sans écran, en arrière-plan</td><td>UC13, UC14</td></tr>
+      <tr><td class="num">E14</td><td>Détails : légende, lieu trouvé, aperçu avec le badge</td><td>UC10</td></tr>
+      <tr><td class="num">E15</td><td>Compléter, seulement s'il manque quelque chose : le téléphone tapé (choisi ou ajouté), la date, le lieu</td><td>UC27</td></tr>
+      <tr><td class="num">E16</td><td>En route : l'envoi part en arrière-plan, une pastille suit la progression</td><td>UC15, UC16</td></tr>
+      <tr><td class="num">E17</td><td>Notifications</td><td>UC46</td></tr>
+      <tr><td class="num">E18</td><td>Mon profil : publications, reels, enregistrés</td><td>UC03, UC44</td></tr>
+      <tr><td class="num">E19</td><td>Collection : couverture, secrète ou publique, renommer, partager</td><td>UC44</td></tr>
+      <tr><td class="num">E20</td><td>Profil d'un créateur : s'abonner, partager, bloquer, signaler</td><td>UC45, UC50, UC51</td></tr>
+      <tr><td class="num">E21</td><td>Modifier le profil ; réglages : données mobiles, autorisations, se déconnecter (en rouge)</td><td>UC03, UC51</td></tr>
+      <tr><td class="num">E22</td><td>Signaler (feuille) : six motifs, précision, anonyme</td><td>UC50</td></tr>
+      <tr><td class="num">E23</td><td>Règles communautaires : six règles avec un exemple accepté et un refusé, les sanctions</td><td>UC52</td></tr>
+      <tr><td class="num">E24</td><td>Modération, la file : à vérifier, signalements, demandes, les plus urgents d'abord</td><td>UC53, UC54</td></tr>
+      <tr><td class="num">E25</td><td>Modération, la décision : score d'IA, fichier comparé à la déclaration, motif, publier ou refuser</td><td>UC53, UC54</td></tr>
+      <tr><td class="num">E26</td><td>Mes envois : en cours, en pause, en vérification</td><td>UC17</td></tr>
+      <tr><td class="num">E27</td><td>Tourner un reel (caméra USW) : durée, séquences, minuterie</td><td>UC18</td></tr>
+      <tr><td class="num">E28</td><td>Monter le reel : frise des séquences, couper, réordonner, texte</td><td>UC19</td></tr>
+      <tr><td class="num">E29</td><td>Choisir un son : son d'origine, voix off, musiques libres de droits</td><td>UC19</td></tr>
+      <tr><td class="num">E30</td><td>Indiquer le lieu : chercher le lieu ou poser une épingle sur la carte</td><td>UC27</td></tr>
+      <tr><td class="num">E31</td><td>Recherche : champ libre, recherches récentes, onglets Lieux, Contenus, Créateurs</td><td>UC26, UC21, UC30</td></tr>
+      <tr><td class="num">E32</td><td>Autorisations, une seule fois : position, modèle du téléphone, caméra et micro pour les reels</td><td>UC11, UC18</td></tr>
+      <tr><td class="num">E33</td><td>Lieu : toutes les photos et reels d'un lieu, qui entrent au défilement ; Y aller</td><td>UC20, UC22, UC30</td></tr>
+      <tr><td class="num">E34</td><td>Conditions générales d'utilisation</td><td>UC01, UC52</td></tr>
+      <tr><td class="num">E35</td><td>Aide : sujets, questions fréquentes, écrire à l'équipe</td><td>UC52</td></tr>
+      <tr><td class="num">E36</td><td>Compléter le profil à la première connexion, en trois étapes</td><td>UC01, UC03</td></tr>
+      <tr><td class="num">E37</td><td>Messages et erreurs : champ en erreur, hors connexion, contenu introuvable, publication refusée, confirmation, bulle d'aide, message après une action, position désactivée, recherche vide</td><td>tous</td></tr>
+      <tr><td class="num">E38</td><td>Politique de confidentialité : en bref, données gardées et durée, vos droits</td><td>UC52</td></tr>
+    </tbody>
+  </table>
+  <p>Chaque cas d'utilisation a au moins un écran, et chaque écran sert au moins un cas, à
+  l'exception de l'ouverture, qui porte l'identité de l'application.</p>
+  <div class="encart">
+    <p class="surtitre">Maquette cliquable</p>
+    <p>Les 61 maquettes (les écrans et leurs variantes) sont réunies dans un fichier
+    <strong>.god2</strong>, ouvert dans god2-design. En présentation, elles se parcourent comme un
+    prototype : chaque bouton mène à son écran (632 liens), « Retour » revient en arrière, et un
+    clic hors d'un lien montre en bleu les zones cliquables.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 10 -->
+<section style="break-before: page;">
+  <p class="surtitre">Cahier des charges · 10</p>
+  <h1 class="titre">Points à valider</h1>
+  <p class="chapeau">Là où la première version du dossier ne tranchait pas, voici les choix
+  retenus. Ils restent à confirmer par le groupe.</p>
+  <table>
+    <thead><tr><th style="width:5%">#</th><th style="width:30%">Choix</th><th>Détail</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="cle">On peut regarder sans compte</td><td>Le visiteur parcourt la mosaïque, les reels et la carte, et peut lancer « Y aller ». Publier, réagir, commenter, suivre et télécharger l'original demandent un compte.</td></tr>
+      <tr><td class="num">2</td><td class="cle">Quatre réactions rapides</td><td>J'aime, Waou, Envie d'y aller, Merci.</td></tr>
+      <tr><td class="num">3</td><td class="cle">Validation automatique, puis humaine</td><td>Rien n'est refusé pour une information manquante : l'auteur la complète. Un contenu cohérent est publié dès que ses versions sont prêtes ; un contenu douteux part dans la file humaine.</td></tr>
+      <tr><td class="num">4</td><td class="cle">Modération dans l'application</td><td>Le modérateur est un membre avec un rôle de plus, et non un outil séparé.</td></tr>
+      <tr><td class="num">5</td><td class="cle">Deux niveaux de badge</td><td>« Capture vérifiée » quand le téléphone et le lieu viennent du fichier ou de la caméra USW ; « Informations déclarées » quand l'auteur les a complétés.</td></tr>
+      <tr><td class="num">6</td><td class="cle">Montage fidèle au réel</td><td>Couper, réordonner, texte, son d'origine, voix off, musique libre de droits ; ni filtre beauté, ni effet ou décor généré par IA, ni changement de voix.</td></tr>
+      <tr><td class="num">7</td><td class="cle">Les signes d'IA</td><td>Sont refusés les fichiers dont les métadonnées nomment un logiciel de génération ou portent une marque de provenance qui les déclare générés ; les incohérences partent en file humaine.</td></tr>
+      <tr><td class="num">8</td><td class="cle">Connexion par e-mail ou Google</td><td>Comme Pinterest. À la première connexion, le membre complète son profil (photo, nom, ville, lieux aimés). La page du mot de passe ne montre ni nom ni photo, pour ne pas révéler qui est inscrit.</td></tr>
+      <tr><td class="num">9</td><td class="cle">L'appareil photo du téléphone</td><td>Les photos se prennent avec l'appareil du téléphone et tous ses modes ; la caméra USW ne sert qu'aux reels. Les modes gardés dépendent du fabricant : à tester sur le Tecno Camon 50 Pro.</td></tr>
+      <tr><td class="num">10</td><td class="cle">Vérification sans écran</td><td>Rien n'arrête le membre quand tout va bien ; un écran n'apparaît qu'en cas de problème.</td></tr>
+      <tr><td class="num">11</td><td class="cle">Envoi en deux temps</td><td>Une version légère d'abord, pour paraître vite en 3G ; l'original ensuite, de préférence en Wi-Fi.</td></tr>
+      <tr><td class="num">12</td><td class="cle">Modèles de téléphone saisis</td><td>USW ne tient pas la liste de tous les téléphones : un modèle absent est ajouté par le premier membre qui l'utilise. Un modérateur peut fusionner les doublons.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ============================================================ 11 -->
+<section style="break-before: page;">
+  <p class="surtitre">Cahier des charges · 11</p>
+  <h1 class="titre">Architecture du backend</h1>
+  <p class="chapeau">L'architecture est fixée avant d'écrire le code. Elle suit la méthode du
+  cours <strong>Projet d'initiation aux frameworks avec Laravel</strong> (IFRI, GL3) ; le détail
+  est dans <strong>analyse/ARCHITECTURE.md</strong>.</p>
+  <table>
+    <thead><tr><th style="width:24%">Sujet</th><th>Choix</th></tr></thead>
+    <tbody>
+      <tr><td class="cle">Forme</td><td>Un <strong>monolithe modulaire</strong> Laravel 13 : Compte, Dépôt, Envoi, Lieux, Exploration, Communauté, Modération, Notifications. Comme Pinterest à ses débuts, on reste simple et l'on découpe seulement quand la charge l'impose.</td></tr>
+      <tr><td class="cle">Organisation</td><td>Contrôleurs fins ; validation dans des Form Requests ; logique dans des services et des actions ; autorisations dans des Policies ; réponses par des ressources JSON ; travail lent dans des jobs en file d'attente ; réactions par événements et écouteurs.</td></tr>
+      <tr><td class="cle">Données</td><td>MySQL 8.4, index spatiaux pour Près de moi et la carte ; identifiants publics ULID, non devinables ; Redis pour le cache, les files et les limites de débit ; médias sur un disque S3 compatible, servis par un CDN.</td></tr>
+      <tr><td class="cle">Authentification</td><td>Jetons Sanctum pour l'application mobile ; jeton d'identité Google vérifié par l'API ; code e-mail haché, valable 10 minutes ; 5 essais de mot de passe, puis une pause de 15 minutes.</td></tr>
+      <tr><td class="cle">Envoi</td><td>Par morceaux bruts, reprenable (inspiré de tus) ; déduplication par empreinte SHA-256 ; aperçu d'abord, original ensuite.</td></tr>
+      <tr><td class="cle">Accueil</td><td>Pagination par curseur, chargement anticipé (pas de N+1), pages gardées 60 secondes en cache.</td></tr>
+      <tr><td class="cle">Sécurité</td><td>PHP 8.5.12 au minimum depuis les failles <strong>php2shell</strong> (CVE-2026-109618 et CVE-2026-109619, 21 octobre 2026), exigé par Composer et vérifié au déploiement ; PHP-FPM derrière Nginx ; validation serveur, <em>$fillable</em>, Policies à chaque ressource, limites de débit, originaux privés servis par lien signé, versions d'affichage sans métadonnées.</td></tr>
+      <tr><td class="cle">Tests</td><td>PHPUnit : tests unitaires et <em>feature tests</em>, base recréée à chaque test, services extérieurs simulés.</td></tr>
+    </tbody>
+  </table>
+  <h2>Méthode de réalisation</h2>
+  <p>Comme dans le TP : on avance dans l'ordre et on teste chaque étape avant la suivante. Chaque
+  lot suit le même chemin : migration, modèle, <em>factory</em>, Form Request, service, contrôleur,
+  ressource, Policy, route, <em>feature tests</em>, puis contrôle sur le téléphone.</p>
+  <ol class="etapes">
+    <li>Socle : projet, base, Sanctum, format des erreurs, tests, vérification de PHP.</li>
+    <li>Compte : inscription, code, connexion e-mail et Google, profil.</li>
+    <li>Lieux et contenus, avec des données de départ.</li>
+    <li>Envoi et vérification : morceaux, deux temps, analyse, variantes.</li>
+    <li>Exploration : flux, reels, Près de moi, carte, recherche.</li>
+    <li>Communauté : réactions, commentaires, collections, abonnements.</li>
+    <li>Modération : signalements, file, décisions.</li>
+    <li>Notifications, puis mise en production.</li>
+  </ol>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/archi-composants.svg" alt="Vue d'ensemble : un monolithe modulaire Laravel">
+    <figcaption>Figure 7 · Vue d'ensemble : un monolithe modulaire Laravel</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/archi-deploiement.svg" alt="Production">
+    <figcaption>Figure 8 · Production</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/archi-requete.svg" alt="Le trajet d'une requête">
+    <figcaption>Figure 9 · Le trajet d'une requête</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/seq-connexion.svg" alt="Se connecter : e-mail ou Google">
+    <figcaption>Figure 10 · Se connecter : e-mail ou Google</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/seq-publication.svg" alt="Publier une photo : envoi en deux temps, vérification sans écran">
+    <figcaption>Figure 11 · Publier une photo : envoi en deux temps, vérification sans écran</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/seq-envoi.svg" alt="Envoyer par morceaux et reprendre après une coupure">
+    <figcaption>Figure 12 · Envoyer par morceaux et reprendre après une coupure</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/activite-verification.svg" alt="AnalyserCapture : la vérification sans écran">
+    <figcaption>Figure 13 · AnalyserCapture : la vérification sans écran</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/seq-flux.svg" alt="Afficher l'accueil en piles">
+    <figcaption>Figure 14 · Afficher l'accueil en piles</figcaption>
+  </figure>
+</section>
+<section class="diagramme">
+  <figure>
+    <img src="../analyse/rendus/seq-moderation.svg" alt="Signaler et modérer">
+    <figcaption>Figure 15 · Signaler et modérer</figcaption>
+  </figure>
+</section>
+<section class="diagramme grand">
+  <figure>
+    <img src="../analyse/rendus/donnees.svg" alt="Modèle physique : les tables principales">
+    <figcaption>Figure 16 · Modèle physique : les tables principales</figcaption>
+  </figure>
+</section>
+</body>
+</html>

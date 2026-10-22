@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SafeVault · Maquette EC1 · god2-design</title>
+<!--
+  SafeVault, maquette EC1 (ergonomie), ouverte dans god2-design.
+
+  god2-design est l atelier qui ouvre une maquette comme un fichier de
+  design : les ecrans poses sur une toile ou l on se deplace et ou l on zoome,
+  leurs calques a gauche, les proprietes du calque choisi a droite. On y
+  retouche la maquette : deplacer, dimensionner, reecrire, dessiner, annuler.
+  Presenter montre chaque ecran en vrai, a la taille de la fenetre.
+
+  La maquette elle-meme est un document .god2 (voir outils/maquette/FORMAT-GOD2.md),
+  embarque plus bas. god2-design sait aussi en ouvrir un autre, et exporter
+  chaque cadre en SVG pour les autres editeurs de design.
+
+  Ce fichier est assemble par `npm run maquette` (outils/maquette.mjs). Ne pas
+  le retoucher a la main : corriger les sources, puis relancer la commande.
+-->
+<style>
+/*{{STYLES_ATELIER}}*/
+</style>
+</head>
+<body>
+  <div class="gd" id="gd" data-outil="deplacer" data-section="calques">
+
+    <!-- ============ Barre du haut : la marque, les menus, le fichier ouvert ============ -->
+    <header class="gd-barre">
+      <span class="gd-marque" aria-hidden="true"><svg viewBox="0 0 9 10"><path d="M0 0H6.6V2.4H2.4V7.6H0Z" /><path d="M9 10H2.4V7.6H6.6V2.4H9Z" /></svg></span>
+
+      <nav class="gd-menus" aria-label="Menus">
+        <div class="gd-menu-hote">
+          <button type="button" class="gd-menu-titre" data-menu="menu-fichier" aria-haspopup="menu" aria-expanded="false">Fichier</button>
+          <div class="gd-menu" id="menu-fichier" role="menu" hidden>
+            <a role="menuitem" id="gd-accueil" href="#" hidden>Toutes les maquettes</a>
+            <span class="gd-menu-filet" id="gd-accueil-filet" role="separator" hidden></span>
+            <button type="button" role="menuitem" data-action="ouvrir">Ouvrir un fichier .god2…</button>
+            <button type="button" role="menuitem" data-action="enregistrer">Enregistrer <kbd>Ctrl S</kbd></button>
+            <button type="button" role="menuitem" data-action="enregistrer-copie">Enregistrer une copie en .god2…</button>
+            <span class="gd-menu-filet" role="separator"></span>
+            <button type="button" role="menuitem" data-action="exporter-choix">Exporter la sélection en SVG</button>
+            <button type="button" role="menuitem" data-action="exporter-tout">Exporter tous les cadres en SVG</button>
+          </div>
+        </div>
+        <div class="gd-menu-hote">
+          <button type="button" class="gd-menu-titre" data-menu="menu-edition" aria-haspopup="menu" aria-expanded="false">Édition</button>
+          <div class="gd-menu" id="menu-edition" role="menu" hidden>
+            <button type="button" role="menuitem" data-action="annuler">Annuler <kbd>Ctrl Z</kbd></button>
+            <button type="button" role="menuitem" data-action="refaire">Rétablir <kbd>Ctrl Maj Z</kbd></button>
+            <span class="gd-menu-filet" role="separator"></span>
+            <button type="button" role="menuitem" data-action="copier">Copier <kbd>Ctrl C</kbd></button>
+            <button type="button" role="menuitem" data-action="couper">Couper <kbd>Ctrl X</kbd></button>
+            <button type="button" role="menuitem" data-action="coller">Coller <kbd>Ctrl V</kbd></button>
+            <button type="button" role="menuitem" data-action="dupliquer">Dupliquer <kbd>Ctrl D</kbd></button>
+            <button type="button" role="menuitem" data-action="supprimer">Supprimer <kbd>Suppr</kbd></button>
+            <span class="gd-menu-filet" role="separator"></span>
+            <button type="button" role="menuitem" data-action="ecrire">Modifier le texte <kbd>Entrée</kbd></button>
+            <button type="button" role="menuitem" data-action="renommer">Renommer le calque <kbd>F2</kbd></button>
+            <button type="button" role="menuitem" data-action="masquer">Masquer ou montrer <kbd>Ctrl Maj H</kbd></button>
+            <button type="button" role="menuitem" data-action="avancer">Avancer d'un rang <kbd>Ctrl ]</kbd></button>
+            <button type="button" role="menuitem" data-action="reculer">Reculer d'un rang <kbd>Ctrl [</kbd></button>
+            <span class="gd-menu-filet" role="separator"></span>
+            <button type="button" role="menuitem" data-action="ecran-nouveau">Nouvel écran</button>
+            <button type="button" role="menuitem" data-action="ecran-dupliquer">Dupliquer l'écran</button>
+            <button type="button" role="menuitem" data-action="ecran-supprimer">Supprimer l'écran</button>
+          </div>
+        </div>
+        <div class="gd-menu-hote">
+          <button type="button" class="gd-menu-titre" data-menu="menu-affichage" aria-haspopup="menu" aria-expanded="false">Affichage</button>
+          <div class="gd-menu" id="menu-affichage" role="menu" hidden>
+            <button type="button" role="menuitem" data-action="zoom-ajuster">Tout voir <kbd>Maj 1</kbd></button>
+            <button type="button" role="menuitem" data-action="zoom-choix">Voir la sélection <kbd>Maj 2</kbd></button>
+            <button type="button" role="menuitem" data-action="zoom-100">Taille réelle <kbd>Maj 0</kbd></button>
+            <span class="gd-menu-filet" role="separator"></span>
+            <button type="button" role="menuitem" data-action="theme">Thème clair ou sombre</button>
+            <button type="button" role="menuitem" data-action="presenter">Présenter <kbd>P</kbd></button>
+          </div>
+        </div>
+        <div class="gd-menu-hote">
+          <button type="button" class="gd-menu-titre" data-menu="menu-aide" aria-haspopup="menu" aria-expanded="false">Aide</button>
+          <div class="gd-menu" id="menu-aide" role="menu" hidden>
+            <button type="button" role="menuitem" data-action="aide">Raccourcis et gestes</button>
+          </div>
+        </div>
+      </nav>
+
+      <span class="gd-onglet-fichier" title="Le fichier ouvert">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.25 2.25H5A1.5 1.5 0 0 0 3.5 3.75v8.5A1.5 1.5 0 0 0 5 13.75h6a1.5 1.5 0 0 0 1.5-1.5V5.5z" /><path d="M9.25 2.25V4.5a1 1 0 0 0 1 1h2.25" /></svg>
+        <span id="gd-nom-fichier">Maquette</span>
+      </span>
+
+      <span class="gd-barre-fin">
+        <span class="gd-equipe" id="gd-equipe"></span>
+        <button type="button" class="gd-bouton gd-bouton-plein" data-action="presenter" title="Présenter : voir l'écran en vrai (P)">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4.75v10.5l8.5-5.25z" /></svg><span>Présenter</span>
+        </button>
+        <span class="gd-menu-hote gd-zoom">
+          <button type="button" class="gd-zoom-valeur" id="gd-zoom-valeur" data-menu="menu-zoom" aria-haspopup="menu" aria-expanded="false" title="Options de zoom">100 %</button>
+          <div class="gd-menu gd-menu-droite" id="menu-zoom" role="menu" hidden>
+            <button type="button" role="menuitem" data-action="zoom-plus">Zoom avant <kbd>+</kbd></button>
+            <button type="button" role="menuitem" data-action="zoom-moins">Zoom arrière <kbd>-</kbd></button>
+            <span class="gd-menu-filet" role="separator"></span>
+            <button type="button" role="menuitem" data-action="zoom-ajuster">Tout voir <kbd>Maj 1</kbd></button>
+            <button type="button" role="menuitem" data-action="zoom-choix">Voir la sélection <kbd>Maj 2</kbd></button>
+            <button type="button" role="menuitem" data-action="zoom-50">50 %</button>
+            <button type="button" role="menuitem" data-action="zoom-100">100 % <kbd>Maj 0</kbd></button>
+            <button type="button" role="menuitem" data-action="zoom-200">200 %</button>
+          </div>
+        </span>
+        <button type="button" class="gd-icone-bouton" data-action="theme" title="Thème clair ou sombre" aria-label="Changer de thème">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 11.6A6.4 6.4 0 0 1 8.4 4 6.4 6.4 0 1 0 16 11.6z" /></svg>
+        </button>
+      </span>
+
+      <!-- Sur un telephone, les volets s ouvrent d ici. -->
+      <button type="button" class="gd-bouton gd-barre-volet" data-action="volet-gauche" aria-controls="gd-volet-gauche" aria-expanded="false">Calques</button>
+      <button type="button" class="gd-bouton gd-barre-volet" data-action="volet-droit" aria-controls="gd-volet-droit" aria-expanded="false">Design</button>
+    </header>
+
+    <!-- ============ Rail : ce que le volet de gauche montre ============ -->
+    <nav class="gd-rail" aria-label="Contenu du volet">
+      <button type="button" class="gd-rail-bouton" data-section="calques" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4.5 8 4-8 4-8-4z" /><path d="m4 12.5 8 4 8-4" /><path d="m4 16.25 8 4 8-4" /></svg>
+        <span>Calques</span>
+      </button>
+      <button type="button" class="gd-rail-bouton" data-section="composants" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 3.25 3.25L12 10 8.75 6.75z" /><path d="m12 14 3.25 3.25L12 20.5l-3.25-3.25z" /><path d="m6.75 8.75 3.25 3.25-3.25 3.25L3.5 12z" /><path d="m17.25 8.75 3.25 3.25-3.25 3.25L14 12z" /></svg>
+        <span>Composants</span>
+      </button>
+      <button type="button" class="gd-rail-bouton" data-section="styles" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9.5" r="4.75" /><circle cx="15" cy="9.5" r="4.75" /><circle cx="12" cy="14.75" r="4.75" /></svg>
+        <span>Styles</span>
+      </button>
+    </nav>
+
+    <!-- ============ Volet gauche ============ -->
+    <aside class="gd-volet gd-volet-gauche" id="gd-volet-gauche" aria-label="Calques, composants et styles">
+      <div class="gd-volet-tete">
+        <div class="gd-sections" role="tablist" aria-label="Contenu du volet">
+          <button type="button" class="gd-section-onglet" role="tab" data-section="calques" aria-selected="true">Calques</button>
+          <button type="button" class="gd-section-onglet" role="tab" data-section="composants" aria-selected="false">Composants</button>
+          <button type="button" class="gd-section-onglet" role="tab" data-section="styles" aria-selected="false">Styles</button>
+        </div>
+        <button type="button" class="gd-icone-bouton gd-fermer-volet" data-action="volet-gauche" aria-label="Fermer le volet">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5.5 5.5 9 9M14.5 5.5l-9 9" /></svg>
+        </button>
+      </div>
+
+      <div class="gd-pan" data-pan="calques">
+        <label class="gd-recherche">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="4.75" /><path d="m12.5 12.5 3.5 3.5" /></svg>
+          <span class="gd-cache">Chercher un calque</span>
+          <input type="search" id="gd-recherche" placeholder="Chercher un calque" autocomplete="off" />
+        </label>
+        <div class="gd-arbre gd-defile" id="gd-arbre" role="tree" aria-label="Calques de la page"></div>
+      </div>
+      <div class="gd-pan gd-defile" data-pan="composants" id="gd-composants" hidden></div>
+      <div class="gd-pan gd-defile" data-pan="styles" id="gd-styles" hidden></div>
+    </aside>
+
+    <!-- ============ La toile ============ -->
+    <main class="gd-toile" id="gd-toile" aria-label="Toile : les écrans de la maquette">
+      <div class="gd-monde" id="gd-monde"></div>
+      <div class="gd-capteur" id="gd-capteur"></div>
+      <div class="gd-dessus" id="gd-dessus" aria-hidden="true">
+        <span class="gd-contour gd-contour-survol" id="gd-survol" hidden></span>
+        <span class="gd-contour gd-contour-choix" id="gd-choix" hidden><span class="gd-mesure" id="gd-mesure"></span></span>
+      </div>
+      <p class="gd-attente" id="gd-attente" role="status">Préparation des écrans…</p>
+      <p class="gd-depose" id="gd-depose" hidden>Lâchez un fichier .god2 pour l'ouvrir, ou une image sur un cadre</p>
+      <div class="gd-reprise" id="gd-reprise" role="status" hidden>
+        <span>Cette maquette a été retouchée sur cet ordinateur.</span>
+        <button type="button" class="gd-bouton gd-bouton-plein" data-action="reprendre">Reprendre mes retouches</button>
+        <button type="button" class="gd-bouton" data-action="oublier">Les oublier</button>
+      </div>
+
+      <!-- Les outils : choisir et se deplacer d abord, dessiner ensuite. Sur un
+           telephone, ou le doigt deplace la toile, seuls les premiers sont montres. -->
+      <div class="gd-outils" role="toolbar" aria-label="Outils" aria-orientation="vertical">
+        <button type="button" class="gd-outil" data-outil="deplacer" aria-pressed="true" title="Choisir, déplacer, dimensionner (V)" aria-label="Choisir et déplacer">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5 15.8 9l-4.7 1.5-1.6 4.8z" /></svg>
+        </button>
+        <button type="button" class="gd-outil" data-outil="main" aria-pressed="false" title="Main : se déplacer sur la toile (H, ou Espace maintenue)" aria-label="Main">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 11.5V5.75a1.25 1.25 0 0 1 2.5 0V10 4.5a1.25 1.25 0 0 1 2.5 0V10 5.75a1.25 1.25 0 0 1 2.5 0v6.75c0 2.9-2 4.75-4.9 4.75-2.1 0-3.3-.85-4.45-2.7L3.5 11.9a1.15 1.15 0 0 1 1.9-1.3L7 12.4" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-ajuster" data-action="zoom-ajuster" title="Tout voir (Maj 1)" aria-label="Tout voir">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7.5V4h3.5M16 7.5V4h-3.5M4 12.5V16h3.5M16 12.5V16h-3.5" /></svg>
+        </button>
+        <span class="gd-outils-filet" aria-hidden="true"></span>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="cadre" aria-pressed="false" title="Cadre (F)" aria-label="Cadre">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3v14M13 3v14M3 7h14M3 13h14" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="forme" aria-pressed="false" title="Rectangle (R)" aria-label="Rectangle">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="4" width="12" height="12" rx="1.75" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="ellipse" aria-pressed="false" title="Ellipse (O)" aria-label="Ellipse">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="6.25" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="trait" aria-pressed="false" title="Trait (L)" aria-label="Trait">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 15.5 11-11" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="plume" aria-pressed="false" title="Plume : un clic par point, double-clic pour finir (Maj P)" aria-label="Plume">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 16 1.4-5.3L12.6 3.5l3.9 3.9-7.2 7.2z" /><path d="m10.9 5.2 3.9 3.9" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="texte" aria-pressed="false" title="Texte (T)" aria-label="Texte">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 6V4.25h10V6M10 4.25v11.5M8 15.75h4" /></svg>
+        </button>
+        <button type="button" class="gd-outil gd-outil-dessin" data-outil="image" aria-pressed="false" title="Image (I)" aria-label="Image">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="4.5" width="13" height="11" rx="1.75" /><path d="m4 13.5 3.5-3.25 2.75 2.25 2-1.75 3.75 3" /></svg>
+        </button>
+      </div>
+
+      <!-- ============ Volet droit : les proprietes et l export ============ -->
+      <aside class="gd-volet gd-volet-droit" id="gd-volet-droit" aria-label="Propriétés et export">
+        <div class="gd-volet-tete">
+          <div class="gd-onglets" role="tablist" aria-label="Propriétés ou export">
+            <button type="button" class="gd-onglet" role="tab" data-onglet="design" aria-selected="true">Design</button>
+            <button type="button" class="gd-onglet" role="tab" data-onglet="export" aria-selected="false">Export</button>
+          </div>
+          <button type="button" class="gd-icone-bouton gd-fermer-volet" data-action="volet-droit" aria-label="Fermer le volet">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5.5 5.5 9 9M14.5 5.5l-9 9" /></svg>
+          </button>
+        </div>
+        <div class="gd-fiche gd-defile" id="gd-fiche" aria-live="polite"></div>
+        <div class="gd-fiche gd-defile" id="gd-export" hidden>
+          <section class="gd-bloc">
+            <h3 class="gd-bloc-titre">Sélection</h3>
+            <p class="gd-note" id="gd-export-quoi">Rien de choisi : l'export porte sur tous les cadres.</p>
+            <button type="button" class="gd-bouton gd-bouton-large" data-action="exporter-choix">Exporter en SVG</button>
+          </section>
+          <section class="gd-bloc">
+            <h3 class="gd-bloc-titre">Page</h3>
+            <button type="button" class="gd-bouton gd-bouton-large" data-action="exporter-tout">Tous les cadres, un SVG par cadre</button>
+          </section>
+          <section class="gd-bloc">
+            <h3 class="gd-bloc-titre">Fichier</h3>
+            <button type="button" class="gd-bouton gd-bouton-large" data-action="enregistrer">Enregistrer la maquette</button>
+            <button type="button" class="gd-bouton gd-bouton-large" data-action="enregistrer-copie">Enregistrer une copie en .god2</button>
+            <p class="gd-note">
+              Le <b>.god2</b> se rouvre dans god2-design. Le <b>SVG</b> s'ouvre dans les éditeurs de design
+              (Figma, Lunacy, Penpot, Illustrator) : formes, textes et icônes y restent modifiables. Les textes
+              y sont en Outfit, dont Wura mi est une instance.
+            </p>
+          </section>
+        </div>
+      </aside>
+    </main>
+
+    <!-- ============ Presentation : un ecran en vrai, a la taille d un format ou de la fenetre ============ -->
+    <div class="gd-presentation" id="gd-presentation" role="dialog" aria-modal="true" aria-label="Présentation de la maquette" hidden>
+      <div class="gd-presentation-barre">
+        <button type="button" class="gd-bouton" data-action="quitter-presentation">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 10h-11M8.5 5.5 4 10l4.5 4.5" /></svg>Atelier
+        </button>
+        <span class="gd-presentation-formats" id="gd-presentation-formats" role="group" aria-label="Format de présentation"></span>
+        <span class="gd-presentation-titre" id="gd-presentation-titre"></span>
+        <span class="gd-presentation-pas">
+          <button type="button" class="gd-icone-bouton" data-action="presentation-avant" aria-label="Écran précédent"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 5 7 10l5 5" /></svg></button>
+          <button type="button" class="gd-icone-bouton" data-action="presentation-apres" aria-label="Écran suivant"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5" /></svg></button>
+        </span>
+      </div>
+      <div class="gd-presentation-scene" id="gd-presentation-scene">
+        <iframe class="gd-presentation-ecran" id="gd-presentation-ecran" title="Écran de la maquette" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+
+    <!-- ============ Aide ============ -->
+    <dialog class="gd-aide" id="gd-aide" aria-labelledby="gd-aide-titre">
+      <h2 id="gd-aide-titre">Raccourcis et gestes</h2>
+      <dl>
+        <div><dt>Se déplacer</dt><dd>Molette, <kbd>Espace</kbd> + glisser, ou l'outil Main <kbd>H</kbd></dd></div>
+        <div><dt>Zoomer</dt><dd><kbd>Ctrl</kbd> + molette, <kbd>+</kbd> et <kbd>-</kbd>, ou pincer</dd></div>
+        <div><dt>Tout voir</dt><dd><kbd>Maj</kbd> <kbd>1</kbd></dd></div>
+        <div><dt>Voir la sélection</dt><dd><kbd>Maj</kbd> <kbd>2</kbd></dd></div>
+        <div><dt>Taille réelle</dt><dd><kbd>Maj</kbd> <kbd>0</kbd></dd></div>
+        <div><dt>Choisir</dt><dd>Clic sur la toile ou dans les calques, outil <kbd>V</kbd></dd></div>
+        <div><dt>Calque parent, calque voisin</dt><dd><kbd>Maj</kbd> <kbd>Entrée</kbd>, <kbd>Tab</kbd></dd></div>
+        <div><dt>Ne plus rien choisir</dt><dd><kbd>Échap</kbd></dd></div>
+        <div><dt>Déplacer un calque</dt><dd>Le glisser ; les flèches le poussent d'un pixel, de dix avec <kbd>Maj</kbd></dd></div>
+        <div><dt>Pendant qu'on glisse</dt><dd><kbd>Maj</kbd> tient un seul axe, <kbd>Alt</kbd> emporte une copie, <kbd>Ctrl</kbd> coupe les aimants</dd></div>
+        <div><dt>Dimensionner</dt><dd>Tirer un bord, n'importe où, ou un coin ; <kbd>Maj</kbd> garde les proportions, <kbd>Alt</kbd> part du centre ; <kbd>Ctrl</kbd> + flèches</dd></div>
+        <div><dt>Arrondir les coins</dt><dd>Tirer l'un des points ronds du calque choisi ; <kbd>Alt</kbd> pour un seul coin</dd></div>
+        <div><dt>Mesurer un écart</dt><dd><kbd>Alt</kbd> en survolant un autre calque</dd></div>
+        <div><dt>Opacité</dt><dd><kbd>1</kbd> à <kbd>9</kbd> pour 10 à 90 %, <kbd>0</kbd> pour 100 %</dd></div>
+        <div><dt>Réécrire un texte</dt><dd>Double-clic sur le texte, ou <kbd>Entrée</kbd></dd></div>
+        <div><dt>Dessiner</dt><dd><kbd>F</kbd> cadre, <kbd>R</kbd> rectangle (deux fois : arrondi), <kbd>O</kbd> ellipse, <kbd>L</kbd> trait, <kbd>Maj</kbd> <kbd>P</kbd> plume, <kbd>T</kbd> texte, <kbd>I</kbd> image</dd></div>
+        <div><dt>Dupliquer, couper, supprimer</dt><dd><kbd>Ctrl</kbd> <kbd>D</kbd>, <kbd>Ctrl</kbd> <kbd>X</kbd>, <kbd>Suppr</kbd></dd></div>
+        <div><dt>Renommer un calque</dt><dd>Double-clic sur son nom, ou <kbd>F2</kbd></dd></div>
+        <div><dt>Annuler, rétablir</dt><dd><kbd>Ctrl</kbd> <kbd>Z</kbd>, <kbd>Ctrl</kbd> <kbd>Maj</kbd> <kbd>Z</kbd></dd></div>
+        <div><dt>Enregistrer</dt><dd><kbd>Ctrl</kbd> <kbd>S</kbd></dd></div>
+        <div><dt>Présenter</dt><dd><kbd>P</kbd>, puis les flèches pour changer d'écran</dd></div>
+        <div><dt>Ouvrir un .god2</dt><dd>Menu Fichier, ou glisser le fichier sur la fenêtre</dd></div>
+      </dl>
+      <form method="dialog"><button class="gd-bouton gd-bouton-plein">Fermer</button></form>
+    </dialog>
+
+    <input type="file" id="gd-fichier" accept=".god2,application/json" hidden />
+    <input type="file" id="gd-image" accept="image/*" hidden />
+    <p class="gd-annonce" id="gd-annonce" role="status" hidden></p>
+  </div>
+
+  <!-- ============ La maquette : un document .god2, tel qu on l enregistre ============ -->
+  <script type="application/json" id="document-god2">
+/*{{DOCUMENT_GOD2}}*/
+  </script>
+
+  <script>
+/*{{SCRIPT_ATELIER}}*/
+  </script>
+</body>
+</html>

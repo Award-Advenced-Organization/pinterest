@@ -1,0 +1,205 @@
+' USW, United State of World : diagrammes de cas d'utilisation
+' Source : Cahier_De_Charges_Groupe4.pdf, version 2 (sections 3 et 7)
+' Les numeros UCxx renvoient a analyse/ANALYSE.md
+' Un diagramme d'ensemble, puis un diagramme par module.
+
+' =================================================================== 1
+@startuml cas-utilisation-1-ensemble
+!include style.iuml
+title Vue d'ensemble : acteurs et modules
+left to right direction
+
+actor "Visiteur" as Visiteur
+actor "Membre" as Membre
+actor "Créateur" as Createur
+actor "Modérateur" as Moderateur
+actor "Application de\ncartographie" as Carto <<système>>
+actor "GPS du\ntéléphone" as GPS <<système>>
+actor "Messagerie\n(WhatsApp)" as Messagerie <<système>>
+
+Visiteur <|-- Membre
+Membre <|-- Createur
+Membre <|-- Moderateur
+
+rectangle "USW · United State of World" {
+  usecase "Compte\nUC01 à UC03" as Compte
+  usecase "Exploration\nUC20 à UC26" as Exploration
+  usecase "Itinéraire\nUC30, UC31" as Itineraire
+  usecase "Dépôt et reels\nUC10 à UC19, UC27" as Depot
+  usecase "Communauté\nUC40 à UC48" as Communaute
+  usecase "Modération\nUC50 à UC54" as Moderation
+}
+
+Visiteur --> Compte
+Visiteur --> Exploration
+Visiteur --> Itineraire
+Membre --> Depot
+Membre --> Communaute
+Membre --> Moderation
+Createur --> Communaute
+Moderateur --> Moderation
+
+Itineraire --> Carto
+Itineraire --> GPS
+Exploration --> GPS
+Communaute --> Messagerie
+@enduml
+
+' =================================================================== 2
+@startuml cas-utilisation-2-depot
+!include style.iuml
+title Dépôt : publier une photo ou un reel
+
+actor "Membre" as Membre
+
+rectangle "Dépôt et reels" {
+  usecase "UC11 Prendre une photo\navec l'appareil du téléphone" as UC11
+  usecase "UC12 Importer depuis\nla galerie" as UC12
+  usecase "UC18 Tourner un reel\npar séquences" as UC18
+  usecase "UC19 Monter le reel\ncouper, ordonner,\ntexte, son" as UC19
+  usecase "UC10 Publier un contenu\nphoto ou reel" as UC10
+  usecase "UC27 Compléter les informations\nmanquantes : téléphone,\ndate, lieu" as UC27
+  usecase "UC13 Extraire les métadonnées\net pré-remplir" as UC13
+  usecase "UC14 Vérifier l'authenticité\nsignes d'IA, cohérence,\nniveau du badge" as UC14
+  usecase "UC15 Envoyer le média\npar morceaux, avec reprise" as UC15
+  usecase "UC16 Préparer les\nversions WebP" as UC16
+  usecase "UC17 Suivre ses envois\npause, reprise, annulation" as UC17
+}
+
+Membre --> UC10
+Membre --> UC11
+Membre --> UC12
+Membre --> UC18
+Membre --> UC17
+
+UC18 <.. UC19 : <<extend>>
+UC12 <.. UC19 : <<extend>>\nvidéo importée
+UC11 ..> UC10 : <<extend>>
+UC12 ..> UC10 : <<extend>>
+UC18 ..> UC10 : <<extend>>
+UC27 .> UC10 : <<extend>>\nsi une information\nmanque au fichier
+UC10 ..> UC13 : <<include>>
+UC10 ..> UC14 : <<include>>
+UC10 ..> UC15 : <<include>>
+UC15 ..> UC16 : <<include>>
+@enduml
+
+' =================================================================== 3
+@startuml cas-utilisation-3-exploration
+!include style.iuml
+title Exploration et itinéraire : découvrir et s'y rendre
+left to right direction
+
+actor "Visiteur" as Visiteur
+actor "Membre" as Membre
+actor "Application de\ncartographie" as Carto <<système>>
+actor "GPS du\ntéléphone" as GPS <<système>>
+
+Visiteur <|-- Membre
+
+rectangle "Exploration et itinéraire" {
+  usecase "UC20 Parcourir la mosaïque\nDécouverte, Abonnements,\nPrès de moi" as UC20
+  usecase "UC25 Regarder les reels\nen fil vertical" as UC25
+  usecase "UC26 Rechercher\nlieux, contenus, créateurs" as UC26
+  usecase "UC21 Filtrer\npays, ville, type de lieu,\nproximité" as UC21
+  usecase "UC22 Consulter un contenu\nlieu, appareil, date, badge" as UC22
+  usecase "UC23 Explorer la carte\ndes reels" as UC23
+  usecase "UC24 Télécharger\nl'original" as UC24
+  usecase "UC30 Lancer l'itinéraire\n« Y aller »" as UC30
+  usecase "UC31 Obtenir la\nposition actuelle" as UC31
+}
+
+Visiteur --> UC20
+Visiteur --> UC25
+Visiteur --> UC26
+Visiteur --> UC22
+Visiteur --> UC23
+Membre --> UC24
+
+UC21 .> UC20 : <<extend>>
+UC21 .> UC25 : <<extend>>
+UC21 .> UC26 : <<extend>>
+UC20 ..> UC31 : <<include>>\nPrès de moi
+UC25 ..> UC31 : <<include>>\nPrès de moi
+UC30 .> UC22 : <<extend>>
+UC30 .> UC23 : <<extend>>
+UC30 .> UC25 : <<extend>>
+UC30 .> UC26 : <<extend>>
+
+UC30 --> Carto
+UC31 --> GPS
+@enduml
+
+' =================================================================== 4
+@startuml cas-utilisation-4-communaute
+!include style.iuml
+title Communauté : aimer, commenter, suivre, partager
+left to right direction
+
+actor "Membre" as Membre
+actor "Créateur" as Createur
+actor "Messagerie\n(WhatsApp)" as Messagerie <<système>>
+
+Membre <|-- Createur
+
+rectangle "Communauté" {
+  usecase "UC40 Aimer, réagir" as UC40
+  usecase "UC41 Commenter\nrépondre, mentionner" as UC41
+  usecase "UC45 S'abonner à\nun créateur" as UC45
+  usecase "UC42 Partager\nun contenu" as UC42
+  usecase "UC43 Enregistrer dans\nune collection" as UC43
+  usecase "UC44 Gérer ses\ncollections" as UC44
+  usecase "UC46 Consulter ses\nnotifications" as UC46
+  usecase "UC47 Épingler un\ncommentaire" as UC47
+  usecase "UC48 Modérer les commentaires\nde ses contenus" as UC48
+}
+
+Membre --> UC40
+Membre --> UC41
+Membre --> UC45
+Membre --> UC42
+Membre --> UC43
+Membre --> UC46
+Createur --> UC47
+Createur --> UC48
+
+UC43 ..> UC44 : <<include>>
+UC42 --> Messagerie
+@enduml
+
+' =================================================================== 5
+@startuml cas-utilisation-5-compte-moderation
+!include style.iuml
+title Compte et modération
+left to right direction
+
+actor "Visiteur" as Visiteur
+actor "Membre" as Membre
+actor "Modérateur" as Moderateur
+
+Visiteur <|-- Membre
+Membre <|-- Moderateur
+
+rectangle "Compte" {
+  usecase "UC01 S'inscrire" as UC01
+  usecase "UC02 Se connecter" as UC02
+  usecase "UC03 Gérer son profil" as UC03
+}
+
+rectangle "Modération" {
+  usecase "UC52 Consulter les règles\ncommunautaires" as UC52
+  usecase "UC50 Signaler un contenu\nou un commentaire" as UC50
+  usecase "UC51 Bloquer un\nutilisateur" as UC51
+  usecase "UC53 Traiter la file\nde validation" as UC53
+  usecase "UC54 Traiter les\nsignalements" as UC54
+}
+
+Visiteur --> UC01
+Visiteur --> UC02
+Visiteur --> UC52
+Membre --> UC03
+Membre --> UC50
+Membre --> UC51
+Moderateur --> UC53
+Moderateur --> UC54
+@enduml

@@ -1,0 +1,187 @@
+/* USW : le parcours Creer. Autoriser la camera (E32), creer (E12), camera
+   USW et reel (E27), monter (E28), son (E29), lecture du fichier (E13),
+   details (E14), completer (E15), lieu (E30), envoi (E16), mes envois (E26).
+   La camera est noire, comme celle de Snapchat ; le rouge de la charte dit
+   l enregistrement en cours et ce qui supprime ou refuse. */
+
+.note { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--discret); font-size: 13.5px; line-height: 1.45; }
+.note .ic { flex: none; width: 18px; height: 18px; margin-top: 1px; color: var(--texte); }
+.bas-page { display: grid; gap: 6px; margin-top: auto; padding-top: 22px; }
+.place-bouton { width: 44px; }
+.petit-rond { width: 38px; height: 38px; }
+.petit-rond .ic { width: 18px; height: 18px; }
+.rond-verre.danger { color: var(--erreur); }
+
+/* ------------------------------------------------------------ E32 autoriser */
+.objectif { position: relative; display: grid; place-items: center; width: 84px; height: 84px; margin: 4px 0 6px; border-radius: 26px; background: var(--texte); color: #fff; animation: monte 0.8s 0.15s var(--signature) both; }
+.objectif .ic { width: 38px; height: 38px; stroke-width: 1.7; }
+.objectif-verre { position: absolute; inset: 8px; border-radius: 20px; box-shadow: inset 0 0 0 1px hsl(0 0% 100% / 0.16); }
+
+/* ------------------------------------------------------------ E12 creer */
+.fond-feuille { pointer-events: none; }
+.feuille-titre { margin: 0 0 6px 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.option-creer { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 8px; border: none; border-radius: 18px; background: none; text-align: left; cursor: pointer; animation: monte 0.7s calc(0.8s + var(--n) * 0.06s) var(--signature) both; }
+.option-creer + .option-creer { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.option-icone { display: grid; flex: none; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: hsl(0 0% 100% / 0.9); box-shadow: 0 6px 16px -10px hsl(229 50% 20% / 0.5); }
+.option-icone .ic { width: 26px; height: 26px; }
+.option-texte { display: grid; flex: 1; gap: 2px; font-size: 13.5px; color: var(--discret); }
+.option-texte strong { color: var(--texte); font-size: 16px; }
+.option-creer > .ic:last-child { color: var(--discret); }
+.rappel { margin: 10px 6px 0; padding: 12px 14px; border-radius: 16px; background: hsl(0 0% 100% / 0.6); }
+
+/* ------------------------------------------------------------ la camera USW */
+.camera { background: #000; color: #fff; }
+.camera .barre-etat { position: relative; z-index: 3; color: #fff; }
+.viseur { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; }
+.camera .rond-verre.givre { color: var(--texte); }
+.camera-haut { position: absolute; z-index: 3; top: 42px; left: var(--marge-app); right: var(--marge-app); display: flex; align-items: center; gap: 8px; }
+/* Ce que la prise recevra d office : le telephone et la position. */
+.infos-prise { position: absolute; z-index: 3; top: 100px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; animation: monte 0.8s 0.4s var(--signature) both; }
+.info-prise { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px 0 9px; border-radius: 999px; background: hsl(0 0% 0% / 0.42); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: 12.5px; font-weight: 600; }
+.info-prise .ic { width: 17px; height: 17px; }
+.camera-bas { position: absolute; z-index: 3; left: 0; right: 0; bottom: 26px; display: grid; gap: 16px; padding: 0 var(--marge-app); }
+.modes, .durees { display: flex; justify-content: center; gap: 22px; font-size: 14px; font-weight: 700; color: hsl(0 0% 100% / 0.62); }
+.modes [aria-current], .durees [aria-current] { color: #fff; }
+.durees span { padding: 6px 12px; border-radius: 999px; background: hsl(0 0% 0% / 0.38); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.durees [aria-current] { background: #fff; color: var(--texte); }
+.commandes-camera { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.commandes-camera > :first-child { justify-self: start; }
+.commandes-camera > :last-child { justify-self: end; }
+.derniere { width: 48px; height: 48px; border-radius: 14px; box-shadow: 0 0 0 2px #fff; aspect-ratio: auto; }
+.declencheur { position: relative; width: 80px; height: 80px; padding: 0; border: 5px solid #fff; border-radius: 50%; background: none; cursor: pointer; }
+.declencheur::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: #fff; transition: transform 0.3s var(--ressort); }
+.declencheur:active::after { transform: scale(0.88); }
+/* En train de filmer : le centre devient un carre rouge. */
+.declencheur.enregistre::after { inset: 21px; border-radius: 9px; background: var(--erreur); }
+.suivant-reel { min-height: 44px; padding: 0 16px; }
+.sequences { position: absolute; z-index: 4; top: 36px; left: var(--marge-app); right: var(--marge-app); display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.sequences span { position: relative; height: 4px; overflow: hidden; border-radius: 2px; background: hsl(0 0% 100% / 0.3); }
+.sequences span::after { content: ''; position: absolute; inset: 0; width: var(--p, 0%); background: #fff; }
+.sequences .encours::after { background: var(--erreur); }
+.reel-camera .camera-haut { top: 50px; }
+.chrono { display: inline-flex; flex: 1; justify-content: center; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.rec { width: 10px; height: 10px; border-radius: 50%; background: var(--erreur); animation: clignote 1.2s steps(1) infinite; }
+
+/* ------------------------------------------------------------ E28 monter le reel */
+.montage { background: #0b0d14; color: #fff; }
+.montage .barre-etat { color: #fff; }
+.montage-haut { padding: 0 var(--marge-app); }
+.montage-haut .rond-verre.givre { color: var(--texte); }
+.apercu-reel { position: relative; height: 54vh; margin: 4px var(--marge-app) 0; overflow: hidden; border-radius: 24px; }
+@media (min-width: 600px) { .apercu-reel { width: min(100% - 56px, 420px); margin-inline: auto; } }
+.apercu-reel .photo { height: 100%; aspect-ratio: auto; }
+.texte-reel { position: absolute; left: 50%; top: 38%; translate: -50% 0; padding: 6px 12px; border-radius: 10px; background: #fff; color: var(--texte); font-size: 18px; font-weight: 700; white-space: nowrap; }
+.lecture-reel { position: absolute; left: 14px; bottom: 14px; display: grid; place-items: center; width: 44px; height: 44px; border: none; border-radius: 50%; background: #fff; color: var(--texte); }
+.temps-reel { position: absolute; right: 14px; bottom: 24px; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.outils { display: flex; justify-content: space-around; margin: 18px var(--marge-app) 16px; }
+.outil { display: grid; justify-items: center; gap: 6px; border: none; background: none; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
+.outil-icone { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: hsl(0 0% 100% / 0.12); }
+.outil.danger { color: var(--erreur); }
+.frise { position: relative; display: flex; gap: 4px; margin: 0 var(--marge-app); }
+.segment { position: relative; flex: var(--l) 1 0; height: 64px; overflow: hidden; border-radius: 12px; animation: monte 0.7s calc(0.4s + var(--n) * 0.06s) var(--signature) both; }
+.segment .photo { height: 100%; aspect-ratio: auto; opacity: 0.85; }
+.segment-duree { position: absolute; left: 8px; bottom: 6px; font-size: 11.5px; font-weight: 700; }
+/* La sequence choisie : cadree de blanc, ses poignees pour couper. */
+.segment.choisi { box-shadow: inset 0 0 0 3px #fff; }
+.segment.choisi::before, .segment.choisi::after { content: ''; position: absolute; z-index: 1; top: 0; bottom: 0; width: 12px; background: #fff; }
+.segment.choisi::before { left: 0; }
+.segment.choisi::after { right: 0; }
+.tete-lecture { position: absolute; z-index: 2; top: -8px; bottom: -8px; left: 26%; width: 3px; border-radius: 2px; background: var(--limonade); }
+
+/* ------------------------------------------------------------ E29 son */
+.son-feuille { gap: 10px; color: var(--texte); }
+.son-feuille .flux { margin: 0 6px; }
+.pistes { display: grid; gap: 2px; }
+.piste { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 16px; animation: monte 0.7s calc(0.8s + var(--n) * 0.05s) var(--signature) both; }
+.piste.choisie { background: hsl(0 0% 100% / 0.8); }
+.piste > div { display: grid; flex: 1; gap: 1px; font-size: 13px; color: var(--discret); }
+.piste strong { color: var(--texte); font-size: 15px; }
+.piste-icone { display: grid; flex: none; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--texte); color: #fff; }
+.piste-icone .ic { width: 18px; height: 18px; }
+.piste-coche { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--texte); color: #fff; }
+.piste-coche .ic { width: 15px; height: 15px; stroke-width: 2.4; }
+.melange { display: flex; align-items: center; gap: 12px; padding: 4px 6px; font-weight: 600; font-size: 14px; }
+.melange > span:first-child { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.curseur-volume { position: relative; flex: 1; height: 4px; border-radius: 2px; background: hsl(229 30% 30% / 0.15); }
+.curseur-volume::before { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--v); border-radius: 2px; background: var(--texte); }
+.curseur-volume::after { content: ''; position: absolute; top: 50%; left: var(--v); width: 20px; height: 20px; translate: -50% -50%; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px hsl(229 50% 20% / 0.3); }
+
+/* ------------------------------------------------------------ E14 details */
+.details-apercu { display: flex; align-items: flex-end; gap: 14px; margin: 4px 0 22px; animation: monte 0.8s 0.25s var(--signature) both; }
+.details-apercu .carte-image { flex: none; width: 128px; }
+.details-apercu .carte-image .badge { height: 22px; font-size: 10.5px; padding: 0 8px 0 5px; }
+.details-apercu .carte-image .badge .ic { width: 14px; height: 14px; }
+.details-infos { display: grid; gap: 8px; font-size: 13.5px; font-weight: 600; }
+.details-infos span { display: inline-flex; align-items: center; gap: 8px; }
+.details-infos .ic { width: 20px; height: 20px; }
+.types { display: flex; flex-wrap: wrap; gap: 6px; }
+.types .pastille { height: 32px; font-size: 13px; }
+.bouton-verre.plein .bouton-verre-texte .ic { margin-right: 6px; }
+
+/* ------------------------------------------------------------ E15 completer */
+.manque { margin-bottom: 20px; animation: monte 0.8s calc(0.4s + var(--n) * 0.07s) var(--signature) both; }
+.manque .champ-libelle { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; }
+.manque .champ-libelle .ic { width: 20px; height: 20px; }
+.manque .champ-aide { margin-top: 8px; }
+.modeles { display: grid; margin-top: 8px; border-radius: 18px; overflow: hidden; }
+.modele { display: flex; align-items: center; gap: 12px; padding: 12px 14px; font-size: 14.5px; }
+.modele + .modele { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.modele > div { display: grid; }
+.modele span:not(.radio) { color: var(--discret); font-size: 12.5px; }
+.radio { flex: none; width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 2px hsl(229 30% 30% / 0.3); }
+.modele.choisi .radio { box-shadow: inset 0 0 0 7px var(--texte); }
+.champ .fin { margin-left: auto; font-size: 14px; }
+/* Le modele absent de la liste : on l ajoute d un geste. */
+.modele-ajout { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: hsl(0 0% 100% / 0.75); }
+.modele-ajout > .ic { flex: none; width: 22px; height: 22px; padding: 2px; border-radius: 50%; background: var(--texte); color: #fff; stroke-width: 2.4; }
+.modele-ajout > div { display: grid; }
+.modele-ajout strong { font-size: 14.5px; }
+.modele-ajout span { color: var(--discret); font-size: 12.5px; }
+.modele-ajout + .modele { border-top: 1px solid hsl(229 30% 30% / 0.08); }
+.ce-telephone { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 12px; border: none; border-radius: 999px; background: hsl(0 0% 100% / 0.6); font-size: 13px; font-weight: 600; cursor: pointer; }
+.ce-telephone .ic { width: 16px; height: 16px; }
+.resultat { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 16px; background: hsl(0 0% 100% / 0.6); color: var(--discret); font-size: 13.5px; font-weight: 600; }
+
+/* ------------------------------------------------------------ E30 indiquer le lieu */
+.choisir-lieu { background: #eceef4; }
+.plan { position: absolute; inset: 0; width: 100%; height: 100%; }
+.choisir-lieu .barre-etat { position: relative; z-index: 3; }
+.lieu-haut { position: absolute; z-index: 3; top: 44px; left: var(--marge-app); right: var(--marge-app); display: flex; gap: 8px; }
+.lieu-haut .champ { flex: 1; min-height: 44px; padding-block: 0; }
+.givre-champ { background: hsl(0 0% 100% / 0.88); }
+.epingle-carte { position: absolute; z-index: 2; left: 50%; top: 40%; display: grid; justify-items: center; translate: -50% -100%; animation: repere-tombe 0.9s 0.4s cubic-bezier(0.2, 1.3, 0.35, 1) both; }
+.epingle-carte .ic { width: 56px; height: 56px; }
+.epingle-ombre { width: 14px; height: 5px; margin-top: -3px; border-radius: 50%; background: hsl(229 40% 15% / 0.3); }
+.ma-position { position: absolute; z-index: 3; right: var(--marge-app); bottom: 250px; }
+.lieu-choisi { position: absolute; z-index: 3; left: 8px; right: 8px; bottom: 8px; display: grid; gap: 14px; padding: 16px; border-radius: 28px; background: hsl(229 40% 97%); animation: feuille-monte 0.7s 0.3s var(--signature) both; }
+@media (min-width: 600px) { .lieu-choisi { left: 50%; right: auto; width: 460px; translate: -50% 0; } }
+.lieu-indice { margin: 0; color: var(--discret); font-size: 13px; text-align: center; }
+.lieu-ligne-choix { display: flex; align-items: center; gap: 12px; }
+.lieu-ligne-choix > div { display: grid; gap: 2px; font-size: 13px; color: var(--discret); }
+.lieu-ligne-choix strong { color: var(--texte); font-size: 16px; }
+.lieu-pastille { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: #fff; }
+
+/* ------------------------------------------------------------ E16 envoi en route */
+.toast { position: fixed; z-index: 45; top: 44px; left: 50%; display: inline-flex; align-items: center; gap: 8px; translate: -50% 0; width: max-content; max-width: calc(100% - 32px); padding: 10px 16px 10px 12px; border-radius: 999px; background: var(--texte); color: #fff; font-size: 13.5px; font-weight: 600; animation: toast 4s 0.3s var(--signature) both; }
+.toast .ic { width: 18px; height: 18px; color: var(--limonade); stroke-width: 2.4; }
+@keyframes toast { 0% { transform: translateY(-140%); } 12%, 100% { transform: none; } }
+.envoi-pastille { position: fixed; z-index: 41; left: 50%; bottom: calc(var(--haut-onglets) + 24px); display: flex; align-items: center; gap: 12px; width: min(100% - 2 * var(--marge-app), 440px); translate: -50% 0; padding: 10px 10px 10px 10px; border-radius: 20px; background: hsl(229 40% 97%); animation: monte 0.8s 0.6s var(--signature) both; }
+.envoi-pastille > .photo { flex: none; width: 44px; height: 44px; border-radius: 12px; aspect-ratio: auto; }
+.envoi-pastille > div { display: grid; flex: 1; gap: 2px; min-width: 0; font-size: 12.5px; color: var(--discret); }
+.envoi-pastille strong { color: var(--texte); font-size: 14px; }
+.barre-envoi { position: relative; height: 4px; margin-top: 4px; overflow: hidden; border-radius: 2px; background: hsl(229 30% 30% / 0.12); }
+.barre-envoi::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--p); border-radius: 2px; background: var(--ocean); }
+
+/* ------------------------------------------------------------ E26 mes envois */
+.envois { display: grid; gap: 8px; margin-bottom: 20px; }
+.envoi { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 18px; background: hsl(0 0% 100% / 0.6); animation: monte 0.8s calc(0.35s + var(--n) * 0.05s) var(--signature) both; }
+.envoi > .photo { flex: none; width: 56px; height: 56px; border-radius: 14px; aspect-ratio: auto; }
+.envoi > div:not(.envoi-actions) { display: grid; flex: 1; gap: 3px; min-width: 0; }
+.envoi strong { font-size: 14.5px; }
+.envoi-detail { display: inline-flex; align-items: center; gap: 5px; color: var(--discret); font-size: 12.5px; }
+.envoi-detail .ic { width: 16px; height: 16px; }
+.envoi-actions { display: flex; flex: none; align-items: center; gap: 6px; }
+.envoi.pause .barre-envoi::after { background: hsl(229 15% 60%); }
+.envoi.refuse .envoi-detail { color: var(--erreur); }
+.envoi.publie .envoi-detail .ic { color: var(--texte); }
+.envoi .lien-encre { font-size: 13.5px; }

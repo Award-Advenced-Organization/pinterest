@@ -1,0 +1,29 @@
+<div class="app fixe choisir-lieu">
+  <svg class="plan" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="400" height="800" fill="#eceef4"/>
+    <path d="M0 610 C80 590 140 640 220 620 S340 600 400 615 V800 H0z" fill="#b9d7f2"/>
+    <path d="M0 520 C60 505 120 540 190 525 S320 500 400 520 V548 C330 530 260 556 190 552 S60 535 0 548z" fill="#b9d7f2"/>
+    <path d="M30 140 C70 120 130 150 150 200 S120 280 70 270 S10 190 30 140z" fill="#cfe6cf"/>
+    <path d="M250 260 C300 240 360 270 365 320 S320 390 280 375 S220 290 250 260z" fill="#cfe6cf"/>
+    <g fill="none" stroke="#fff" stroke-linecap="round">
+      <path d="M-10 470 C90 450 200 480 410 455" stroke-width="12"/>
+      <path d="M200 -10 C190 120 230 260 205 470" stroke-width="9"/>
+      <path d="M-10 300 C100 320 260 290 410 330" stroke-width="7"/>
+      <path d="M90 470 C100 400 70 350 95 300" stroke-width="5"/>
+      <path d="M310 460 C300 400 330 360 320 320" stroke-width="5"/>
+    </g>
+    <g fill="none" stroke="#f3d27a" stroke-linecap="round"><path d="M-10 470 C90 450 200 480 410 455" stroke-width="5"/></g>
+  </svg>
+  <!--barre-etat-->
+  <div class="lieu-haut">
+    <button type="button" class="rond-verre verre verre-appuyable givre" aria-label="Retour"><svg class="ic"><use href="#i-retour"/></svg></button>
+    <div class="champ verre givre-champ"><svg class="ic"><use href="#i-loupe"/></svg><span class="champ-valeur">Grand-Popo</span></div>
+  </div>
+  <div class="epingle-carte"><svg class="ic"><use href="#i-lieu"/></svg><span class="epingle-ombre"></span></div>
+  <button type="button" class="rond-verre verre verre-appuyable givre ma-position" aria-label="Ma position"><svg class="ic"><use href="#i-cible"/></svg></button>
+  <div class="lieu-choisi verre-plaque">
+    <p class="lieu-indice">Déplacez la carte pour poser l'épingle.</p>
+    <div class="lieu-ligne-choix"><span class="lieu-pastille"><svg class="ic"><use href="#i-lieu"/></svg></span><div><strong>Plage de Grand-Popo</strong><span>Grand-Popo, Mono, Bénin · 6,2795° N, 1,8226° E</span></div></div>
+    <button type="button" class="bouton-verre verre verre-appuyable plein large" style="--k:0"><span class="bouton-verre-texte">Choisir ce lieu</span></button>
+  </div>
+</div>

@@ -1,0 +1,321 @@
+/* USW : les ecrans du compte. Bienvenue (E01), inscription et connexion
+   (E02), conditions generales (E34), aide (E35). Le champ est celui de
+   SafeVault, tel quel : une lame de verre, le libelle au-dessus, une ligne
+   d aide dessous. Les elements entrent un a un (--k). */
+
+/* ------------------------------------------------------------ la page simple */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 var(--marge-app) 28px;
+}
+.page > .barre-etat,
+.bienvenue > .barre-etat { margin-inline: calc(50% - 50vw); }
+@media (min-width: 600px) {
+  .page { padding-inline: max(var(--marge-app), calc((100% - 520px) / 2)); }
+  .page.lecture { padding-inline: max(var(--marge-app), calc((100% - 640px) / 2)); }
+}
+.page-haut { display: flex; align-items: center; gap: 12px; height: 60px; }
+.page-haut-titre { font-weight: 700; font-size: 17px; }
+.page-titre { margin: 10px 0 8px; font-size: 30px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; }
+.page-texte { margin: 0 0 26px; color: var(--discret); font-size: 15.5px; line-height: 1.45; animation: monte 0.9s 0.35s var(--signature) both; }
+.page-texte b { color: var(--texte); font-weight: 600; }
+.pied-page { margin: auto 0 0; padding-top: 28px; text-align: center; color: var(--discret); font-size: 14.5px; }
+.lien { color: var(--ocean); font-weight: 600; text-decoration: none; cursor: pointer; }
+.lien.droite { justify-self: end; margin-top: -6px; font-size: 14px; }
+.lien-discret { border: none; background: none; padding: 8px 4px; color: var(--discret); font-weight: 600; font-size: 14.5px; cursor: pointer; }
+.lien-discret.centre { justify-self: center; }
+.large { width: 100%; }
+.bouton-verre .bouton-verre-texte .ic { width: 19px; height: 19px; }
+
+/* ------------------------------------------------------------ le formulaire */
+.formulaire { display: grid; gap: 18px; }
+.formulaire > * { animation: monte 0.8s calc(0.4s + var(--k, 0) * 0.06s) var(--signature) both; }
+.champ-bloc { display: flex; flex-direction: column; gap: 0.6rem; }
+.champ-libelle { font-weight: 600; font-size: 0.92rem; }
+.champ-aide { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--discret); font-size: 0.82rem; line-height: 1.45; }
+.champ {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3.2rem;
+  padding: 0.95rem 1.05rem;
+  border-radius: 14px;
+  outline: 2px solid transparent;
+  transition: outline-color 0.2s var(--courbe);
+}
+.champ.focus { outline-color: var(--ocean); }
+.champ > .ic { width: 1.15rem; height: 1.15rem; color: var(--discret); }
+.champ-valeur, .champ-place { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.champ-place { color: var(--discret); }
+.champ .curseur { flex: none; width: 1.5px; height: 20px; margin-left: -8px; background: var(--ocean); animation: clignote 1s steps(1) infinite; }
+.champ .curseur + .champ-place { margin-left: -8px; }
+.page .section-titre { text-align: left; }
+.champ > .ic:first-child + * { flex: 0 1 auto; }
+.champ > :last-child:is(.ic, .champ-bouton) { margin-left: auto; }
+.champ .ic.ok, .champ-aide .ic.mini { color: hsl(140 55% 36%); }
+.champ .ic.ok { width: 1.15rem; height: 1.15rem; stroke-width: 2; }
+.champ-bouton { display: inline-flex; border: none; background: none; padding: 0; color: var(--discret); cursor: pointer; }
+.champ-bouton .ic { width: 1.25rem; height: 1.25rem; }
+/* La solidite du mot de passe : quatre traits, trois remplis. */
+.force { display: inline-grid; grid-template-columns: repeat(4, 16px); gap: 3px; margin-right: 4px; }
+.force i { height: 4px; border-radius: 2px; background: var(--ocean); }
+.force i:last-child { background: hsl(229 30% 30% / 0.15); }
+.case-ligne { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.45; color: var(--discret); }
+.case { display: grid; flex: none; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: var(--ocean); color: #fff; }
+.case .ic { width: 16px; height: 16px; stroke-width: 2.2; }
+.criteres { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--discret); }
+.criteres li { display: flex; align-items: center; gap: 8px; }
+.criteres .ic { width: 18px; height: 18px; padding: 2px; border-radius: 50%; background: hsl(229 30% 30% / 0.1); color: transparent; stroke-width: 2.4; }
+.criteres li.ok { color: var(--texte); }
+.criteres li.ok .ic { background: hsl(140 55% 40%); color: #fff; }
+
+/* Le code a six chiffres. */
+.code { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px; }
+.code > span {
+  display: grid;
+  place-items: center;
+  height: 60px;
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: 700;
+  outline: 2px solid transparent;
+  animation: monte 0.7s calc(0.4s + var(--k) * 0.05s) var(--signature) both;
+}
+.code > span.actif { outline-color: var(--ocean); }
+.code .curseur { width: 1.5px; height: 26px; background: var(--ocean); animation: clignote 1s steps(1) infinite; }
+.renvoi { margin-bottom: 22px; }
+
+/* ------------------------------------------------------------ E01 bienvenue */
+.bienvenue { display: flex; flex-direction: column; padding: 0 var(--marge-app) 28px; }
+@media (min-width: 600px) { .bienvenue { padding-inline: max(var(--marge-app), calc((100% - 520px) / 2)); } }
+/* Trois traits : celui de l ecran se remplit en 6 s, puis l ecran suivant vient. */
+.progression { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+.progression span { position: relative; height: 3px; overflow: hidden; border-radius: 3px; background: hsl(229 30% 30% / 0.14); }
+.progression span.fait::after,
+.progression span.encours::after { content: ''; position: absolute; inset: 0; background: var(--texte); transform-origin: left; }
+.progression span.encours::after { animation: remplit 6s 0.3s linear both; }
+@keyframes remplit { from { transform: scaleX(0); } }
+.bienvenue-haut { display: flex; justify-content: flex-end; height: 44px; }
+.bienvenue-visuel { display: grid; flex: 1; min-height: 0; place-items: center; }
+.bienvenue-texte .page-texte { margin-bottom: 0; }
+.bienvenue-actions { display: grid; gap: 10px; margin-top: 26px; }
+.bienvenue-actions > * { animation: monte 0.8s calc(0.55s + var(--k, 0) * 0.06s) var(--signature) both; }
+
+/* 1 : la pile de l accueil, en grand. */
+.pile-grande { width: min(64%, 300px); aspect-ratio: 4 / 5; margin-top: 18px; }
+.pile-grande .pile-carte { border-radius: 26px; }
+/* 2 et 3 : une photo, et ce qu elle dit. */
+.demo-photo {
+  position: relative;
+  width: min(72%, 320px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 26px;
+  box-shadow: 0 24px 48px -30px hsl(229 50% 20% / 0.55);
+  animation: carte 1.2s 0.15s var(--signature) both;
+}
+.demo-photo .photo { height: 100%; aspect-ratio: auto; }
+.demo-photo .badge { position: absolute; top: 12px; left: 12px; }
+.puces { position: absolute; left: 12px; right: 12px; bottom: 12px; display: grid; justify-items: start; gap: 6px; }
+.puce {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 12px 0 9px;
+  border-radius: 999px;
+  background: hsl(0 0% 100% / 0.9);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  animation: monte 0.8s calc(0.7s + var(--k) * 0.12s) var(--signature) both;
+}
+.puce .ic { width: 18px; height: 18px; }
+/* Le repere tombe sur la photo avec un leger rebond. */
+.repere-demo { position: absolute; left: 50%; top: 34%; translate: -50% -50%; animation: repere-tombe 0.9s 0.6s cubic-bezier(0.2, 1.3, 0.35, 1) both; }
+.repere-demo .ic { width: 64px; height: 64px; }
+@keyframes repere-tombe { from { transform: translateY(-60px); opacity: 0; } 30% { opacity: 1; } }
+.demo-aller { position: absolute; left: 50%; bottom: 16px; translate: -50% 0; min-height: 46px; animation: monte 0.8s 0.9s var(--signature) both; }
+
+/* ------------------------------------------------------------ E34 lecture */
+.document-tete .page-titre { font-size: 28px; }
+/* Le document vivant de SafeVault, tel quel (pieces/DocumentVivant.css). */
+.document-vivant {
+  flex: none;
+  width: 2.75rem;
+  height: 3.3rem;
+  margin: 6px 0 4px 2px;
+  overflow: visible;
+  transform: rotate(-4deg);
+  filter: drop-shadow(0 1px 1px hsl(229 40% 20% / 0.14)) drop-shadow(0 8px 12px hsl(229 40% 25% / 0.22));
+}
+.document-vivant .papier,
+.document-vivant .papier-pli { stroke: hsl(229 25% 60% / 0.55); stroke-width: 0.75; stroke-linejoin: round; }
+.document-vivant .ligne {
+  fill: none;
+  stroke: hsl(229 20% 30% / 0.7);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: 11s var(--courbe) infinite both;
+}
+.document-vivant .ligne-1 { stroke: var(--ocean); stroke-width: 1.9; animation-name: ecrire-1; }
+.document-vivant .ligne-2 { animation-name: ecrire-2; }
+.document-vivant .ligne-3 { animation-name: ecrire-3; }
+.document-vivant .ligne-4 { animation-name: ecrire-4; }
+.document-vivant .ligne-5 { animation-name: ecrire-5; }
+@keyframes ecrire-1 { 0%, 4% { stroke-dashoffset: 1; opacity: 1; } 13%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 96% { stroke-dashoffset: 0; opacity: 0; } 97%, 100% { stroke-dashoffset: 1; opacity: 0; } }
+@keyframes ecrire-2 { 0%, 15% { stroke-dashoffset: 1; opacity: 1; } 27%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 96% { stroke-dashoffset: 0; opacity: 0; } 97%, 100% { stroke-dashoffset: 1; opacity: 0; } }
+@keyframes ecrire-3 { 0%, 29% { stroke-dashoffset: 1; opacity: 1; } 40%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 96% { stroke-dashoffset: 0; opacity: 0; } 97%, 100% { stroke-dashoffset: 1; opacity: 0; } }
+@keyframes ecrire-4 { 0%, 42% { stroke-dashoffset: 1; opacity: 1; } 54%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 96% { stroke-dashoffset: 0; opacity: 0; } 97%, 100% { stroke-dashoffset: 1; opacity: 0; } }
+@keyframes ecrire-5 { 0%, 56% { stroke-dashoffset: 1; opacity: 1; } 63%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 96% { stroke-dashoffset: 0; opacity: 0; } 97%, 100% { stroke-dashoffset: 1; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .document-vivant .ligne { animation: none; stroke-dashoffset: 0; } }
+.sommaire { display: flex; gap: 8px; margin: 0 calc(-1 * var(--marge-app)) 22px; padding: 0 var(--marge-app); overflow: hidden; }
+.sommaire .pastille { animation: monte 0.8s calc(0.4s + var(--k) * 0.04s) var(--signature) both; }
+.document { display: grid; gap: 22px; }
+.article { animation: monte 0.9s calc(0.45s + var(--n) * 0.05s) var(--signature) both; }
+.article h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 17.5px; font-weight: 700; letter-spacing: -0.01em; }
+.article .numero { display: inline-grid; flex: none; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--texte); color: #fff; font-size: 13px; }
+.article p { margin: 0; color: hsl(229 20% 28%); font-size: 15px; line-height: 1.6; }
+
+/* ------------------------------------------------------------ E35 aide */
+.recherche-aide { margin-bottom: 26px; animation: monte 0.8s 0.35s var(--signature) both; }
+.sujets { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 28px; }
+@media (min-width: 600px) { .sujets { grid-template-columns: repeat(3, 1fr); } }
+.sujet {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 14px;
+  border: none;
+  border-radius: 18px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+  animation: monte 0.8s calc(0.4s + var(--n) * 0.05s) var(--signature) both;
+}
+.sujet .ic { width: 26px; height: 26px; color: var(--texte); }
+.questions { display: grid; gap: 8px; margin-bottom: 26px; }
+.question { border-radius: 16px; background: hsl(0 0% 100% / 0.55); animation: monte 0.8s calc(0.5s + var(--n) * 0.05s) var(--signature) both; }
+.question button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 15px 16px; border: none; background: none; text-align: left; font-weight: 600; font-size: 14.5px; cursor: pointer; }
+.question .ic { flex: none; color: var(--discret); transition: transform 0.35s var(--interface); }
+.question.ouverte .ic { transform: rotate(180deg); }
+.question p { margin: -4px 16px 0; padding-bottom: 16px; color: var(--discret); font-size: 14.5px; line-height: 1.55; }
+.contact { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; margin-bottom: 18px; }
+.contact > div { display: grid; flex: 1; gap: 2px; font-size: 14px; color: var(--discret); }
+.contact strong { color: var(--texte); font-size: 15px; }
+.contact-icone { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: hsl(0 0% 100% / 0.7); color: var(--texte); }
+.contact .bouton-verre { min-height: 42px; }
+.liens-legaux { display: grid; }
+.liens-legaux a { display: flex; align-items: center; gap: 12px; padding: 14px 2px; border-top: 1px solid hsl(229 30% 30% / 0.1); font-weight: 600; font-size: 14.5px; cursor: pointer; }
+.liens-legaux a .ic:first-child { color: var(--discret); }
+.liens-legaux a .ic:last-child { margin-left: auto; color: var(--discret); }
+
+/* ------------------------------------------------------------ E02 l entree */
+/* Comme celle de Pinterest : en haut, des colonnes de photos qui glissent
+   lentement en sens contraires (transform seulement, sans fin) ; dessous, le
+   nom, un champ e-mail et « Continuer », ou Google. */
+.entree { display: flex; flex-direction: column; }
+.entree > .barre-etat { position: absolute; top: 0; left: 0; right: 0; z-index: 5; }
+.entree-mosaique {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  height: 42vh;
+  padding: 0 8px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 40%, #0000 94%);
+  mask-image: linear-gradient(#000 40%, #0000 94%);
+}
+@media (min-width: 600px) { .entree-mosaique { grid-template-columns: repeat(5, 1fr); height: 46vh; } }
+.entree-mosaique .colonne { display: grid; gap: 8px; align-content: start; animation: glisse 48s linear infinite; }
+.entree-mosaique .colonne:nth-child(even) { margin-top: -40%; animation-direction: reverse; }
+.entree-mosaique .colonne:nth-child(n + 4) { display: none; }
+@media (min-width: 600px) { .entree-mosaique .colonne:nth-child(n + 4) { display: grid; } }
+.entree-mosaique .photo { aspect-ratio: 3 / 4; border-radius: 16px; }
+@keyframes glisse { to { transform: translateY(-50%); } }
+.entree-corps { position: relative; display: flex; flex: 1; flex-direction: column; align-items: center; margin-top: -3vh; padding: 0 var(--marge-app) 24px; text-align: center; }
+@media (min-width: 600px) { .entree-corps { width: 520px; align-self: center; } }
+.entree-corps .formulaire { width: 100%; text-align: left; }
+.entree-corps .page-titre { margin-bottom: 22px; }
+/* Le sigle de l ouverture, en petit : U et S en ocean, W en limonade. */
+.logo-usw { display: inline-flex; gap: 1px; font-size: 40px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; color: var(--ocean); animation: monte 0.8s 0.15s var(--signature) both; }
+.logo-usw .citron { color: var(--limonade); }
+.separateur { display: flex; align-items: center; gap: 12px; color: var(--discret); font-size: 13.5px; }
+.separateur::before, .separateur::after { content: ''; flex: 1; height: 1px; background: hsl(229 30% 30% / 0.14); }
+.bouton-google .ic { width: 20px; height: 20px; }
+.legal { margin: 0; color: var(--discret); font-size: 12.5px; line-height: 1.5; text-align: center; }
+.pied-page.legal { font-size: 12.5px; }
+
+/* Bon retour : le compte reconnu. */
+.retour-compte { display: grid; justify-items: start; }
+.avatar.grand { width: 64px; height: 64px; font-size: 22px; margin-top: 4px; animation: monte 0.8s 0.15s var(--signature) both; }
+.avatar.geant { position: relative; width: 104px; height: 104px; font-size: 34px; }
+
+/* ------------------------------------------------------------ E36 completer le profil */
+.completer .progression { margin-top: 8px; }
+.etape { flex: 1; color: var(--discret); font-size: 14px; font-weight: 600; }
+.photo-profil { display: grid; justify-items: center; gap: 10px; margin-bottom: 22px; animation: monte 0.8s 0.3s var(--signature) both; }
+.photo-profil-bouton { position: absolute; right: -2px; bottom: -2px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--texte); color: #fff; box-shadow: 0 0 0 3px var(--fond); }
+.photo-profil-bouton .ic { width: 18px; height: 18px; }
+.facultatif { margin-left: 4px; color: var(--discret); font-weight: 400; font-size: 0.82rem; }
+.champ.zone { align-items: flex-start; min-height: 5.5rem; }
+/* Un reglage en carte : icone, texte, interrupteur. */
+.reglage-carte { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; }
+.reglage-carte > div { display: grid; flex: 1; gap: 2px; font-size: 13.5px; color: var(--discret); line-height: 1.4; }
+.reglage-carte strong { color: var(--texte); font-size: 15px; }
+.reglage-icone { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: hsl(0 0% 100% / 0.7); }
+/* L interrupteur, comme celui d iOS : l ocean quand il est ouvert. */
+.interrupteur { position: relative; flex: none; width: 50px; height: 30px; border-radius: 999px; background: hsl(229 30% 30% / 0.18); transition: background 0.3s var(--interface); }
+.interrupteur::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px hsl(229 50% 20% / 0.25); transition: transform 0.35s var(--ressort); }
+.interrupteur.actif { background: var(--ocean); }
+.interrupteur.actif::after { transform: translateX(20px); }
+/* Les types de lieux : des tuiles photo, cochees a l encre. */
+.interets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: 96px; }
+.interet {
+  position: relative;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 16px;
+  aspect-ratio: 3 / 4;
+  background: none;
+  cursor: pointer;
+  animation: carte 1s calc(0.35s + var(--n) * 0.05s) var(--signature) both;
+}
+.interet .photo { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; transition: transform 0.5s var(--interface); }
+.interet::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 45%, hsl(229 40% 8% / 0.62)); }
+.interet-nom { position: absolute; z-index: 1; left: 10px; right: 10px; bottom: 9px; color: #fff; font-size: 13.5px; font-weight: 700; text-align: left; line-height: 1.2; }
+.interet.choisi { box-shadow: 0 0 0 3px var(--fond), 0 0 0 5px var(--texte); }
+.interet.choisi .photo { transform: scale(0.94); border-radius: 12px; }
+.interet-coche { position: absolute; z-index: 1; top: 8px; right: 8px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--texte); color: #fff; }
+.interet-coche .ic { width: 16px; height: 16px; stroke-width: 2.4; }
+.completer-bas { position: fixed; left: 0; right: 0; bottom: 0; padding: 14px var(--marge-app) 22px; }
+.completer-bas::before { content: ''; position: absolute; inset: -24px 0 0; z-index: -1; background: hsl(229 36% 92% / 0.85); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); -webkit-mask-image: linear-gradient(#0000, #000 35%); mask-image: linear-gradient(#0000, #000 35%); }
+@media (min-width: 600px) { .completer-bas { padding-inline: calc((100% - 520px) / 2); } .interets { grid-template-columns: repeat(4, 1fr); } }
+
+/* ------------------------------------------------------------ les pages du parcours e-mail */
+/* Mot de passe, code, oubli : l en-tete est centre (avatar, titre, texte) et
+   le bloc se pose au milieu de l ecran, un peu au-dessus, au lieu de rester
+   colle en haut. Le pied de page (mentions, « La corriger ») reste en bas. */
+.authentification { padding-bottom: max(28px, 7vh); }
+.authentification > .page-haut + * { margin-top: auto; }
+.authentification > .formulaire { margin-bottom: auto; }
+.authentification > .pied-page { padding-top: 20px; }
+.authentification .retour-compte { justify-items: center; text-align: center; }
+.authentification .page-titre, .authentification .page-texte { text-align: center; }
+.authentification .page-titre.mots { justify-content: center; }
+.authentification .code-cases { justify-content: center; }
+.authentification .renvoi { justify-content: center; text-align: center; }
+/* L e-mail tape, rappele en haut de la page du mot de passe : sans nom ni photo du compte. */
+.email-tape { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px; padding: 8px 14px 8px 12px; border-radius: 999px; background: hsl(0 0% 100% / 0.75); font-size: 14px; font-weight: 600; animation: monte 0.8s 0.15s var(--signature) both; }
+.email-tape .ic { width: 17px; height: 17px; color: var(--discret); }
+.email-tape .lien { margin-left: 4px; font-size: 13.5px; }
