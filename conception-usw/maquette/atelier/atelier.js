@@ -85,11 +85,50 @@ function atelierGod2(depart, hote) {
     return d
   }
 
-  function pageDe(ecran, extra, script) {
+  // Les styles d un document portent souvent ses images et ses polices en
+  // data: (plus d un Mo). Recopies dans chaque cadre, ils seraient lus et
+  // decodes autant de fois qu il y a de cadres. Sur la toile, ils deviennent
+  // des fichiers en memoire (blob:), lus une fois et partages par tous les
+  // cadres. La presentation, coupee de l atelier, garde les styles en ligne.
+  var partages = []
+  var feuilleCommune = null
+  function libererPartages() {
+    partages.forEach(function (u) { URL.revokeObjectURL(u) })
+    partages = []
+    feuilleCommune = null
+  }
+  function enFichier(contenu, type) {
+    var u = URL.createObjectURL(new Blob([contenu], { type: type }))
+    partages.push(u)
+    return u
+  }
+  function feuilleDeLaToile() {
+    if (feuilleCommune) return feuilleCommune
+    var vus = {}
+    var styles = (doc.styles || '').replace(/url\(\s*(['"]?)(data:([^;,'")]+)(;base64)?,([^'")]*))\1\s*\)/g, function (tout, q, donnee, type, base64, corps) {
+      if (!vus[donnee]) {
+        try {
+          var octets
+          if (base64) {
+            var brut = atob(corps)
+            octets = new Uint8Array(brut.length)
+            for (var i = 0; i < brut.length; i++) octets[i] = brut.charCodeAt(i)
+          } else octets = decodeURIComponent(corps)
+          vus[donnee] = enFichier(octets, type)
+        } catch (_) { return tout }
+      }
+      return 'url("' + vus[donnee] + '")'
+    })
+    feuilleCommune = enFichier(styles, 'text/css')
+    return feuilleCommune
+  }
+
+  function pageDe(ecran, extra, script, feuille) {
     return (
       '<!doctype html><html lang="fr"><head><meta charset="utf-8">' +
       '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-      '<title>' + echapper(ecran.nom) + '</title><style>' + (doc.styles || '') + '</style>' +
+      '<title>' + echapper(ecran.nom) + '</title>' +
+      (feuille ? '<link rel="stylesheet" href="' + feuille + '">' : '<style>' + (doc.styles || '') + '</style>') +
       (extra ? '<style>' + extra + '</style>' : '') +
       '</head><body>' + (doc.symboles || '') + '<!--god2-->' + ecran.balisage +
       (script ? '<script>' + script + '<\/script>' : '') +
@@ -211,8 +250,31 @@ function atelierGod2(depart, hote) {
 
   var cadres = []
 
+  // Les formats poses sur la toile : l indice d un format, ou -1 pour tous.
+  // Chaque cadre est une page entiere : une grande maquette montree dans tous
+  // ses formats pese lourd. Au-dela de 40 cadres, on commence par le format le
+  // plus etroit (le telephone, en mobile d abord) ; le menu du zoom change ce choix.
+  var formatToile = -1
+  function formatParDefaut() {
+    if (doc.ecrans.length * doc.formats.length <= 40) return -1
+    var etroit = 0
+    doc.formats.forEach(function (f, i) { if (f.largeur < doc.formats[etroit].largeur) etroit = i })
+    return etroit
+  }
+  function remplirFormatsToile() {
+    var menu = id('gd-formats-toile')
+    if (!menu) return
+    var choix = doc.formats.map(function (f, i) { return [i, f.nom] })
+    if (doc.formats.length > 1) choix.push([-1, 'Tous les formats'])
+    menu.innerHTML = doc.formats.length > 1 ? '<span class="gd-menu-filet" role="separator"></span><span class="gd-menu-legende">Sur la toile</span>' + choix.map(function (c) {
+      return '<button type="button" role="menuitemradio" aria-checked="' + (c[0] === formatToile) + '" data-format-toile="' + c[0] + '">' + echapper(c[1]) + '</button>'
+    }).join('') : ''
+    menu.hidden = doc.formats.length < 2
+  }
+
   function creerCadres() {
     doc.formats.forEach(function (format, rangee) {
+      if (formatToile >= 0 && rangee !== formatToile) return
       doc.ecrans.forEach(function (ecran) {
         var iframe = document.createElement('iframe')
         iframe.className = 'gd-cadre'
@@ -225,19 +287,25 @@ function atelierGod2(depart, hote) {
         var fixe = (ecran.fenetre && format.hauteur) || 0
         iframe.style.width = format.largeur + 'px'
         iframe.style.height = (fixe || 900) + 'px'
+        // Sous le cadre, sa silhouette : c est elle qu on voit pendant un zoom (voir appliquer).
+        var fantome = document.createElement('div')
+        fantome.className = 'gd-fantome'
+        fantome.style.width = format.largeur + 'px'
+        fantome.style.height = (fixe || 900) + 'px'
         var etiquette = document.createElement('button')
         etiquette.type = 'button'
         etiquette.className = 'gd-etiquette'
         etiquette.textContent = nomDeCadre(ecran, format)
         dessus.appendChild(etiquette)
         var cadre = {
-          ecran: ecran, format: format, rangee: rangee, iframe: iframe, etiquette: etiquette,
+          ecran: ecran, format: format, rangee: rangee, iframe: iframe, fantome: fantome, etiquette: etiquette,
           nom: etiquette.textContent, x: 0, y: 0, largeur: format.largeur, hauteur: fixe || 900, fixe: fixe, racine: null,
         }
         etiquette.addEventListener('click', function () { if (cadre.racine) choisir(cadre.racine) })
         cadres.push(cadre)
+        monde.appendChild(fantome)
         monde.appendChild(iframe)
-        iframe.srcdoc = pageDe(ecran, FIGE)
+        iframe.srcdoc = pageDe(ecran, FIGE, '', feuilleDeLaToile())
       })
     })
   }
@@ -254,6 +322,7 @@ function atelierGod2(depart, hote) {
       if (Math.abs(cible - cadre.hauteur) < 1) break
       cadre.hauteur = cible
       cadre.iframe.style.height = cible + 'px'
+      cadre.fantome.style.height = cible + 'px'
     }
   }
 
@@ -262,11 +331,13 @@ function atelierGod2(depart, hote) {
     doc.formats.forEach(function (format, rangee) {
       var x = 0
       var haut = 0
-      cadres.filter(function (c) { return c.rangee === rangee }).forEach(function (c) {
+      var rang = cadres.filter(function (c) { return c.rangee === rangee })
+      if (!rang.length) return
+      rang.forEach(function (c) {
         c.x = x
         c.y = y
-        c.iframe.style.left = x + 'px'
-        c.iframe.style.top = y + 'px'
+        c.iframe.style.left = c.fantome.style.left = x + 'px'
+        c.iframe.style.top = c.fantome.style.top = y + 'px'
         x += c.largeur + ECART
         haut = Math.max(haut, c.hauteur)
       })
@@ -297,6 +368,7 @@ function atelierGod2(depart, hote) {
   // dans le navigateur pour cette maquette sont proposees.
   function ouvrir(nouveau) {
     doc = valider(nouveau)
+    formatToile = formatParDefaut()
     historique = []
     refaits = []
     noterModifie(false)
@@ -310,8 +382,9 @@ function atelierGod2(depart, hote) {
     if (ecriture) { ecriture.champ.remove(); ecriture = null }
     plume = null
     dessinerEsquisse(null)
-    cadres.forEach(function (c) { c.iframe.remove(); c.etiquette.remove() })
+    cadres.forEach(function (c) { c.iframe.remove(); c.fantome.remove(); c.etiquette.remove() })
     cadres = []
+    libererPartages()
     index = {}
     ouverts = {}
     survol = null
@@ -326,6 +399,7 @@ function atelierGod2(depart, hote) {
     id('gd-equipe').innerHTML = (doc.auteurs || []).map(function (a) {
       return '<span class="gd-pastille" title="' + echapper(a) + '">' + echapper(String(a).charAt(0).toUpperCase()) + '</span>'
     }).join('')
+    remplirFormatsToile()
     creerCadres()
     // Les cadres prennent leur place tout de suite : on les voit arriver un a
     // un, avant que leurs hauteurs et leurs calques soient lus.
@@ -349,14 +423,53 @@ function atelierGod2(depart, hote) {
 
   function borner(z) { return Math.min(4, Math.max(0.04, z)) }
 
+  // Seuls les cadres dans la vue (avec une marge) sont peints : a chaque cran
+  // de zoom ou de deplacement, ceux d a cote ne coutent rien. Ils restent
+  // charges, leurs calques se lisent toujours.
+  function montrerVisibles() {
+    var nombre = 0
+    var boite = toile.getBoundingClientRect()
+    var marge = 200 / vue.z
+    var gauche = -vue.x / vue.z - marge
+    var haut = -vue.y / vue.z - marge
+    var droite = (boite.width - vue.x) / vue.z + marge
+    var bas = (boite.height - vue.y) / vue.z + marge
+    cadres.forEach(function (c) {
+      var vu = c.x < droite && c.x + c.largeur > gauche && c.y < bas && c.y + c.hauteur > haut
+      if (vu) nombre++
+      if (vu === c.vu) return
+      c.vu = vu
+      c.iframe.style.visibility = vu ? '' : 'hidden'
+      c.fantome.hidden = !vu
+      c.etiquette.hidden = !vu
+    })
+    return nombre
+  }
+
+  // Chaque cran de zoom repeint les cadres visibles a la nouvelle echelle.
+  // Quand il y en a beaucoup, on ne montre que leurs silhouettes le temps du
+  // geste, et les cadres sont repeints une fois, quand il s arrete.
+  var zoomPeint = 0
+  var finDuZoom = 0
+  function suivreLeZoom(visibles) {
+    if (vue.z === zoomPeint) return
+    zoomPeint = vue.z
+    if (visibles <= 8 && !finDuZoom) return
+    monde.dataset.zoom = 'actif'
+    clearTimeout(finDuZoom)
+    finDuZoom = setTimeout(function () { finDuZoom = 0; monde.dataset.zoom = '' }, 160)
+  }
+
   function appliquer() {
     if (rafraichir) return
     rafraichir = true
     requestAnimationFrame(function () {
       rafraichir = false
+      suivreLeZoom(montrerVisibles())
       monde.style.transform = 'translate(' + vue.x + 'px,' + vue.y + 'px) scale(' + vue.z + ')'
       zoomValeur.textContent = Math.round(vue.z * 100) + ' %'
       cadres.forEach(function (c) {
+        if (!c.vu) return
         c.etiquette.style.left = vue.x + c.x * vue.z + 'px'
         c.etiquette.style.top = vue.y + c.y * vue.z - 4 + 'px'
         c.etiquette.style.maxWidth = Math.max(40, c.largeur * vue.z) + 'px'
@@ -2612,6 +2725,13 @@ function atelierGod2(depart, hote) {
       titre.setAttribute('aria-expanded', String(!menu.hidden))
       return
     }
+    var format = e.target.closest('[data-format-toile]')
+    if (format) {
+      fermerMenus()
+      var vise = Number(format.dataset.formatToile)
+      if (vise !== formatToile) { formatToile = vise; monter() }
+      return
+    }
     var bouton = e.target.closest('[data-action], .gd-outil[data-outil], [data-section], [data-onglet]')
     fermerMenus()
     if (!bouton || bouton === racine || bouton.getAttribute('aria-disabled') === 'true') return
@@ -2845,7 +2965,7 @@ function atelierGod2(depart, hote) {
     document: function () { return doc },
     cadres: function () { return cadres.map(function (c) { return c.nom }) },
     exporterSvg: function (i) { return exporterSvg(cadres[i || 0].racine) },
-    arreter: function () { fin.abort() },
+    arreter: function () { fin.abort(); libererPartages() },
   }
   window.godDesign = atelier
 

@@ -223,6 +223,9 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 }
 .gd-menu kbd { color: var(--gd-discret); font: inherit; font-size: 0.85rem; }
 .gd-menu-filet { height: 1px; margin: 0.3rem 0.4rem; background: var(--gd-filet); }
+.gd-menu-groupe { display: flex; flex-direction: column; }
+.gd-menu-legende { padding: 0.2rem 0.6rem; color: var(--gd-discret); font-size: 0.85rem; }
+.gd-menu [aria-checked='true']::after { content: '✓'; color: var(--gd-accent); }
 @media (hover: hover) {
   .gd-menu-titre:hover, .gd-zoom-valeur:hover, .gd-menu :is(button, a):hover { background: var(--gd-relief); }
 }
@@ -351,6 +354,8 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
   -webkit-user-select: none;
 }
 .gd-monde { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.gd-fantome { position: absolute; background: #e3e6f4; box-shadow: 0 0 0 1px #0000000d; }
+.gd-monde[data-zoom='actif'] .gd-cadre { visibility: hidden !important; }
 .gd-cadre { position: absolute; display: block; border: none; background: #e3e6f4; box-shadow: 0 30px 70px -40px #0009, 0 0 0 1px #0000000d; }
 .gd-capteur { position: absolute; inset: 0; cursor: default; }
 .gd[data-outil='main'] .gd-capteur { cursor: grab; }
