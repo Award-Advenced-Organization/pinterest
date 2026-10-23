@@ -85,3 +85,4 @@ Il faut Node, Python 3.12 avec Pillow, Chrome et PlantUML. Les scripts sont dans
 - `outils/diagrammes.cmd` refait les diagrammes, `outils/cahier.cmd` le PDF du cahier.
 
 Certains scripts supposent que le dossier se trouve dans `D:\usw-ihm`.
+.
