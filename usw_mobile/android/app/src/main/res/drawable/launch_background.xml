@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Avant le premier dessin de Flutter : le fond de USW, pour ne pas voir de blanc. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/fond" />
+</layer-list>
