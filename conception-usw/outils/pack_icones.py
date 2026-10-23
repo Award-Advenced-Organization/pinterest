@@ -26,6 +26,18 @@ PACK = RACINE / 'pack-icones'
 BLEU, ROUGE, JAUNE, VERT = '#4285F4', '#EA4335', '#FBBC04', '#34A853'
 BLEU_FONCE, ROUGE_FONCE, GRIS = '#1967D2', '#B31412', '#9AA0A6'
 
+def tuile(nom, haut, bas, glyphe):
+    """Une icone d information facon Parametres du telephone : un carre arrondi
+    degrade (clair en haut, plus franc en bas), un reflet doux sur le haut, un
+    filet blanc, et le dessin en blanc au trait de 1,5."""
+    return (f'<defs><linearGradient id="t-{nom}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{haut}"/><stop offset="1" stop-color="{bas}"/></linearGradient>'
+            f'<linearGradient id="t-{nom}-reflet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.32"/><stop offset="0.55" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>'
+            f'<rect x="0.5" y="0.5" width="23" height="23" rx="6" fill="url(#t-{nom})" stroke="none"/>'
+            f'<rect x="0.5" y="0.5" width="23" height="23" rx="6" fill="url(#t-{nom}-reflet)" stroke="none"/>'
+            f'<rect x="0.8" y="0.8" width="22.4" height="22.4" rx="5.7" fill="none" stroke="#fff" stroke-opacity="0.28" stroke-width="0.6"/>'
+            + glyphe)
+
+
 PIN = 'M12 2.25c-3.87 0-7 3.08-7 6.9 0 5.2 7 12.6 7 12.6s7-7.4 7-12.6c0-3.82-3.13-6.9-7-6.9z'
 SANS = 'stroke="none"'
 
@@ -157,24 +169,20 @@ ICONES = {
     # Les signes d une image generee : une etincelle, pour la moderation.
     'etincelle': ('<path d="M10.5 3.5c.6 3.9 2.1 5.4 6 6-3.9.6-5.4 2.1-6 6-.6-3.9-2.1-5.4-6-6 3.9-.6 5.4-2.1 6-6zM18 14.5c.3 1.9 1 2.6 2.9 2.9-1.9.3-2.6 1-2.9 2.9-.3-1.9-1-2.6-2.9-2.9 1.9-.3 2.6-1 2.9-2.9z" stroke-linejoin="round"/>', None),
     # --- l information, aux couleurs de Google
-    'lieu': (f'<path d="{PIN}" fill="{ROUGE}" {SANS}/><circle cx="12" cy="9.15" r="2.6" fill="{ROUGE_FONCE}" {SANS}/>', None),
+    # --- l information : des tuiles facon Parametres (lieu rouge, telephone bleu, date orange)
+    'lieu': (tuile('lieu', '#FF7A6B', '#E5372B',
+                   '<path d="M12 4.9c-2.75 0-4.95 2.15-4.95 4.85 0 3.7 4.95 9 4.95 9s4.95-5.3 4.95-9c0-2.7-2.2-4.85-4.95-4.85z" fill="#fff" stroke="none"/>'
+                   '<circle cx="12" cy="9.8" r="1.85" fill="#EC4A3C" stroke="none"/>'), None),
+    # Le repere de Maps, sur les cartes (epingle a poser, apercu de la bienvenue).
+    'epingle': (f'<path d="{PIN}" fill="{ROUGE}" {SANS}/><circle cx="12" cy="9.15" r="2.6" fill="{ROUGE_FONCE}" {SANS}/>', None),
     'y-aller': (f'<path d="{PIN}" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="{PIN}" fill="{ROUGE}" {SANS}/><circle cx="12" cy="9.15" r="2.6" fill="{ROUGE_FONCE}" {SANS}/>', None),
-    'telephone': (
-        f'<rect x="6" y="2.25" width="12" height="19.5" rx="3" fill="{BLEU}" {SANS}/>'
-        f'<rect x="7.6" y="4.6" width="8.8" height="13.6" rx="1.2" fill="#fff" {SANS}/>'
-        f'<path d="M7.6 17.2 10.6 14l2.1 2.1 1.6-1.6 2.1 2.1v.4a1.2 1.2 0 0 1-1.2 1.2H8.8a1.2 1.2 0 0 1-1.2-1.2z" fill="{VERT}" {SANS}/>'
-        f'<circle cx="13.9" cy="8.4" r="1.35" fill="{JAUNE}" {SANS}/>'
-        f'<path d="M10.75 20h2.5" stroke="#fff" stroke-width="1.1"/>',
-        None,
-    ),
-    'calendrier': (
-        f'<rect x="3.75" y="4.75" width="16.5" height="15.5" rx="2.5" fill="#fff" stroke="{BLEU}" stroke-width="1.5"/>'
-        f'<path d="M3.75 9.5V7.25a2.5 2.5 0 0 1 2.5-2.5h11.5a2.5 2.5 0 0 1 2.5 2.5V9.5z" fill="{BLEU}" stroke="{BLEU}" stroke-width="1.5" stroke-linejoin="round"/>'
-        f'<path d="M8 3v3M16 3v3" stroke="{BLEU_FONCE}" stroke-width="1.6"/>'
-        + ''.join(f'<circle cx="{x}" cy="{y}" r="0.95" fill="{GRIS}" {SANS}/>' for x, y in [(8, 13), (12, 13), (16, 13), (8, 16.6), (12, 16.6)])
-        + f'<circle cx="16" cy="16.6" r="1.45" fill="{ROUGE}" {SANS}/>',
-        None,
-    ),
+    'telephone': (tuile('telephone', '#5AB0FF', '#1A6FE8',
+                        '<rect x="8.1" y="4.6" width="7.8" height="14.8" rx="2.1" fill="none" stroke="#fff" stroke-width="1.5"/>'
+                        '<path d="M11 16.9h2" stroke="#fff" stroke-width="1.5"/>'), None),
+    'calendrier': (tuile('calendrier', '#FFB257', '#F57A0C',
+                         '<rect x="5.9" y="6.6" width="12.2" height="11.6" rx="2.2" fill="none" stroke="#fff" stroke-width="1.5"/>'
+                         '<path d="M5.9 10.2h12.2M9.2 5.2v2.8M14.8 5.2v2.8" stroke="#fff" stroke-width="1.5"/>'
+                         + ''.join(f'<circle cx="{x}" cy="{y}" r="0.9" fill="#fff" stroke="none"/>' for x, y in [(9.4, 13.4), (12, 13.4), (14.6, 13.4), (9.4, 15.9), (12, 15.9)])), None),
     'boussole': (
         f'<circle cx="12" cy="12" r="8.5"/><path d="M12 5.9 14.3 12H9.7z" fill="{ROUGE}" {SANS}/><path d="M12 18.1 9.7 12h4.6z" fill="{GRIS}" {SANS}/>',
         None,
@@ -204,6 +212,11 @@ def main():
     # La barre d etat reste celle du telephone.
     systeme = re.findall(r'<symbol id="i-(?:signal|wifi|batterie)"[\s\S]*?</symbol>', ancienne)
     symboles = [f'  <symbol id="i-{nom}" viewBox="0 0 24 24">{corps(nom, c, p)}</symbol>' for nom, (c, p) in ICONES.items()]
+    # Le logo : trois gouttes, la noire devient blanche sur fond sombre.
+    for nom, fichier in [('logo', 'usw.svg'), ('logo-sombre', 'usw-sombre.svg')]:
+        svg = (RACINE / 'maquette' / 'logo' / fichier).read_text(encoding='utf-8')
+        chemins = ''.join(re.findall(r'<path[^>]*/>', svg))
+        symboles.append(f'  <symbol id="i-{nom}" viewBox="0 0 100 101">{chemins}</symbol>')
     FEUILLE.write_text(
         '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">\n'
         f'  {ENTETE}\n' + '\n'.join(symboles) + '\n' + '\n'.join('  ' + s for s in systeme) + '\n</svg>\n',
@@ -213,7 +226,7 @@ def main():
     # Chaque icone en fichier, au trait de 1,6.
     dossier = PACK / 'svg'
     dossier.mkdir(parents=True, exist_ok=True)
-    style = 'fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"'
+    style = 'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"'
     for nom, (c, p) in ICONES.items():
         (dossier / f'{nom}.svg').write_text(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" {style}>{c}</svg>\n', encoding='utf-8')
         if p is not None:

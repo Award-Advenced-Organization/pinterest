@@ -24,7 +24,6 @@ def carte(n, photo, lieu, telephone, duree):
         <div class="carte-image"><span class="photo ph-{photo}"></span>{extra}<span class="badge verifie">{ic("verifie")}Vérifiée</span></div>
         <div class="carte-pied">
           <div><div class="carte-lieu">{lieu}</div><div class="carte-appareil">{ic("telephone", "mini")}{telephone}</div></div>
-          {ic("plus-points", "petite")}
         </div>
       </article>'''
 
@@ -165,9 +164,11 @@ REGLAGES = f'''<div class="app page reglages">
   </div>
 {groupe("Compte", [ligne("crayon", "Modifier le profil"), ligne("cadenas", "E-mail et mot de passe"), ligne("bloque", "Comptes bloqués", "2")], 0)}
 {groupe("Données mobiles", [ligne("image", "Photos en qualité réduite en 3G", fin="actif"), ligne("reels", "Lire les reels en Wi-Fi seulement", fin="actif"), ligne("telecharger", "Envois en Wi-Fi seulement", fin="inactif")], 1)}
-{groupe("Autorisations", [ligne("cible", "Position", "Autorisée"), ligne("camera", "Caméra USW", "Autorisée"), ligne("cloche", "Notifications", "Activées")], 2)}
-{groupe("Aide et informations", [ligne("aide", "Aide"), ligne("bouclier", "Règles communautaires"), ligne("document", "Conditions générales"), ligne("cadenas", "Confidentialité")], 3)}
-  <section class="groupe" style="--n:4">
+{groupe("Affichage", [ligne("etincelle", "Thème", "Comme le téléphone"), ligne("texte", "Police du téléphone", fin="actif"), ligne("reels", "Réduire les animations", fin="inactif")], 2)}
+{groupe("Autorisations", [ligne("cible", "Position", "Autorisée"), ligne("camera", "Caméra USW", "Autorisée"), ligne("cloche", "Notifications", "Activées")], 3)}
+{groupe("Aide et informations", [ligne("aide", "Aide"), ligne("bouclier", "Règles communautaires"), ligne("document", "Conditions générales"), ligne("cadenas", "Confidentialité")], 4)}
+{groupe("Équipe", [ligne("bouclier", "Modération", "12")], 5)}
+  <section class="groupe" style="--n:6">
     <div class="groupe-corps verre-plaque">{ligne("sortie", "Se déconnecter", fin="", classe="danger")}</div>
   </section>
   <button type="button" class="supprimer">Supprimer mon compte</button>

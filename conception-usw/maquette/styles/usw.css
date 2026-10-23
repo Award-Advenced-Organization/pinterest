@@ -165,7 +165,15 @@ html { scrollbar-width: none; }
 /* La mesure discrete d un compteur. */
 .compte { font-size: 13px; font-weight: 600; white-space: nowrap; }
 
+/* ------------------------------------------------------------ le logo qui tourne */
+/* Comme un yin et yang, dans le sens inverse des aiguilles : l ouverture et
+   toute attente (jamais de cercle de progression). Transform seulement. */
+.logo-tourne { width: 26px; height: 26px; animation: tourne 1.8s linear infinite; }
+@keyframes tourne { to { transform: rotate(-1turn); } }
+@media (prefers-reduced-motion: reduce) { .logo-tourne { animation: none; } }
+
 /* ------------------------------------------------------------ E00 ouverture */
+.ouverture .logo-tourne { width: 72px; height: 72px; margin: 0 auto 26px; animation-duration: 2.4s; }
 .ouverture {
   display: grid;
   place-items: center;
@@ -269,7 +277,7 @@ html { scrollbar-width: none; }
   animation: pile-image 16s calc(var(--k) * 4s - 17.6s + var(--d, 0s)) var(--pile-courbe) infinite both;
 }
 /* 3 devant, 2 et 1 derriere, 0 partie ; celle qui part passe a 5 pour rester dessus. */
-.pile-carte:nth-child(1) { transform: translateZ(3px); box-shadow: 0 10px 22px -16px hsl(229 50% 20% / 0.5); }
+.pile-carte:nth-child(1) { transform: translateZ(3px); }
 .pile-carte:nth-child(2) { transform: translateZ(2px) translateY(-8px) scale(0.93); opacity: 0.75; }
 .pile-carte:nth-child(3) { transform: translateZ(1px) translateY(-15px) scale(0.86); opacity: 0.45; }
 .pile-carte:nth-child(4) { transform: translateZ(0) translateY(12%) scale(0.98); opacity: 0; }
@@ -411,16 +419,24 @@ html { scrollbar-width: none; }
 
 /* Un texte coupe en mots, qui montent un a un. */
 .mots .m { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.1em; margin-bottom: -0.1em; }
-.mots .m > span { display: inline-block; animation: mot 1s calc(0.25s + var(--k, 0) * 0.05s) var(--signature) both; }
+.mots .m > span { display: inline-block; }
+/* Les mots qui montent un a un : reserves aux pages qui se levent (la
+   bienvenue) et au haut d un lieu. Ailleurs le titre est immobile : trop
+   frequent, l effet perdrait son sens (2026-10-23). */
+:is(.bienvenue, .lieu-page, .ouverture) .mots .m > span { animation: mot 1s calc(0.25s + var(--k, 0) * 0.05s) var(--signature) both; }
 
 /* ------------------------------------------------------------ E03 accueil */
+/* Epure (2026-10-23) : le logo et « USW », la loupe, la cloche ; les flux et
+   les filtres passent dans la recherche. Le fond s efface vers le bas, sans
+   flou : les photos glissent dessous. */
 .entete-accueil {
   position: sticky;
   top: 0;
   z-index: 20;
-  padding: 0 var(--marge-app) 8px;
-  background: var(--fond);
+  padding: 0 var(--marge-app) 18px;
+  background: linear-gradient(180deg, var(--fond) 55%, hsl(229 36% 92% / 0));
 }
+.entete-accueil .rond-verre { background: transparent; box-shadow: inset 0 1px 0.5px hsl(0 0% 100% / 0.9), 0 0 0 0.5px hsl(229 40% 30% / 0.14); }
 .entete-ligne {
   display: flex;
   align-items: center;
@@ -428,11 +444,15 @@ html { scrollbar-width: none; }
   height: 52px;
 }
 .marque {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.04em;
 }
-.marque b { color: var(--ocean); font-weight: 700; }
+.logo { display: block; flex: none; width: 30px; height: 30px; }
+.marque .logo { width: 30px; height: 30px; }
 .entete-actions { display: inline-flex; gap: 6px; }
 .point-nouveau {
   position: absolute;
@@ -471,22 +491,24 @@ html { scrollbar-width: none; }
 .filtres { display: flex; gap: 8px; overflow: hidden; }
 
 /* La mosaique : deux colonnes au telephone, trois a la tablette. */
+/* Fidele a Pinterest : a plat, 5 px d ecart et de bord, rayon 12, le vrai
+   format de chaque photo ; dessous, qui l a prise et avec quel telephone. */
 .mosaique {
   columns: 2;
-  column-gap: 10px;
-  padding: 4px var(--marge-app) calc(var(--haut-onglets) + 40px);
+  column-gap: 5px;
+  padding: 4px 5px calc(var(--haut-onglets) + 40px);
 }
-@media (min-width: 600px) { .mosaique { columns: 3; column-gap: 14px; } }
+@media (min-width: 600px) { .mosaique { columns: 3; column-gap: 5px; } }
 .carte {
   break-inside: avoid;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   animation: carte 1.4s calc(0.35s + var(--n, 0) * 0.07s) var(--signature) both;
 }
 .carte-image {
   position: relative;
-  border-radius: 18px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 22px -16px hsl(229 50% 20% / 0.5);
+  contain: layout paint;
 }
 .carte-image .photo { border-radius: inherit; }
 .duree, .son {
@@ -500,14 +522,16 @@ html { scrollbar-width: none; }
   color: #fff;
   font-size: 12px;
   font-weight: 600;
-  background: hsl(229 30% 8% / 0.42);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  /* Fond plein, sans flou : il y en a une par carte, et chaque flou se
+     recalcule a chaque image du defilement. */
+  background: hsl(229 30% 8% / 0.55);
 }
 .duree { left: 9px; }
 .son { right: 9px; width: 24px; padding: 0; justify-content: center; }
 .son .ic { width: 15px; height: 15px; }
-.carte-image .badge { position: absolute; left: 8px; bottom: 8px; height: 24px; font-size: 11.5px; }
+/* Le badge verifie : l icone seule, dans sa pastille lime. */
+.carte-image .badge { position: absolute; left: 8px; bottom: 8px; width: 26px; height: 26px; padding: 0; justify-content: center; font-size: 0; }
+.carte-image .badge .ic { width: 16px; height: 16px; margin: 0; }
 .carte-pied {
   display: flex;
   align-items: flex-start;
@@ -535,8 +559,10 @@ html { scrollbar-width: none; }
   display: flex;
   justify-content: space-between;
 }
-.photo-grande .badge { position: absolute; left: 14px; bottom: 14px; height: 30px; font-size: 13px; padding: 0 12px 0 8px; }
-.photo-grande .badge .ic { width: 18px; height: 18px; }
+/* Pas de badge sur la grande photo : il est dans la fiche de capture. */
+.photo-grande .badge { display: none; }
+/* Les boutons poses sur la photo : du verre liquide transparent. */
+.photo-grande .rond-verre { background: transparent; box-shadow: inset 0 1px 0.5px hsl(0 0% 100% / 0.9), inset 0 -1px 0.5px hsl(0 0% 100% / 0.5), 0 0 0 0.5px hsl(0 0% 100% / 0.35); color: #121212; }
 
 .actions-photo {
   display: flex;
@@ -656,10 +682,12 @@ html { scrollbar-width: none; }
 .reels-haut {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   padding: 2px var(--marge-app) 0;
 }
-.reels-flux { display: flex; gap: 18px; font-weight: 600; font-size: 16px; color: hsl(0 0% 100% / 0.7); }
+/* Les flux a gauche, la loupe seule a droite : jamais l un sur l autre. */
+.reels-flux { display: flex; flex: 1; min-width: 0; gap: 18px; font-weight: 600; font-size: 16px; white-space: nowrap; color: hsl(0 0% 100% / 0.7); }
+.reels-haut > .rond-verre { flex: none; margin-left: auto; }
 .reels-flux span[aria-current='true'] { color: #fff; position: relative; }
 .reels-flux span[aria-current='true']::after {
   content: '';
@@ -676,7 +704,7 @@ html { scrollbar-width: none; }
   position: absolute;
   z-index: 3;
   right: 10px;
-  bottom: calc(var(--haut-onglets) + 46px);
+  bottom: calc(var(--haut-onglets) + 26px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -708,13 +736,26 @@ html { scrollbar-width: none; }
 }
 .reels-cote .suivre .ic { width: 14px; height: 14px; stroke-width: 2.2; }
 .reels-cote .profil-reel { position: relative; display: flex; justify-content: center; margin-bottom: 6px; }
+/* Le disque du son tourne pendant la lecture (transform seul). */
+.disque-son {
+  width: 42px;
+  height: 42px;
+  border: 7px solid #17191f;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 1px hsl(0 0% 100% / 0.12);
+  animation: monte 0.9s calc(0.4s + var(--k) * 0.07s) var(--signature) both, disque 6s 1.3s linear infinite;
+}
+@keyframes disque { to { rotate: 1turn; } }
+@media (prefers-reduced-motion: reduce) { .disque-son { animation: none; } }
 
 .reels-bas {
   position: absolute;
   z-index: 3;
   left: var(--marge-app);
   right: 84px;
-  bottom: calc(var(--haut-onglets) + 34px);
+  bottom: calc(var(--haut-onglets) + 26px);
 }
 .reels-bas .createur-ligne { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; animation: monte 0.9s 0.5s var(--signature) both; }
 .reels-bas .createur-ligne b { font-size: 15px; }
@@ -745,20 +786,18 @@ html { scrollbar-width: none; }
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  background: hsl(0 0% 100% / 0.16);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: hsl(0 0% 0% / 0.38);
 }
-.reels-bas .info .ic { width: 15px; height: 15px; }
+.reels-bas .info .ic { width: 16px; height: 16px; }
 .reels-bas .y-aller { min-height: 46px; animation: monte 0.9s 0.8s var(--signature) both; }
-.reels-son { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12.5px; color: hsl(0 0% 100% / 0.85); }
+.reels-son { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12.5px; color: hsl(0 0% 100% / 0.85); }
 .reels-progres {
   position: absolute;
   z-index: 3;
   left: var(--marge-app);
   right: var(--marge-app);
-  bottom: calc(var(--haut-onglets) + 24px);
-  height: 3px;
+  bottom: calc(var(--haut-onglets) + 19px);
+  height: 2.5px;
   border-radius: 3px;
   background: hsl(0 0% 100% / 0.25);
   overflow: hidden;

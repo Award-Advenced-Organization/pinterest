@@ -8,7 +8,7 @@ mes envois (E26).
   python outils/ecrans_creer.py
 """
 
-from ecrans_compte import ecrire, ic, mots, champ, BOUTON
+from ecrans_compte import banniere, ecrire, ic, mots, champ, BOUTON
 from ecrans_profil import carte, PUBLICATIONS, bouton
 
 
@@ -281,7 +281,7 @@ LIEU_CARTE = f'''<div class="app fixe choisir-lieu">
     <button type="button" class="rond-verre verre verre-appuyable givre" aria-label="Retour">{ic("retour")}</button>
     <div class="champ verre givre-champ">{ic("loupe")}<span class="champ-valeur">Grand-Popo</span></div>
   </div>
-  <div class="epingle-carte">{ic("lieu")}<span class="epingle-ombre"></span></div>
+  <div class="epingle-carte">{ic("epingle")}<span class="epingle-ombre"></span></div>
   <button type="button" class="rond-verre verre verre-appuyable givre ma-position" aria-label="Ma position">{ic("cible")}</button>
   <div class="lieu-choisi verre-plaque">
     <p class="lieu-indice">Déplacez la carte pour poser l'épingle.</p>
@@ -307,8 +307,7 @@ EN_ROUTE = f'''<div class="app fixe">
   <main class="mosaique">
 {chr(10).join(carte(i, *c) for i, c in enumerate(PUBLICATIONS))}
   </main>
-  <div class="toast">{ic("coche")}Publication lancée : vous pouvez continuer à naviguer.</div>
-{envoi_pastille()}
+{banniere("Publication lancée : vous pouvez continuer à naviguer.")}{envoi_pastille()}
   <!--onglets:accueil-->
 </div>
 '''
@@ -323,6 +322,8 @@ def envoi(n, photo, titre, etat, detail, progres=None, actions=''):
             f'<div class="envoi-actions">{actions}</div></div>')
 
 
+# L attente de USW : le logo qui tourne, jamais un cercle de progression.
+LOGO_TOURNE = '<svg class="logo logo-tourne" aria-label="Vérification en cours"><use href="#i-logo"/></svg>'
 ROND_PAUSE = f'<button type="button" class="rond-verre verre verre-appuyable petit-rond" aria-label="Pause">{ic("pause")}</button>'
 ROND_REPRENDRE = f'<button type="button" class="rond-verre verre verre-appuyable petit-rond" aria-label="Reprendre">{ic("lecture")}</button>'
 ROND_ANNULER = f'<button type="button" class="rond-verre verre verre-appuyable petit-rond danger" aria-label="Annuler">{ic("fermer")}</button>'
@@ -341,7 +342,7 @@ MES_ENVOIS = f'''<div class="app page">
   </div>
   <h2 class="groupe-titre">En vérification</h2>
   <div class="envois">
-    {envoi(2, "p77", "Ponton de Ouidah", "verification", "Recherche des signes d'IA · environ 1 min")}
+    {envoi(2, "p77", "Ponton de Ouidah", "verification", "Recherche des signes d'IA · environ 1 min", actions=LOGO_TOURNE)}
   </div>
   <h2 class="groupe-titre">Terminés</h2>
   <div class="envois">

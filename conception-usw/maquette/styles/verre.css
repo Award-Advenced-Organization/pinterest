@@ -10,8 +10,12 @@
    3. l onde (::after) : au survol, un cercle de lumiere part de la main et
       s elargit a la surface, comme sur l eau qu on touche ;
    4. l ombre portee, douce.
-   Deux epaisseurs : .verre pour les controles et les cartes, .verre-plaque
-   pour les grandes surfaces (panneau, liste), sans lentille. */
+   Deux epaisseurs : .verre pour les controles et ce qui flotte, .verre-plaque
+   pour les grandes surfaces.
+   La plaque est A PLAT (2026-10-23, comme les cartes des Parametres du
+   telephone et de Bloc-notes) : un fond plein un ton au-dessus de la page,
+   ni bord, ni ombre, ni relief. Seul ce qui flotte (feuille, dialogue, apercu
+   sur la carte, mentions, pastille d envoi) garde l arete et l ombre du verre. */
 
 /* Le rayon de l onde. Declare, il peut s animer. */
 @property --onde {
@@ -45,9 +49,11 @@
 }
 
 .verre-plaque {
+  background: hsl(0 0% 100% / 0.8);
+}
+.verre-plaque:is(.feuille, .dialogue, .carte-apercu, .mentions, .envoi-pastille, .lieu-choisi) {
   /* Pas de backdrop-filter ici : il couperait les verres poses dessus du
      fond de la page, et leur lentille n aurait plus rien a courber. */
-  background: linear-gradient(180deg, hsl(0 0% 100% / 0.16), hsl(0 0% 100% / 0.08));
   box-shadow:
     inset 0 1px 0.5px hsl(0 0% 100% / 0.9),
     inset 0 -1px 0.5px hsl(0 0% 100% / 0.45),
@@ -59,7 +65,7 @@
 /* L arete : un anneau de 1,25px peint par un degrade conique dont le point
    le plus vif regarde le pointeur (--angle, ecrit par useLumiere). */
 .verre::before,
-.verre-plaque::before {
+.verre-plaque:is(.feuille, .dialogue, .carte-apercu, .mentions, .envoi-pastille, .lieu-choisi)::before {
   content: '';
   position: absolute;
   inset: 0;

@@ -99,3 +99,34 @@
 .vide-recherche { padding-top: 28px; }
 .vide-recherche .etat-icone { width: 64px; height: 64px; border-radius: 20px; }
 .vide-recherche .etat-icone .ic { width: 30px; height: 30px; }
+
+/* ------------------------------------------------------------ la banniere (2026-10-23) */
+/* Le message apres une action, comme une notification d iOS : du verre depoli
+   qui descend du haut avec un ressort, le logo dans sa tuile, « USW ·
+   maintenant », le texte. Il part seul, ou d un geste vers le haut. */
+.banniere {
+  position: fixed;
+  z-index: 46;
+  top: 40px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(100% - 16px, 440px);
+  padding: 12px 14px;
+  border-radius: 24px;
+  background: hsl(0 0% 100% / 0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(1.8);
+  backdrop-filter: blur(18px) saturate(1.8);
+  box-shadow: inset 0 1px 0.5px hsl(0 0% 100% / 0.9), 0 0 0 0.5px hsl(229 40% 30% / 0.12), 0 18px 40px -22px hsl(229 50% 20% / 0.5);
+  translate: -50% 0;
+  animation: banniere 0.6s 0.4s var(--ressort) both;
+}
+@keyframes banniere { from { transform: translateY(-140%) scale(0.96); } }
+.banniere-logo { display: grid; flex: none; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #fff, hsl(229 45% 93%)); }
+.banniere-logo .logo { width: 26px; height: 26px; }
+.banniere > div { flex: 1; min-width: 0; }
+.banniere-tete { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; }
+.banniere-tete span { color: var(--discret); font-size: 12.5px; }
+.banniere p { margin: 1px 0 0; color: var(--texte); font-size: 14px; line-height: 1.35; }
+.banniere-action { flex: none; color: var(--texte); font-size: 14px; font-weight: 700; text-decoration: underline; }

@@ -16,7 +16,7 @@
 @media (min-width: 600px) { .feuille.haute { top: 18%; width: 520px; } .feuille-large { width: 480px; } }
 .feuille-texte { margin: -6px 0 0; color: var(--discret); font-size: 14.5px; line-height: 1.5; }
 .feuille-note { margin: 0; color: var(--discret); font-size: 13px; line-height: 1.5; text-align: center; }
-.feuille-sous-titre { margin: 4px 0 -4px; color: var(--discret); font-size: 13px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+.feuille-sous-titre { margin: 4px 0 -4px; color: var(--texte); font-size: 15.5px; font-weight: 700; }
 .feuille .bouton-verre.large { width: 100%; }
 .feuille .modeles { margin-top: 0; background: #fff; }
 .feuille-pied { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 4px; }
@@ -107,6 +107,15 @@
 .membres, .applis { display: flex; justify-content: space-between; gap: 6px; }
 .membre, .appli { display: grid; justify-items: center; gap: 6px; width: 64px; padding: 0; border: none; background: none; font-size: 12px; font-weight: 600; cursor: pointer; }
 .membre .avatar { width: 54px; height: 54px; font-size: 17px; }
+/* Toucher un membre le choisit : un anneau ocean et une coche qui rebondit.
+   Le premier rond cherche un membre hors des recents. */
+.membre-avatar { position: relative; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; }
+.membre.choisi .avatar { box-shadow: 0 0 0 2.5px var(--fond), 0 0 0 4.5px var(--ocean); }
+.membre-coche { position: absolute; right: -3px; bottom: -3px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ocean); color: #fff; box-shadow: 0 0 0 2px var(--fond); animation: monte 0.5s 0.5s var(--ressort) both; }
+.membre-coche .ic { width: 13px; height: 13px; stroke-width: 2.4; }
+.membre.chercher .membre-avatar { background: hsl(229 30% 90%); color: var(--texte); }
+.membre.chercher .membre-avatar .ic { width: 24px; height: 24px; }
+.envoi-membres { display: grid; gap: 10px; }
 .appli-icone { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: #fff; }
 .appli-icone .ic { width: 24px; height: 24px; }
 .appli-icone.marque .ic { width: 54px; height: 54px; }
@@ -262,8 +271,8 @@
 .bouton-verre.valider { background: var(--limonade); color: hsl(71 60% 12%); box-shadow: 0 10px 22px -12px hsl(71 70% 35% / 0.7); }
 
 /* ------------------------------------------------------------ E06 reagir a un reel */
-/* Un appui long sur le coeur : les quatre reactions s ouvrent a sa gauche, le
-   reel s assombrit un peu pour les laisser lire. */
+/* Un toucher sur le coeur : les quatre reactions s ouvrent a sa gauche, chacune
+   avec son nom dessous ; le reel s assombrit un peu pour les laisser lire. */
 .voile-reagir { position: absolute; inset: 0; z-index: 2; background: hsl(229 40% 4% / 0.35); animation: fondu 0.3s 0.5s var(--interface) both; }
 .reels-cote .bouton-reel.appui { position: relative; z-index: 4; }
 .reels-cote .bouton-reel.appui .rond-verre { transform: scale(1.12); }
@@ -274,7 +283,7 @@
   display: flex;
   gap: 2px;
   padding: 6px;
-  border-radius: 999px;
+  border-radius: 28px;
   background: hsl(229 40% 97%);
   color: var(--texte);
   box-shadow: 0 18px 40px -16px hsl(229 50% 4% / 0.7);
@@ -282,12 +291,11 @@
   animation: reactions-entre 0.45s 0.55s var(--ressort) both;
 }
 @keyframes reactions-entre { from { transform: scale(0.6); opacity: 0; } }
-.reaction { position: relative; display: grid; place-items: center; width: 50px; height: 50px; padding: 0; border: none; border-radius: 50%; background: none; cursor: pointer; animation: monte 0.5s calc(0.65s + var(--k) * 0.05s) var(--ressort) both; }
-.reaction .emoji { font-size: 30px; line-height: 1; }
-/* La reaction sous le doigt grossit et dit son nom au-dessus. */
-.reaction.choisie { background: #fff; transform: translateY(-6px) scale(1.18); box-shadow: 0 8px 18px -10px hsl(229 50% 20% / 0.5); }
-.reaction-nom { position: absolute; bottom: calc(100% + 6px); left: 50%; padding: 3px 9px; border-radius: 999px; background: var(--texte); color: #fff; font-size: 11px; font-weight: 700; white-space: nowrap; translate: -50% 0; opacity: 0; }
-.reaction.choisie .reaction-nom { opacity: 1; }
+.reaction { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 66px; height: 70px; padding: 0; border: none; border-radius: 22px; background: none; color: inherit; cursor: pointer; animation: monte 0.5s calc(0.65s + var(--k) * 0.05s) var(--ressort) both; }
+.reaction .emoji { font-size: 28px; line-height: 1; }
+.reaction-nom { max-width: 62px; font-size: 11px; font-weight: 600; line-height: 1.1; text-align: center; }
+/* La reaction sous le doigt grossit un peu. */
+.reaction.choisie { background: #fff; transform: scale(1.08); }
 
 /* ------------------------------------------------------------ E06 les reactions d un reel */
 .reactions-flux { gap: 18px; margin: -4px -16px 0; padding: 0 16px; overflow: hidden; font-size: 14.5px; white-space: nowrap; }

@@ -10,7 +10,7 @@ faire, en une phrase, avec une seule action principale.
 
 import re
 
-from ecrans_compte import ECRANS, OEIL, BOUTON, ecrire, ic, mots, page
+from ecrans_compte import ECRANS, OEIL, BOUTON, banniere, ecrire, ic, mots, page
 from ecrans_profil import REGLAGES
 
 
@@ -48,7 +48,7 @@ MDP_ERREUR = page(f'''  <div class="retour-compte">
   </div>
   <form class="formulaire">
     <div class="champ-bloc erreur" style="--k:0">
-      <span class="champ-libelle">Mot de passe</span>
+      <span class="champ-libelle pour-lecteur">Mot de passe</span>
       <div class="champ verre">{ic("cadenas")}<span class="champ-valeur">••••••••</span>{OEIL}</div>
       <p class="champ-aide">{ic("alerte", "mini")}Mot de passe incorrect. Encore 4 essais avant une pause de 15 min.</p>
     </div>
@@ -101,15 +101,10 @@ def dialogue():
 # ------------------------------------------------------------ les bulles et les messages
 
 def bulles():
-    """La page d une photo : une bulle d aide sur le badge, un message apres « Enregistrer »."""
+    """La page d une photo, apres « Enregistrer » : la banniere de verre en haut."""
     html = lire('e05-photo.html')
-    bulle = (f'<span class="bulle-aide" role="tooltip"><strong>Capture vérifiée</strong>'
-             f'Le téléphone, la date et le lieu viennent du fichier lui-même.<a class="lien-encre">En savoir plus</a></span>')
-    html = re.sub(r'(<span class="badge verifie">.*?Capture vérifiée</span>)', r'\1' + bulle.replace('\\', '\\\\'), html, count=1)
-    message = (f'  <div class="message" role="status"><span class="photo ph-p108"></span>'
-               f'<span>Enregistrée dans <b>Plages</b></span><a class="message-action">Changer</a></div>\n')
     fin = html.rstrip().rfind('</div>')
-    return html[:fin] + message + '</div>\n'
+    return html[:fin] + banniere('Enregistrée dans « Plages ».', action='Changer') + '</div>\n'
 
 
 # ------------------------------------------------------------ une autorisation refusee, une recherche vide

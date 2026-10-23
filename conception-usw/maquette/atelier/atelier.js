@@ -49,15 +49,20 @@ function atelierGod2(depart, hote) {
   var FIGE =
     '*,*::before,*::after{animation:none!important;transition:none!important}' +
     '.document-vivant .ligne{stroke-dashoffset:0!important}' +
-    'html,body{overflow:hidden!important}.apercu-cadre{overflow:hidden!important}'
+    'html,body{overflow:hidden!important}.apercu-cadre{overflow:hidden!important}' +
+    // Pendant un deplacement ou un zoom, la toile pose la classe `gd-bouge` sur
+    // les cadres visibles : le flou du verre, les ombres et les filtres — ce que
+    // le processeur peine a recalculer image par image sans carte graphique —
+    // s effacent le temps du geste, sans toucher aux dimensions. Tout revient des
+    // que la vue se stabilise.
+    'html.gd-bouge *,html.gd-bouge *::before,html.gd-bouge *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;filter:none!important}'
 
-  // En presentation, la lumiere du verre suit la main, comme dans l application.
-  var LUMIERE =
-    '(function(){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var a=false,d=null;' +
-    'function p(){a=false;var e=d;if(!e||!e.target||!e.target.closest)return;var c=e.target.closest(".verre");if(!c)return;' +
-    'var b=c.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;c.style.setProperty("--lx",x+"px");c.style.setProperty("--ly",y+"px");' +
-    'c.style.setProperty("--angle",Math.atan2(y-b.height/2,x-b.width/2)*180/Math.PI+90+"deg")}' +
-    'addEventListener("pointermove",function(e){d=e;if(a)return;a=true;requestAnimationFrame(p)},{passive:true})})()'
+  // Pendant qu on fait defiler un ecran presente, le flou du verre (tres cher a
+  // recalculer sans carte graphique) s efface le temps du geste : la page glisse
+  // sans accroc, puis le verre revient net des l arret. Voir le controleur, qui
+  // pose la classe `gd-defile` sur la page.
+  var DEFILE =
+    'html.gd-defile *,html.gd-defile *::before,html.gd-defile *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}'
 
   var ECART = 200
 
@@ -421,6 +426,45 @@ function atelierGod2(depart, hote) {
   var vue = { x: 0, y: 0, z: 1 }
   var rafraichir = false
 
+  // Le mode deplacement : pendant un glisser ou un zoom, la toile allege son
+  // rendu (voir `alleger`), puis retrouve toute sa qualite 180 ms apres le
+  // dernier mouvement. Le delai tient compte des molettes et paves tactiles,
+  // qui envoient leurs crans par rafales.
+  var mouvement = false
+  var finMouvement = null
+
+  function marquerMouvement() {
+    if (!mouvement) { mouvement = true; racine.dataset.bouge = 'true' }
+    clearTimeout(finMouvement)
+    finMouvement = setTimeout(finirMouvement, 180)
+  }
+
+  function finirMouvement() {
+    mouvement = false
+    racine.dataset.bouge = 'false'
+    cadres.forEach(function (c) { degrader(c, false) })
+  }
+
+  // Le temps du geste, les cadres dans la vue perdent leurs effets couteux.
+  // Ceux qui sont hors de la vue ne sont deja plus peints (voir montrerVisibles).
+  // Au-dela de 8 cadres visibles, on n y touche pas : chaque bascule recalcule
+  // les styles de toute une page (2 s pour la maquette USW en entier), et
+  // pendant un zoom ces cadres sont de toute facon remplaces par leurs silhouettes.
+  function alleger() {
+    var vus = cadres.filter(function (c) { return c.vu })
+    if (vus.length > 8) return
+    vus.forEach(function (c) { degrader(c, true) })
+  }
+
+  // Couper (ou rendre) les effets couteux a l interieur d un cadre, par la classe
+  // `gd-bouge` sur sa page (voir FIGE). On ne touche qu aux cadres dont l etat
+  // change, et seulement a ceux qui restent a l ecran.
+  function degrader(cadre, oui) {
+    if (!!cadre.degrade === oui) return
+    try { cadre.iframe.contentDocument.documentElement.classList.toggle('gd-bouge', oui); cadre.degrade = oui }
+    catch (e) {}
+  }
+
   function borner(z) { return Math.min(4, Math.max(0.04, z)) }
 
   // Seuls les cadres dans la vue (avec une marge) sont peints : a chaque cran
@@ -474,6 +518,7 @@ function atelierGod2(depart, hote) {
         c.etiquette.style.top = vue.y + c.y * vue.z - 4 + 'px'
         c.etiquette.style.maxWidth = Math.max(40, c.largeur * vue.z) + 'px'
       })
+      if (mouvement) alleger()
       poserContour(contourSurvol, survol === choix ? null : survol)
       poserContour(contourChoix, choix)
       if (ecriture) placerEcriture()
@@ -492,6 +537,7 @@ function atelierGod2(depart, hote) {
   }
 
   function zoomer(z, cx, cy) {
+    marquerMouvement()
     if (cx === undefined) {
       var champ = champLibre()
       cx = champ.gauche + champ.largeur / 2
@@ -2481,6 +2527,7 @@ function atelierGod2(depart, hote) {
       if (!glisse.bouge) return
       if (glisse.main) {
         racine.dataset.glisse = 'true'
+        marquerMouvement()
         vue.x = glisse.vx + dx
         vue.y = glisse.vy + dy
         appliquer()
@@ -2575,6 +2622,7 @@ function atelierGod2(depart, hote) {
   toile.addEventListener('wheel', function (e) {
     if (e.target.closest('.gd-volet')) return
     e.preventDefault()
+    marquerMouvement()
     var boite = toile.getBoundingClientRect()
     if (e.ctrlKey || e.metaKey) {
       zoomer(vue.z * Math.exp(-e.deltaY * (e.deltaMode ? 0.05 : 0.0022)), e.clientX - boite.left, e.clientY - boite.top)
@@ -2787,21 +2835,47 @@ function atelierGod2(depart, hote) {
   // un clic sur une zone liee ouvre l ecran vise, ou revient au precedent ;
   // un clic ailleurs fait clignoter les zones cliquables. Le script tourne
   // dans la page de l ecran et ne parle a l atelier que par postMessage.
-  function scriptLiens(liens) {
-    return '(function(){var L=' + JSON.stringify(liens || []).replace(/</g, '\\u003c') + ';' +
-      'function ok(el,l){return !l.texte||el.textContent.replace(/\\s+/g," ").indexOf(l.texte)>=0}' +
-      'function lien(t){for(var i=0;i<L.length;i++){try{var el=t.closest&&t.closest(L[i].selecteur);' +
-      'while(el&&!ok(el,L[i]))el=el.parentElement&&el.parentElement.closest(L[i].selecteur);if(el)return L[i]}catch(_){}}return null}' +
-      'function zones(){var z=[];L.forEach(function(l){try{document.querySelectorAll(l.selecteur).forEach(function(el){if(!ok(el,l))return;var b=el.getBoundingClientRect();' +
-      'if(b.width&&b.height&&b.bottom>0&&b.top<innerHeight)z.push(b)})}catch(_){}});return z}' +
-      'function clignoter(){zones().forEach(function(b){var d=document.createElement("div");' +
-      'd.style.cssText="position:fixed;z-index:2147483647;pointer-events:none;left:"+b.left+"px;top:"+b.top+"px;width:"+b.width+"px;height:"+b.height+"px;' +
-      'border-radius:10px;background:rgba(13,153,255,.18);box-shadow:inset 0 0 0 2px rgba(13,153,255,.85);transition:opacity .45s .3s";' +
-      'document.body.appendChild(d);requestAnimationFrame(function(){requestAnimationFrame(function(){d.style.opacity="0"})});setTimeout(function(){d.remove()},900)})}' +
-      'addEventListener("click",function(e){var l=lien(e.target);if(l){e.preventDefault();e.stopPropagation();parent.postMessage({god2:"lien",vers:l.vers},"*")}else clignoter()},true);' +
-      'addEventListener("keydown",function(e){if(/^(Escape|ArrowLeft|ArrowRight|Backspace)$/.test(e.key)&&!(e.target.closest&&e.target.closest("input,textarea,[contenteditable]")))parent.postMessage({god2:"touche",touche:e.key},"*")})' +
-      '})()'
-  }
+  // Le controleur vit dans la page presentee, pour toute la session. Il y tient :
+  //  - la lumiere du verre qui suit la main (comme dans l application) ;
+  //  - l allegement au defilement (classe `gd-defile`, voir DEFILE) ;
+  //  - les liens du prototype, lus dans `L`, remis a jour a chaque ecran ;
+  //  - l echange du corps d un ecran a l autre, sans recharger la page : les
+  //    styles et les polices (plus d un mega-octet) ne sont analyses qu une fois.
+  // Il ne parle a l atelier que par postMessage. Changer d ecran retire d abord
+  // les ecouteurs que le script de l ecran precedent avait poses sur la fenetre,
+  // pour qu ils ne s accumulent pas d une visite a l autre.
+  var CONTROLEUR =
+    '(function(){var add=window.addEventListener.bind(window),L=window.__liens||[];' +
+    // la lumiere du verre
+    'if(!matchMedia("(prefers-reduced-motion: reduce)").matches){var a=false,d=null;' +
+    'function p(){a=false;var e=d;if(!e||!e.target||!e.target.closest)return;var c=e.target.closest(".verre");if(!c)return;' +
+    'var b=c.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;c.style.setProperty("--lx",x+"px");c.style.setProperty("--ly",y+"px");' +
+    'c.style.setProperty("--angle",Math.atan2(y-b.height/2,x-b.width/2)*180/Math.PI+90+"deg")}' +
+    'add("pointermove",function(e){d=e;if(a)return;a=true;requestAnimationFrame(p)},{passive:true})}' +
+    // pendant le defilement, on efface le flou du verre
+    'var minu=null;add("scroll",function(){var h=document.documentElement;if(!minu)h.classList.add("gd-defile");clearTimeout(minu);minu=setTimeout(function(){minu=null;h.classList.remove("gd-defile")},140)},true);' +
+    // les liens du prototype
+    'function ok(el,l){return !l.texte||el.textContent.replace(/\\s+/g," ").indexOf(l.texte)>=0}' +
+    'function lien(t){for(var i=0;i<L.length;i++){try{var el=t.closest&&t.closest(L[i].selecteur);' +
+    'while(el&&!ok(el,L[i]))el=el.parentElement&&el.parentElement.closest(L[i].selecteur);if(el)return L[i]}catch(_){}}return null}' +
+    'function zones(){var z=[];L.forEach(function(l){try{document.querySelectorAll(l.selecteur).forEach(function(el){if(!ok(el,l))return;var b=el.getBoundingClientRect();' +
+    'if(b.width&&b.height&&b.bottom>0&&b.top<innerHeight)z.push(b)})}catch(_){}});return z}' +
+    'function clignoter(){zones().forEach(function(b){var d=document.createElement("div");' +
+    'd.style.cssText="position:fixed;z-index:2147483647;pointer-events:none;left:"+b.left+"px;top:"+b.top+"px;width:"+b.width+"px;height:"+b.height+"px;' +
+    'border-radius:10px;background:rgba(13,153,255,.18);box-shadow:inset 0 0 0 2px rgba(13,153,255,.85);transition:opacity .45s .3s";' +
+    'document.body.appendChild(d);requestAnimationFrame(function(){requestAnimationFrame(function(){d.style.opacity="0"})});setTimeout(function(){d.remove()},900)})}' +
+    'add("click",function(e){var l=lien(e.target);if(l){e.preventDefault();e.stopPropagation();parent.postMessage({god2:"lien",vers:l.vers},"*")}else clignoter()},true);' +
+    'add("keydown",function(e){if(/^(Escape|ArrowLeft|ArrowRight|Backspace)$/.test(e.key)&&!(e.target.closest&&e.target.closest("input,textarea,[contenteditable]")))parent.postMessage({god2:"touche",touche:e.key},"*")});' +
+    // on traque les ecouteurs poses ensuite (par les scripts des ecrans), pour
+    // les retirer avant de poser l ecran suivant
+    'var suivis=[];[window,document].forEach(function(o){var vrai=o.addEventListener.bind(o);o.addEventListener=function(t,f,c){suivis.push([o,t,f,c]);return vrai(t,f,c)}});' +
+    'function poser(html,liens){L=liens||[];suivis.forEach(function(s){try{s[0].removeEventListener(s[1],s[2],s[3])}catch(_){}});suivis=[];' +
+    'var b=document.body;b.innerHTML=html;' +
+    // les <script> poses par innerHTML ne s executent pas : on les recree
+    'b.querySelectorAll("script").forEach(function(v){var n=document.createElement("script");for(var i=0;i<v.attributes.length;i++)n.setAttribute(v.attributes[i].name,v.attributes[i].value);n.textContent=v.textContent;v.replaceWith(n)});' +
+    'scrollTo(0,0)}' +
+    'add("message",function(e){if(e.source!==parent||!e.data||e.data.god2!=="poser")return;poser(e.data.html,e.data.liens)});' +
+    'parent.postMessage({god2:"pret"},"*")})()'
 
   // Le chemin suivi par les liens, pour « retour ». Changer d ecran par les
   // fleches ou la barre repart d un chemin vide.
@@ -2817,9 +2891,13 @@ function atelierGod2(depart, hote) {
     chemin.push(presente)
     presenter(i, true)
   }
+  // Vrai des que le controleur de la page presentee est pret a recevoir un ecran
+  // par message (sans recharger). Remis a faux a chaque remontage du document.
+  var presPret = false
   window.addEventListener('message', function (e) {
     if (presente < 0 || e.source !== presentationEcran.contentWindow || !e.data || typeof e.data !== 'object') return
-    if (e.data.god2 === 'lien' && typeof e.data.vers === 'string') suivreLien(e.data.vers)
+    if (e.data.god2 === 'pret') presPret = true
+    else if (e.data.god2 === 'lien' && typeof e.data.vers === 'string') suivreLien(e.data.vers)
     else if (e.data.god2 === 'touche') toucheDePresentation(e.data.touche)
   }, hors)
   function toucheDePresentation(touche) {
@@ -2837,6 +2915,7 @@ function atelierGod2(depart, hote) {
     presente = i < 0 ? 0 : i
     var ecran = doc.ecrans[presente]
     presentationTitre.textContent = 'Écran ' + (presente + 1) + ' sur ' + doc.ecrans.length + ' · ' + ecran.nom
+    var ouverture = presentation.hidden
     presentation.hidden = false
     if (formatPresente === null) {
       var etroit = formatsTries()[0]
@@ -2844,13 +2923,24 @@ function atelierGod2(depart, hote) {
       remplirFormats()
     }
     poserFormat()
-    presentationEcran.srcdoc = pageDe(ecran, '', LUMIERE + ';' + scriptLiens(ecran.liens))
+    var corps = (doc.symboles || '') + ecran.balisage
+    var fenetre = presentationEcran.contentWindow
+    // Au premier ecran d une session, on monte le document (styles et polices
+    // analyses une seule fois). Ensuite, on n echange que le corps par message :
+    // changer d ecran ne coute plus que quelques millisecondes.
+    if (ouverture || !presPret || !fenetre) {
+      presPret = false
+      presentationEcran.srcdoc = pageDe(ecran, DEFILE, 'window.__liens=' + JSON.stringify(ecran.liens || []).replace(/</g, '\\u003c') + ';' + CONTROLEUR)
+    } else {
+      fenetre.postMessage({ god2: 'poser', html: corps, liens: ecran.liens || [] }, '*')
+    }
     presentation.querySelector('[data-action="quitter-presentation"]').focus()
   }
   function quitterPresentation() {
     presentation.hidden = true
     presentationEcran.srcdoc = ''
     presente = -1
+    presPret = false
     toutVoir()
   }
 

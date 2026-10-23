@@ -147,13 +147,19 @@ def appli(icone, nom, classe=''):
     return f'<button type="button" class="appli"><span class="appli-icone{(" " + classe) if classe else ""}">{ic(icone)}</span>{nom}</button>'
 
 
-def membre(initiales, teinte, nom):
-    return f'<button type="button" class="membre">{av(initiales, teinte)}<span>{nom}</span></button>'
+def membre(initiales, teinte, nom, choisi=False):
+    coche = f'<span class="membre-coche">{ic("coche")}</span>' if choisi else ''
+    return (f'<button type="button" class="membre{" choisi" if choisi else ""}" aria-pressed="{"true" if choisi else "false"}">'
+            f'<span class="membre-avatar">{av(initiales, teinte)}{coche}</span><span>{nom}</span></button>')
+
+
+# Le premier rond : chercher un membre qui n est pas dans les recents.
+CHERCHER_MEMBRE = f'<button type="button" class="membre chercher"><span class="membre-avatar">{ic("loupe")}</span><span>Rechercher</span></button>'
 
 
 PARTAGER = sur('e05-photo.html', feuille(f'''    <div class="partage-apercu"><span class="photo ph-p108"></span><div><strong>Les cocotiers de Grand-Popo</strong><span>Akouavi K. · Capture vérifiée</span><span class="lien-court">usw.app/p/k3x9</span></div></div>
     <h3 class="feuille-sous-titre">Envoyer à un membre</h3>
-    <div class="membres">{membre("MS", "hsl(229 97% 55%)", "Mawuli")}{membre("SV", "hsl(160 55% 34%)", "Sènan")}{membre("FH", "hsl(40 80% 45%)", "Fifamè")}{membre("EA", "hsl(280 40% 50%)", "Edem")}{membre("SA", "hsl(330 50% 50%)", "Séna")}</div>
+    <div class="membres">{CHERCHER_MEMBRE}{membre("MS", "hsl(229 97% 55%)", "Mawuli")}{membre("SV", "hsl(160 55% 34%)", "Sènan")}{membre("FH", "hsl(40 80% 45%)", "Fifamè")}{membre("EA", "hsl(280 40% 50%)", "Edem")}</div>
     <h3 class="feuille-sous-titre">Partager avec</h3>
     <div class="applis">{appli("whatsapp", "WhatsApp", "marque")}{appli("lien", "Copier le lien")}{appli("envoyer", "Message")}{appli("enveloppe", "E-mail")}{appli("plus-points", "Autres")}</div>
     <p class="feuille-note">Le lien ouvre la photo, même sans l'application.</p>''',
@@ -477,10 +483,11 @@ REEL_COMMENTAIRES = sur('e06-reels.html', feuille(f'''    <div class="avis-liste
 
 REEL_PARTAGER = sur('e06-reels.html', feuille(f'''    <div class="partage-apercu"><span class="photo ph-p15"></span><div><strong>Cascade de Kota</strong><span>senan.voyage · reel de 0:31</span><span class="lien-court">usw.app/r/7tq2</span></div></div>
     <h3 class="feuille-sous-titre">Envoyer à un membre</h3>
-    <div class="membres">{membre("MS", "hsl(229 97% 55%)", "Mawuli")}{membre("AK", "hsl(18 70% 52%)", "Akouavi")}{membre("FH", "hsl(40 80% 45%)", "Fifamè")}{membre("EA", "hsl(280 40% 50%)", "Edem")}{membre("SA", "hsl(330 50% 50%)", "Séna")}</div>
-    <h3 class="feuille-sous-titre">Partager avec</h3>
-    <div class="applis">{appli("whatsapp", "WhatsApp", "marque")}{appli("lien", "Copier le lien")}{appli("envoyer", "Message")}{appli("enveloppe", "E-mail")}{appli("plus-points", "Autres")}</div>
-    <div class="applis actions-reel">{appli("telecharger", "Télécharger")}{appli("enregistrer", "Enregistrer")}{appli("oeil-barre", "Pas intéressé")}{appli("drapeau", "Signaler", "rouge-doux")}</div>''',
+    <div class="membres">{CHERCHER_MEMBRE}{membre("MS", "hsl(229 97% 55%)", "Mawuli", choisi=True)}{membre("AK", "hsl(18 70% 52%)", "Akouavi")}{membre("FH", "hsl(40 80% 45%)", "Fifamè", choisi=True)}{membre("EA", "hsl(280 40% 50%)", "Edem")}</div>
+    <div class="envoi-membres">
+      <div class="champ verre">{ic("commentaire")}<span class="champ-place">Ajouter un message (facultatif)</span></div>
+      <button type="button" class="bouton-verre verre verre-appuyable large plein"><span class="bouton-verre-texte">{ic("envoyer")}Envoyer à 2 membres</span></button>
+    </div>''',
     'Partager le reel'))
 
 

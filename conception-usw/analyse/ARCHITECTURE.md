@@ -20,7 +20,8 @@ Version du 22 octobre 2026.
 | PHP | **8.5.12 au minimum** (ou 8.4.27) | Versions qui corrigent *php2shell* (section 9) |
 | Base de données | **MySQL 8.4** (ou MariaDB 11.4) ; SQLite en mémoire pour les tests | Base du TP ; index spatiaux pour « Près de moi » et la carte |
 | Cache, files d'attente, limites de débit | Fichiers et base en développement ; **Redis** en production | Partie 15.2 et Partie 18 |
-| Fichiers | Disque `medias` : local en développement, **S3 compatible** en production | Abstraction des disques (Partie 23) |
+| Fichiers | Disque `medias` : local en développement, **Cloudflare R2** en production (pilote `s3` de Laravel, adresse R2) ; les versions publiques passent par le réseau de Cloudflare | Abstraction des disques (Partie 23). R2 ne fait pas payer la sortie des données : décisif pour une application de photos. Gratuit jusqu'à 10 Go, 1 million d'écritures et 10 millions de lectures par mois |
+| E-mails | **Resend** (codes de vérification, mot de passe oublié), en file d'attente | Gratuit jusqu'à 3 000 e-mails par mois et 100 par jour ; un domaine vérifié pour écrire à toutes les adresses |
 | Authentification | **Sanctum, jetons personnels** pour l'application mobile | Une application mobile utilise des jetons, jamais le mode cookie (Partie 21) |
 | Connexion Google | L'application obtient un jeton d'identité Google ; l'API **vérifie sa signature**, son émetteur, son audience et son expiration | Pas de redirection web dans une application mobile |
 | Tests | **PHPUnit**, tests unitaires et *feature tests*, `RefreshDatabase`, *factories* | Partie 22 |
@@ -56,7 +57,7 @@ Nginx ──► PHP-FPM 8.5.12 ──► API Laravel 13 (monolithe modulaire)
                       Workers de file d'attente (variantes, analyse, notifications)
                       Planificateur (une entrée crontab, Partie 24)
 
-Services extérieurs : Google (vérification du jeton), FCM (notifications push),
+Services extérieurs : Google (vérification du jeton), Resend (e-mails), Cloudflare R2 (photos et vidéos), FCM (notifications push),
 l'application de cartographie du téléphone (« Y aller » : aucun appel du serveur).
 ```
 
@@ -387,7 +388,7 @@ points de sécurité de la Partie 27.
 
 ## 12. Ce qui reste à décider avec le groupe
 
-1. **L'hébergement de production**, qui détermine Redis, le stockage S3 compatible et le CDN.
+1. **L'hébergement du serveur** (PHP, MySQL, Redis). Décidé le 22 octobre 2026 : les e-mails passent par **Resend**, les photos et les vidéos par **Cloudflare R2**.
 2. **Le service push** : Firebase Cloud Messaging (Android et iOS).
 3. **Le projet à part ou dans le dépôt existant** : on propose `usw_api` à côté de `pinterest_api`.
    - On reprend de `pinterest_api` : le rendu JSON des erreurs, la lecture des médias, les tests.

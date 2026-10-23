@@ -39,7 +39,7 @@ button { font: inherit; color: inherit; }
   flex: none;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.9;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -52,4 +52,15 @@ button { font: inherit; color: inherit; }
     animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Lu par le lecteur d ecran, invisible a l oeil : les champs de compte n ont
+   pas de libelle au-dessus, leur indication dit quoi ecrire (2026-10-23). */
+.pour-lecteur {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

@@ -21,6 +21,14 @@ def mots(texte, k0=0, classe='page-titre', balise='h1'):
     return f'<{balise} class="{classe} mots">{morceaux}</{balise}>'
 
 
+def banniere(texte, titre='USW', action=''):
+    """Le message apres une action : une banniere de verre depoli qui descend
+    du haut, comme une notification d iOS (2026-10-23 : plus de bandeau noir)."""
+    lien = f'<a class="banniere-action">{action}</a>' if action else ''
+    return (f'  <div class="banniere" role="status"><span class="banniere-logo"><svg class="logo"><use href="#i-logo"/></svg></span>'
+            f'<div><div class="banniere-tete"><strong>{titre}</strong><span>maintenant</span></div><p>{texte}</p></div>{lien}</div>\n')
+
+
 def ecrire(nom, html):
     (ECRANS / nom).write_text(html, encoding='utf-8')
 
@@ -70,7 +78,7 @@ VISUEL_2 = f'''    <div class="demo-photo">
 
 VISUEL_3 = f'''    <div class="demo-photo">
       <span class="photo ph-p77"></span>
-      <span class="repere-demo">{ic('lieu')}</span>
+      <span class="repere-demo">{ic('epingle')}</span>
       <span class="bouton-verre verre plein demo-aller"><span class="bouton-verre-texte">{ic('y-aller')}Y aller · 38 km</span></span>
     </div>'''
 
@@ -92,7 +100,7 @@ def page(contenu, classe='', titre_haut=''):
 '''
 
 
-def champ(libelle, icone, valeur, aide='', focus=False, fin='', indication=False, k=0):
+def champ(libelle, icone, valeur, aide='', focus=False, fin='', indication=False, k=0, compte=False):
     if indication:
         # Champ vide : le curseur attend devant l indication.
         texte = ('<span class="curseur"></span>' if focus else '') + f'<span class="champ-place">{valeur}</span>'
@@ -100,7 +108,7 @@ def champ(libelle, icone, valeur, aide='', focus=False, fin='', indication=False
         texte = f'<span class="champ-valeur">{valeur}</span>' + ('<span class="curseur"></span>' if focus else '')
     ligne_aide = f'\n      <p class="champ-aide">{aide}</p>' if aide else ''
     return f'''    <div class="champ-bloc" style="--k:{k}">
-      <span class="champ-libelle">{libelle}</span>
+      <span class="champ-libelle{" pour-lecteur" if compte else ""}">{libelle}</span>
       <div class="champ verre{" focus" if focus else ""}">{ic(icone)}{texte}{fin}</div>{ligne_aide}
     </div>'''
 
@@ -143,7 +151,7 @@ ENTREE = f'''<div class="app fixe entree">
     <span class="logo-usw" aria-label="USW"><span>U</span><span>S</span><span class="citron">W</span></span>
     {mots('Bienvenue sur USW')}
     <form class="formulaire">
-{champ("E-mail", "enveloppe", "Adresse e-mail", focus=True, indication=True, k=0)}
+{champ("E-mail", "enveloppe", "Entrez votre adresse e-mail", focus=True, indication=True, k=0, compte=True)}
       {BOUTON.format(k=1, t="Continuer")}
       <div class="separateur" style="--k:2"><span>ou</span></div>
       <button type="button" class="bouton-verre verre verre-appuyable large bouton-google" style="--k:3"><span class="bouton-verre-texte">{ic("google")}Continuer avec Google</span></button>
@@ -161,7 +169,7 @@ MOT_DE_PASSE = page(f'''  <div class="retour-compte">
     {mots('Entrez votre mot de passe')}
   </div>
   <form class="formulaire">
-{champ("Mot de passe", "cadenas", "Votre mot de passe", focus=True, fin=OEIL, indication=True, k=0)}
+{champ("Mot de passe", "cadenas", "Entrez votre mot de passe", focus=True, fin=OEIL, indication=True, k=0, compte=True)}
     <a class="lien droite" style="--k:1">Mot de passe oublié ?</a>
     {BOUTON.format(k=2, t="Se connecter")}
   </form>''', classe='authentification')
@@ -170,7 +178,7 @@ MOT_DE_PASSE = page(f'''  <div class="retour-compte">
 CREER_MDP = page(f'''  {mots('Créez votre mot de passe')}
   <p class="page-texte">Pour le compte <b>akouavi.k@gmail.com</b>.</p>
   <form class="formulaire">
-{champ("Mot de passe", "cadenas", "••••••••••", aide='<span class="force"><i></i><i></i><i></i><i></i></span>Solide', focus=True, fin=OEIL, k=0)}
+{champ("Mot de passe", "cadenas", "••••••••••", aide='<span class="force"><i></i><i></i><i></i><i></i></span>Solide', focus=True, fin=OEIL, k=0, compte=True)}
     <ul class="criteres" style="--k:1">{critere(True, "8 caractères au moins")}{critere(True, "Un chiffre")}{critere(True, "Une lettre")}</ul>
     {BOUTON.format(k=2, t="Continuer")}
   </form>
@@ -258,7 +266,7 @@ CODE = page(f'''  {mots('Vérifiez votre e-mail')}
 OUBLI = page(f'''  {mots('Mot de passe oublié')}
   <p class="page-texte">Indiquez l'e-mail du compte : nous y enverrons un code pour choisir un nouveau mot de passe.</p>
   <form class="formulaire">
-{champ("E-mail", "enveloppe", "akouavi.k@gm", focus=True, k=0)}
+{champ("E-mail", "enveloppe", "akouavi.k@gm", focus=True, k=0, compte=True)}
     {BOUTON.format(k=1, t="Envoyer le code")}
   </form>
   <p class="pied-page">Vous vous en souvenez ? <a class="lien">Se connecter</a></p>''', classe='authentification')
@@ -266,8 +274,8 @@ OUBLI = page(f'''  {mots('Mot de passe oublié')}
 NOUVEAU = page(f'''  {mots('Nouveau mot de passe')}
   <p class="page-texte">Choisissez-en un que vous n'utilisez pas ailleurs.</p>
   <form class="formulaire">
-{champ("Nouveau mot de passe", "cadenas", "••••••••", fin=OEIL, k=0)}
-{champ("Confirmer", "cadenas", "••••••", focus=True, fin=OEIL, k=1)}
+{champ("Nouveau mot de passe", "cadenas", "••••••••", fin=OEIL, k=0, compte=True)}
+{champ("Confirmer", "cadenas", "••••••", focus=True, fin=OEIL, k=1, compte=True)}
     <ul class="criteres" style="--k:2">{critere(True, "8 caractères au moins")}{critere(True, "Un chiffre")}{critere(False, "Les deux mots de passe sont identiques")}</ul>
     {BOUTON_INACTIF.format(k=3, t="Enregistrer")}
   </form>''', classe='authentification')

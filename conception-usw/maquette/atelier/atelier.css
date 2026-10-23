@@ -357,6 +357,11 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round
 .gd-fantome { position: absolute; background: #e3e6f4; box-shadow: 0 0 0 1px #0000000d; }
 .gd-monde[data-zoom='actif'] .gd-cadre { visibility: hidden !important; }
 .gd-cadre { position: absolute; display: block; border: none; background: #e3e6f4; box-shadow: 0 30px 70px -40px #0009, 0 0 0 1px #0000000d; }
+/* Le temps d un deplacement ou d un zoom, les ombres portees des cadres —
+   recalculees a chaque image sur une machine sans carte graphique — s effacent.
+   Pas de will-change sur la toile : mesure sur la maquette USW, une couche a part
+   rend le zoom plus lent (arrets jusqu a 18 s avec la carte graphique). */
+.gd[data-bouge='true'] .gd-cadre { box-shadow: none; }
 .gd-capteur { position: absolute; inset: 0; cursor: default; }
 .gd[data-outil='main'] .gd-capteur { cursor: grab; }
 .gd[data-glisse='true'] .gd-capteur { cursor: grabbing; }
